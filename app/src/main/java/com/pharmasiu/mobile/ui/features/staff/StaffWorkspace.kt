@@ -1,34 +1,14 @@
 package com.pharmasiu.mobile.ui.features.staff
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.pharmasiu.mobile.data.model.Medicine
-import com.pharmasiu.mobile.domain.StaffRole
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 
-/** One employee entrance, one shared operations UI, with role-scoped demo actions. */
-@Composable
-fun StaffWorkspace(
-    products: List<Medicine>,
-    store: StaffDemoStore,
-    onExit: () -> Unit,
-) {
-    var role by remember { mutableStateOf<StaffRole?>(null) }
-    BackHandler(enabled = role != null) { role = null }
-    when (role) {
-        null -> StaffLoginScreen(
-            onCustomerLogin = onExit,
-            onAuthenticated = { role = it },
-        )
-        else -> OperationsHub(role!!, products, store, onLogout = { role = null })
-    }
-}
-
+/** Shared UI utilities for the operations area; authentication lives at app root. */
 @Composable
 internal fun StaffNotice(message: String) {
     Surface(shape = RoundedCornerShape(13.dp), color = PharmaPalette.Mint) {

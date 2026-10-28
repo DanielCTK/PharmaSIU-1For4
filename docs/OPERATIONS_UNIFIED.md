@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Đây là **màn mặc định khi vừa mở ứng dụng**. Đăng nhập nội bộ qua **email/mật khẩu demo**: `nhanvien@pharmasiu.demo` / `1111` (nhân viên), `quanly@pharmasiu.demo` / `2222` (quản lý). Vai trò tự xác định từ tài khoản, sau đó hai vai trò dùng chung header, bottom navigation và các màn chính.
+Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Đây là **một màn Đăng nhập PharmaSIU chung**. Đăng nhập bằng **email hoặc số điện thoại cùng mật khẩu demo**: `nhanvien@pharmasiu.demo` / `1111` (nhân viên), `quanly@pharmasiu.demo` / `2222` (quản lý). Vai trò tự xác định từ tài khoản, sau đó hai vai trò dùng chung header, bottom navigation và các màn chính.
 
 | Tab | Nhân viên | Quản lý |
 |---|---|---|
@@ -67,3 +67,5 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Mật khẩu không được lưu sau khi vào khu vận hành. Không có backend, OTP, reset password hay phân quyền thật; cần thay bằng xác thực máy chủ khi triển khai chính thức.
 
 **Điều hướng đăng xuất mới:** Nhân viên/Quản lý nhấn biểu tượng Thoát để về ngay màn Đăng nhập nội bộ. Từ cổng này chọn Đăng nhập tài khoản khách hàng để vào gian hàng; khách đăng xuất cũng về cổng này. Không thể dùng nút Back để hiện lại nội dung đã đăng xuất. Khởi động Activity mới không tự đăng nhập.
+
+**Đăng nhập thống nhất:** Cả Nhân viên, Quản lý và Khách hàng dùng duy nhất UnifiedLoginScreen. Không có thêm nút dẫn đến màn login khác. Vai trò được xác định từ thông tin đăng nhập; khách hàng vào gian hàng, hai tài khoản nội bộ vào OperationsHub. Đăng ký và quên mật khẩu demo nằm trong cùng giao diện đăng nhập.

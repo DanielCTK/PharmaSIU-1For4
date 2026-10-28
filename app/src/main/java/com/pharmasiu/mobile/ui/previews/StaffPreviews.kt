@@ -11,14 +11,18 @@ import com.pharmasiu.mobile.ui.features.staff.*
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 import com.pharmasiu.mobile.ui.theme.PharmaSIUTheme
 
-@Preview(name = "01 · Đăng nhập nội bộ", group = "PharmaSIU · operations",
+@Preview(name = "01 · Đăng nhập chung", group = "PharmaSIU · operations",
     widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun StaffAccessPreview() {
     PharmaSIUTheme {
         val data = remember { StaffDemoStore(DemoCatalogRepository.medicines) }
         Surface(Modifier.fillMaxSize(), color = PharmaPalette.Cream) {
-            StaffLoginScreen(onExit = {}, onAuthenticated = {})
+            UnifiedLoginScreen(
+                onLogin = { _, _ -> null },
+                onRegister = { _, _, _ -> null },
+                onReset = { _, _ -> null },
+            )
         }
     }
 }

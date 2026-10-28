@@ -5,23 +5,22 @@ import org.junit.Test
 
 class AppEntryStateTest {
     @Test fun freshLaunchAlwaysShowsSignIn() {
-        assertEquals(AppEntryScreen.STAFF_LOGIN, AppEntryState().screen)
-        assertEquals(AppEntryScreen.STAFF_LOGIN, AppEntryState().returnToLogin().screen)
+        assertEquals(AppEntryScreen.LOGIN, AppEntryState().screen)
+        assertEquals(AppEntryScreen.LOGIN, AppEntryState().returnToLogin().screen)
     }
 
     @Test fun customerNeedsSignInBeforeEnteringShop() {
         val initial = AppEntryState()
-        assertEquals(AppEntryScreen.STAFF_LOGIN, initial.customerAuthenticated().screen)
-        val customerAuth = initial.openCustomerLogin()
-        assertEquals(AppEntryScreen.CUSTOMER_LOGIN, customerAuth.screen)
-        assertEquals(AppEntryScreen.CUSTOMER_APP, customerAuth.customerAuthenticated().screen)
+        assertEquals(AppEntryScreen.CUSTOMER_APP, initial.customerAuthenticated().screen)
     }
 
     @Test fun logoutAndBackDoNotRestorePriorAppScreen() {
-        val loggedIn = AppEntryState().openCustomerLogin().customerAuthenticated()
-        assertEquals(AppEntryScreen.STAFF_LOGIN, loggedIn.returnToLogin().screen)
-        val cancelled = AppEntryState().openCustomerLogin().returnToLogin()
-        assertEquals(AppEntryScreen.STAFF_LOGIN, cancelled.screen)
-        assertEquals(AppEntryScreen.STAFF_LOGIN, cancelled.customerAuthenticated().screen)
+        val loggedIn = AppEntryState().customerAuthenticated()
+        assertEquals(AppEntryScreen.LOGIN, loggedIn.returnToLogin().screen)
+        val manager = AppEntryState().staffAuthenticated(StaffRole.ADMIN)
+        assertEquals(AppEntryScreen.STAFF_APP, manager.screen)
+        assertEquals(StaffRole.ADMIN, manager.staffRole)
+        assertEquals(AppEntryScreen.LOGIN, manager.returnToLogin().screen)
+        assertEquals(AppEntryScreen.STAFF_APP, manager.customerAuthenticated().screen)
     }
 }

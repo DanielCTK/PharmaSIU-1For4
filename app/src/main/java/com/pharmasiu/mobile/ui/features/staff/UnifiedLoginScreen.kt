@@ -36,37 +36,64 @@ import com.pharmasiu.mobile.domain.StaffRole
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 
 /**
- * Professional-looking mock sign-in, not a security boundary.
+ * The ONE app login for customers, cashier and manager.
  * No passwords are persisted or sent to a server.
  */
 @Composable
-fun StaffLoginScreen(
-    onExit: (() -> Unit)? = null,
-    onCustomerLogin: (() -> Unit)? = null,
-    onAuthenticated: (StaffRole) -> Unit,
+fun UnifiedLoginScreen(
+    onLogin: (identifier: String, password: String) -> String?,
+    onRegister: (name: String, phone: String, password: String) -> String?,
+    onReset: (phone: String, newPassword: String) -> String?,
 ) {
-    var email by rememberSaveable { mutableStateOf("") }
+    var mode by rememberSaveable { mutableStateOf("login") }
+    var identifier by rememberSaveable { mutableStateOf("") }
+    var displayName by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordAgain by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     var showDemoAccounts by rememberSaveable { mutableStateOf(false) }
     var attempted by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    var successMessage by remember { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val passwordFocus = remember { FocusRequester() }
 
+    fun switchMode(next: String) {
+        mode = next
+        identifier = ""
+        displayName = ""
+        password = ""
+        passwordAgain = ""
+        error = null
+        successMessage = null
+        attempted = false
+        showDemoAccounts = false
+    }
     fun submit() {
         attempted = true
-        val result = StaffDemoAccess.authenticate(email, password)
-        if (result == null) {
-            error = "Email hoặc mật khẩu demo chưa đúng. Hãy kiểm tra lại thông tin."
-            return
+        val phoneValid = identifier.length == 10 && identifier.startsWith("0") &&
+            identifier.all(Char::isDigit)
+        error = when {
+            identifier.isBlank() || password.isBlank() ->
+                "Vui lòng nhập thông tin tài khoản và mật khẩu."
+            mode != "login" && !phoneValid -> "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0."
+            mode != "login" && password.length < 6 -> "Mật khẩu demo cần ít nhất 6 ký tự."
+            mode != "login" && password != passwordAgain -> "Mật khẩu nhập lại chưa khớp."
+            mode == "register" && displayName.trim().length < 2 -> "Vui lòng nhập họ tên hợp lệ."
+            mode == "register" -> onRegister(displayName.trim(), identifier, password)
+            mode == "reset" -> onReset(identifier, password)
+            else -> onLogin(identifier.trim(), password)
         }
+        if (error != null) return
         keyboard?.hide()
         focusManager.clearFocus()
         password = ""
-        error = null
-        onAuthenticated(result)
+        passwordAgain = ""
+        if (mode == "reset") {
+            switchMode("login")
+            successMessage = "Đã cập nhật mật khẩu demo. Vui lòng đăng nhập lại."
+        }
     }
 
     Column(
@@ -79,16 +106,10 @@ fun StaffLoginScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            if (onExit != null) {
-                IconButton(onClick = onExit, modifier = Modifier.size(48.dp)) {
-                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Quay lại",
-                        tint = PharmaPalette.Emerald)
-                }
-            }
             Column(Modifier.weight(1f)) {
                 Text("PharmaSIU", style = MaterialTheme.typography.titleLarge,
                     color = PharmaPalette.Emerald, fontWeight = FontWeight.ExtraBold)
-                Text("KHU VỰC VẬN HÀNH", color = PharmaPalette.Muted,
+                Text("CHĂM SÓC · MUA SẮM · VẬN HÀNH", color = PharmaPalette.Muted,
                     fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.35.sp)
             }
             Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(8.dp)) {
@@ -120,16 +141,16 @@ fun StaffLoginScreen(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Outlined.Storefront, contentDescription = null,
+                    Icon(Icons.Outlined.LocalPharmacy, contentDescription = null,
                         tint = PharmaPalette.Lime, modifier = Modifier.size(25.dp))
                     Spacer(Modifier.width(10.dp))
-                    Text("NHÂN SỰ  /  PHARMASIU", color = PharmaPalette.Lime,
+                    Text("PHARMASIU  /  WELCOME", color = PharmaPalette.Lime,
                         letterSpacing = 1.4.sp, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
                 Text("Chào mừng\ntrở lại.", color = Color.White,
                     style = MaterialTheme.typography.headlineLarge.copy(fontSize = 34.sp),
                     lineHeight = 38.sp, fontWeight = FontWeight.ExtraBold)
-                Text("Tiếp tục công việc tại quầy trong một không gian thống nhất.",
+                Text("Một tài khoản. Đúng không gian dành cho bạn.",
                     color = PharmaPalette.Mint, style = MaterialTheme.typography.bodySmall)
             }
         }
@@ -137,22 +158,41 @@ fun StaffLoginScreen(
             Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
-            Text("Đăng nhập nội bộ", style = MaterialTheme.typography.titleLarge,
+            Text(when (mode) {
+                    "register" -> "Đăng ký tài khoản khách hàng"
+                    "reset" -> "Đặt lại mật khẩu demo"
+                    else -> "Đăng nhập PharmaSIU"
+                }, style = MaterialTheme.typography.titleLarge,
                 color = PharmaPalette.Ink, fontWeight = FontWeight.Bold)
-            Text("Nhập tài khoản được cấp cho nhân viên hoặc quản lý.",
+            Text(if (mode == "login") "Dành cho khách hàng, nhân viên và quản lý."
+                else "Tính năng dùng thử cho tài khoản khách hàng.",
                 style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
+            if (mode == "register") {
+                OutlinedTextField(
+                    value = displayName,
+                    onValueChange = { displayName = it.take(70); error = null },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Họ và tên") },
+                    singleLine = true, shape = RoundedCornerShape(14.dp),
+                )
+            }
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it.take(120); error = null; attempted = false },
+                value = identifier,
+                onValueChange = {
+                    identifier = if (mode == "login") it.take(120)
+                    else it.filter(Char::isDigit).take(10)
+                    error = null; attempted = false; successMessage = null
+                },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Email nội bộ") },
-                placeholder = { Text("ten@pharmasiu.demo") },
-                leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
+                label = { Text(if (mode == "login") "Email hoặc số điện thoại" else "Số điện thoại") },
+                placeholder = { if (mode == "login") Text("Email / 0900000000") },
+                leadingIcon = { Icon(Icons.Outlined.PersonOutline, contentDescription = null) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                    keyboardType = if (mode == "login") KeyboardType.Text else KeyboardType.Phone,
+                    imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
-                isError = attempted && email.isBlank(),
+                isError = attempted && identifier.isBlank(),
                 shape = RoundedCornerShape(14.dp),
             )
             OutlinedTextField(
@@ -176,13 +216,28 @@ fun StaffLoginScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
-                    if (email.isNotBlank() && password.isNotBlank()) submit()
+                    if (identifier.isNotBlank() && password.isNotBlank() && mode == "login") submit()
                     else { attempted = true; error = "Hãy nhập email và mật khẩu." }
                 }),
                 singleLine = true,
                 isError = attempted && (password.isBlank() || error != null),
                 shape = RoundedCornerShape(14.dp),
             )
+            if (mode != "login") {
+                OutlinedTextField(
+                    value = passwordAgain,
+                    onValueChange = { passwordAgain = it.take(64); error = null },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Nhập lại mật khẩu") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    shape = RoundedCornerShape(14.dp),
+                )
+            }
+            if (successMessage != null) {
+                Text(successMessage!!, color = PharmaPalette.Emerald,
+                    style = MaterialTheme.typography.bodyMedium)
+            }
             if (error != null) {
                 Surface(color = PharmaPalette.WarningSurface, shape = RoundedCornerShape(12.dp)) {
                     Row(Modifier.fillMaxWidth().padding(12.dp),
@@ -197,14 +252,36 @@ fun StaffLoginScreen(
                 }
             }
             Button(
-                enabled = email.isNotBlank() && password.isNotBlank(),
+                enabled = identifier.isNotBlank() && password.isNotBlank(),
                 onClick = ::submit,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 55.dp),
                 shape = RoundedCornerShape(13.dp),
             ) {
-                Text("Đăng nhập", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                Text(when (mode) {
+                    "register" -> "Tạo tài khoản khách hàng"
+                    "reset" -> "Cập nhật mật khẩu"
+                    else -> "Đăng nhập"
+                }, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                 Icon(Icons.Outlined.ArrowForward, contentDescription = null)
             }
+            if (mode == "login") {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TextButton(onClick = { switchMode("register") }) {
+                        Text("Tạo tài khoản")
+                    }
+                    TextButton(onClick = { switchMode("reset") }) {
+                        Text("Quên mật khẩu?")
+                    }
+                }
+            } else {
+                TextButton(onClick = { switchMode("login") }) {
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = null,
+                        modifier = Modifier.size(17.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text("Trở lại đăng nhập")
+                }
+            }
+            if (mode == "login") {
             Surface(color = PharmaPalette.Paper, shape = RoundedCornerShape(14.dp)) {
                 Column {
                     Row(
@@ -228,7 +305,7 @@ fun StaffLoginScreen(
                         StaffDemoAccess.demoAccounts.forEach { account ->
                             Surface(
                                 onClick = {
-                                    email = account.email
+                                    identifier = account.email
                                     password = account.password
                                     error = null
                                     attempted = false
@@ -261,19 +338,33 @@ fun StaffLoginScreen(
                                 }
                             }
                         }
+                        Surface(onClick = {
+                            identifier = "0900000000"
+                            password = "demo1234"
+                            error = null
+                            attempted = false
+                            keyboard?.hide()
+                            focusManager.clearFocus()
+                        }, color = PharmaPalette.Paper) {
+                            Row(
+                                Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(11.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(Icons.Outlined.ShoppingBag, contentDescription = null,
+                                    tint = PharmaPalette.Emerald)
+                                Column(Modifier.weight(1f)) {
+                                    Text("Khách hàng", fontWeight = FontWeight.SemiBold,
+                                        color = PharmaPalette.Ink)
+                                    Text("0900000000", color = PharmaPalette.Muted, fontSize = 12.sp)
+                                }
+                                Text("Dùng thử", color = PharmaPalette.Emerald,
+                                    style = MaterialTheme.typography.labelMedium)
+                            }
+                        }
                     }
                 }
             }
-            if (onCustomerLogin != null) {
-                OutlinedButton(
-                    onClick = onCustomerLogin,
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-                    shape = RoundedCornerShape(13.dp),
-                ) {
-                    Icon(Icons.Outlined.ShoppingBag, contentDescription = null)
-                    Spacer(Modifier.width(9.dp))
-                    Text("Đăng nhập tài khoản khách hàng")
-                }
             }
             Row(
                 verticalAlignment = Alignment.Top,

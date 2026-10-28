@@ -23,6 +23,9 @@ import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
 import com.pharmasiu.mobile.domain.CartRules
 import com.pharmasiu.mobile.domain.AppEntryScreen
 import com.pharmasiu.mobile.domain.AppEntryState
+import com.pharmasiu.mobile.domain.DemoCustomerIdentity
+import com.pharmasiu.mobile.domain.DemoLoginIdentity
+import com.pharmasiu.mobile.domain.UnifiedDemoAuth
 import com.pharmasiu.mobile.ui.features.account.*
 import com.pharmasiu.mobile.ui.features.cart.CartScreen
 import com.pharmasiu.mobile.ui.features.catalog.CatalogScreen
@@ -34,7 +37,8 @@ import com.pharmasiu.mobile.ui.features.orders.OrderStatusScreen
 import com.pharmasiu.mobile.ui.features.prescription.PrescriptionScreen
 import com.pharmasiu.mobile.ui.features.product.ProductDetailScreen
 import com.pharmasiu.mobile.ui.features.staff.StaffDemoStore
-import com.pharmasiu.mobile.ui.features.staff.StaffWorkspace
+import com.pharmasiu.mobile.ui.features.staff.OperationsHub
+import com.pharmasiu.mobile.ui.features.staff.UnifiedLoginScreen
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -142,9 +146,6 @@ fun PharmaSIUApp() {
             } else null
         }
     }
-    BackHandler(enabled = entry.screen == AppEntryScreen.CUSTOMER_LOGIN) {
-        entry = entry.returnToLogin()
-    }
     BackHandler(enabled = entry.screen == AppEntryScreen.CUSTOMER_APP &&
         (navigation.size > 1 || current != "home")) { back() }
     val topTabs = remember { listOf(
@@ -155,22 +156,28 @@ fun PharmaSIUApp() {
         Triple("account", "Tài khoản", Icons.Outlined.PersonOutline),
     ) }
     val onTab = current.takeIf { it in topTabs.map { item -> item.first } }
-    if (entry.screen == AppEntryScreen.STAFF_LOGIN) {
-        // Employee/admin logout returns here; Back cannot reveal a prior screen.
-        StaffWorkspace(
-            products = products,
-            store = staffStore,
-            onExit = { entry = entry.openCustomerLogin() },
-        )
-        return
-    }
-    if (entry.screen == AppEntryScreen.CUSTOMER_LOGIN) {
-        AuthScreen(
-            onBack = { entry = entry.returnToLogin() },
-            onLogin = { phone, password ->
-                val record = accounts[phone]
-                if (record?.password != password) "Sai thông tin tài khoản mẫu."
-                else { switchOwner(phone); customerAuthenticated(); null }
+    if (entry.screen == AppEntryScreen.LOGIN) {
+        // The only entry screen, for every role. Back cannot reveal a previous account.
+        UnifiedLoginScreen(
+            onLogin = { identifier, password ->
+                val records = accounts.values.map {
+                    DemoCustomerIdentity(
+                        phone = it.profile.phone, email = it.profile.email,
+                        password = it.password,
+                    )
+                }
+                when (val result = UnifiedDemoAuth.authenticate(identifier, password, records)) {
+                    is DemoLoginIdentity.Staff -> {
+                        entry = entry.staffAuthenticated(result.role)
+                        null
+                    }
+                    is DemoLoginIdentity.Customer -> {
+                        switchOwner(result.phone)
+                        customerAuthenticated()
+                        null
+                    }
+                    null -> "Email/số điện thoại hoặc mật khẩu demo chưa chính xác."
+                }
             },
             onRegister = { name, phone, password ->
                 if (accounts.containsKey(phone)) "Số điện thoại đã thuộc tài khoản mẫu khác."
@@ -186,6 +193,15 @@ fun PharmaSIUApp() {
                 if (old == null) "Không tìm thấy tài khoản demo này."
                 else { accounts[phone] = old.copy(password = newPass); null }
             },
+        )
+        return
+    }
+    if (entry.screen == AppEntryScreen.STAFF_APP) {
+        OperationsHub(
+            role = requireNotNull(entry.staffRole),
+            products = products,
+            store = staffStore,
+            onLogout = { entry = entry.returnToLogin() },
         )
         return
     }
@@ -304,7 +320,7 @@ fun PharmaSIUApp() {
                     profile = profile,
                     favoriteCount = favoriteIds.size,
                     requestCount = myRequests.size,
-                    onAuth = { logoutToLogin(); entry = entry.openCustomerLogin() },
+                    onAuth = ::logoutToLogin,
                     onEdit = { go("edit-profile") },
                     onFavorites = { go("favorites") },
                     onOrders = { go("orders") },

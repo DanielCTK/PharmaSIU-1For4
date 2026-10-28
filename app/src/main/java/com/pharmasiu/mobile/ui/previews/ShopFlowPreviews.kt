@@ -8,6 +8,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.pharmasiu.mobile.data.model.*
 import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
 import com.pharmasiu.mobile.ui.features.account.*
+import com.pharmasiu.mobile.ui.features.staff.UnifiedLoginScreen
 import com.pharmasiu.mobile.ui.features.catalog.CatalogScreen
 import com.pharmasiu.mobile.ui.features.community.*
 import com.pharmasiu.mobile.ui.features.onboarding.OnboardingScreen
@@ -40,7 +41,8 @@ private fun OnboardingMockPreview() = MockPreviewShell { OnboardingScreen(onFini
 @Preview(name = "02 • Đăng nhập demo", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun SignInMockPreview() = MockPreviewShell {
-    AuthScreen(onBack = {}, onLogin = { _, _ -> null }, onRegister = { _, _, _ -> null }, onReset = { _, _ -> null })
+    UnifiedLoginScreen(onLogin = { _, _ -> null }, onRegister = { _, _, _ -> null },
+        onReset = { _, _ -> null })
 }
 
 @Preview(name = "03 • Tài khoản khách", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)

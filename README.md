@@ -4,19 +4,23 @@
 
 > **Trạng thái: ứng dụng trải nghiệm tương tác, dữ liệu mock (v0.2).** Có onboarding, đăng nhập/đăng ký demo, hồ sơ, sổ địa chỉ, danh mục 30 mặt hàng, tìm kiếm, yêu thích, giỏ, toa, checkout và lịch sử đơn hàng demo. **Chưa kết nối API nhà thuốc, chưa tạo đơn thật, chưa gửi ảnh toa, chưa xác nhận tồn, chưa thanh toán hoặc phê duyệt dược sĩ trên máy chủ.** Giá là dữ liệu ví dụ, không phải giá chào bán.
 
-## Khởi động và đăng xuất (mặc định)
+## Một màn đăng nhập cho toàn bộ PharmaSIU
 
-- **Mở ứng dụng:** luôn vào màn **Đăng nhập nội bộ**. Tài khoản Nhân viên `nhanvien@pharmasiu.demo` / `1111`, Quản lý `quanly@pharmasiu.demo` / `2222` sẽ vào đúng khu vận hành.
-- **Khách hàng:** trên màn đăng nhập chọn **Đăng nhập tài khoản khách hàng**, dùng tài khoản `0900000000` / `demo1234` (hoặc đăng ký demo) rồi mới vào gian hàng; Onboarding sẽ hiện nếu chưa hoàn thành.
-- **Đăng xuất:** từ nút thoát ở khu vận hành hoặc nút đăng xuất trong Tài khoản khách hàng đều quay về **màn Đăng nhập nội bộ**, không quay về trang đã đăng xuất. Khi mở lại Activity, phiên đăng nhập không tự khôi phục.
-- Để đổi vai trò khi đang ở gian hàng, chọn **Tài khoản → Vào khu vận hành** để quay về cổng đăng nhập. Không phải cơ chế đăng nhập an toàn: thông tin demo là công khai và không kết nối backend.
+- **Mở ứng dụng:** duy nhất một màn **Đăng nhập PharmaSIU** với ô **Email hoặc số điện thoại** + **Mật khẩu**. Không có màn chọn vai trò và không có màn đăng nhập Khách hàng tách biệt.
+- **Quản lý:** `quanly@pharmasiu.demo` / `2222` → Khu vận hành, vai trò Quản lý.
+- **Nhân viên:** `nhanvien@pharmasiu.demo` / `1111` → Khu vận hành, vai trò Nhân viên.
+- **Khách hàng:** `0900000000` / `demo1234` hoặc `demo@pharmasiu.example` / `demo1234` → Gian hàng. Có thể **Đăng ký** và **Quên mật khẩu demo** ngay trong màn chung mà không chuyển sang trang đăng nhập khác.
+- **Đăng xuất:** từ bất kỳ vai trò nào quay về đúng một màn Đăng nhập PharmaSIU. Tạo Activity mới cũng luôn yêu cầu đăng nhập lại. Nút Back không mở lại khu vực đã đăng xuất.
+- **Giới hạn:** tài khoản demo công khai, xác thực trong bộ nhớ; chưa có xác thực server hoặc SQL. Không sử dụng mật khẩu/dữ liệu thật.
+**Ảnh giao diện kiểm tra trên emulator:** [Đăng nhập chung](docs/screenshots/app-unified-login.png) · [Ba tài khoản demo](docs/screenshots/app-unified-demo-accounts.png) · [Đăng ký](docs/screenshots/app-unified-register.png) · [Quên mật khẩu](docs/screenshots/app-unified-reset.png) · [Sau đăng xuất](docs/screenshots/app-unified-after-logout.png).
+
 ## Chạy trong Android Studio
 
 1. Cài Android Studio có Android SDK **API 36** và JDK **17+** (Android Studio bundled JBR được khuyến nghị).
 2. Clone repo `git clone https://github.com/DanielCTK/PharmaSIU-1For4.git`.
 3. Mở **thư mục gốc repo** (chứa `settings.gradle.kts`) trong Android Studio; chọn **Trust Project** nếu đồng ý, đợi **Gradle Sync**.
 4. Chọn cấu hình chạy **app** và emulator/thiết bị Android **8.0 / API 26 trở lên**.
-5. Nhấn **Run**. Ứng dụng **luôn mở màn Đăng nhập nội bộ trước**, không tự vào Trang chủ hoặc Onboarding. Chọn tài khoản Nhân viên/Quản lý demo hoặc **Đăng nhập tài khoản khách hàng** để vào gian hàng. Không cần API key, nhưng phải đăng nhập bằng thông tin demo để mở các khu vực.
+5. Nhấn **Run**. Ứng dụng **luôn mở màn Đăng nhập nội bộ trước**, không tự vào Trang chủ hoặc Onboarding. Dùng email hoặc số điện thoại cùng mật khẩu để vào đúng giao diện theo vai trò. Không cần API key, nhưng phải đăng nhập bằng thông tin demo để mở các khu vực.
 
 Chạy kiểm tra từ terminal:
 
@@ -57,7 +61,7 @@ Người dùng thêm sản phẩm → giỏ hàng → chọn toa nếu có thu�
 Đây là thao tác **lưu đơn hàng thành công trong RAM của ứng dụng để trải nghiệm**, không phải đơn đã gửi/được nhà thuốc xác nhận. Không có thanh toán, giữ hàng, duyệt toa hay API quản lý. Phần quy trình quản lý sẽ triển khai riêng khi tích hợp backend.
 ### Vận hành nhà thuốc — gộp bán hàng và quản trị (demo)
 
-Từ tab **Tài khoản → Vào khu vận hành**, sử dụng màn **Đăng nhập nội bộ** (email + mật khẩu) để vào một khu vận hành thống nhất gồm bốn tab Tổng quan, Bán hàng, Hàng hóa, Hóa đơn. Nhân viên: `nhanvien@pharmasiu.demo` / `1111`; quản lý: `quanly@pharmasiu.demo` / `2222`. Màn đăng nhập có ẩn/hiện mật khẩu, báo lỗi và mục chọn nhanh tài khoản demo. Vai trò do tài khoản xác định, không chọn thủ công. Đây là thông tin công khai để thử UI, chưa phải xác thực máy chủ.
+Từ màn **Đăng nhập PharmaSIU chung**, tài khoản Nhân viên hoặc Quản lý được đưa vào khu vận hành thống nhất gồm bốn tab Tổng quan, Bán hàng, Hàng hóa, Hóa đơn. Nhân viên: `nhanvien@pharmasiu.demo` / `1111`; quản lý: `quanly@pharmasiu.demo` / `2222`. Màn đăng nhập có ẩn/hiện mật khẩu, báo lỗi và mục chọn nhanh tài khoản demo. Vai trò do tài khoản xác định, không chọn thủ công. Đây là thông tin công khai để thử UI, chưa phải xác thực máy chủ.
 
 **Bán hàng:** mở ca → tìm/chọn sản phẩm không kê đơn → giỏ → tiền mặt hoặc phương thức khác demo → kiểm tra thanh toán → hoàn tất hóa đơn POS-DEMO → bán tiếp/lịch sử → đóng ca. Tồn giả lập giảm khi lập hóa đơn hợp lệ; thuốc kê đơn bị khóa vì chưa tích hợp dược sĩ duyệt.
 

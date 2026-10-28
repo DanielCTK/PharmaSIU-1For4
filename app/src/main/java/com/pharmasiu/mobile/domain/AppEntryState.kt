@@ -1,19 +1,17 @@
 package com.pharmasiu.mobile.domain
 
-/** App entry routing. A new activity always starts unauthenticated. */
-enum class AppEntryScreen { STAFF_LOGIN, CUSTOMER_LOGIN, CUSTOMER_APP }
+/** One entry for all roles. Never persist a signed-in state. */
+enum class AppEntryScreen { LOGIN, STAFF_APP, CUSTOMER_APP }
 
-data class AppEntryState(val screen: AppEntryScreen = AppEntryScreen.STAFF_LOGIN) {
-    fun openCustomerLogin(): AppEntryState =
-        copy(screen = AppEntryScreen.CUSTOMER_LOGIN)
+data class AppEntryState(
+    val screen: AppEntryScreen = AppEntryScreen.LOGIN,
+    val staffRole: StaffRole? = null,
+) {
+    fun staffAuthenticated(role: StaffRole): AppEntryState =
+        if (screen == AppEntryScreen.LOGIN) AppEntryState(AppEntryScreen.STAFF_APP, role) else this
 
-    /** Customer shop is only reachable after a successful customer login/register. */
     fun customerAuthenticated(): AppEntryState =
-        if (screen == AppEntryScreen.CUSTOMER_LOGIN)
-            copy(screen = AppEntryScreen.CUSTOMER_APP)
-        else this
+        if (screen == AppEntryScreen.LOGIN) AppEntryState(AppEntryScreen.CUSTOMER_APP) else this
 
-    /** Both logout and back from the customer login reset the entry to sign in. */
-    fun returnToLogin(): AppEntryState =
-        AppEntryState(AppEntryScreen.STAFF_LOGIN)
+    fun returnToLogin(): AppEntryState = AppEntryState()
 }
