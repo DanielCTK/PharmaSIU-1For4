@@ -3,6 +3,9 @@ package com.pharmasiu.mobile.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import android.animation.ValueAnimator
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -10,6 +13,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
@@ -66,13 +70,18 @@ fun PharmaSIUApp() {
     var demoReference by rememberSaveable { mutableStateOf("DEMO-0000") }
     var submitting by remember { mutableStateOf(false) }
     val products = DemoCatalogRepository.medicines
-    val cart = quantities.mapNotNull { (id, count) ->
-        DemoCatalogRepository.byId(id)?.takeIf { count > 0 }?.let { CartLine(it, count) }
-    }
-    val myRequests = requests.filter { it.owner == owner }.map { it.value }
-    val myAddresses = addresses.filter { it.owner == owner }.map { it.value }
-    val favoriteIds = favorites.filterValues { it }.keys.toSet()
-    val cartCount = cart.sumOf { it.quantity }
+    // Only recompute derived collections when their underlying snapshot data changes.
+    // Scrolling a lazy grid must not rebuild a cart or a history collection per frame.
+    val cart by remember { derivedStateOf {
+        quantities.mapNotNull { (id, count) ->
+            DemoCatalogRepository.byId(id)?.takeIf { count > 0 }?.let { CartLine(it, count) }
+        }
+    } }
+    val myRequests by remember(owner) { derivedStateOf { requests.filter { it.owner == owner }.map { it.value } } }
+    val myAddresses by remember(owner) { derivedStateOf { addresses.filter { it.owner == owner }.map { it.value } } }
+    val favoriteIds by remember { derivedStateOf { favorites.filterValues { it }.keys.toSet() } }
+    val screenStates = rememberSaveableStateHolder()
+    val animationMillis = remember { if (ValueAnimator.areAnimatorsEnabled()) 130 else 0 }
 
     fun saveFavorites() { savedFavorites[owner] = favorites.filterValues { it }.keys.toSet() }
     fun switchOwner(newPhone: String?) {
@@ -113,13 +122,13 @@ fun PharmaSIUApp() {
         }
     }
     BackHandler(enabled = navigation.size > 1 || current != "home") { back() }
-    val topTabs = listOf(
+    val topTabs = remember { listOf(
         Triple("home", "Trang chủ", Icons.Outlined.Home),
         Triple("catalog", "Danh mục", Icons.Outlined.GridView),
         Triple("favorites", "Yêu thích", Icons.Outlined.FavoriteBorder),
         Triple("orders", "Yêu cầu", Icons.Outlined.ReceiptLong),
         Triple("account", "Tài khoản", Icons.Outlined.PersonOutline),
-    )
+    ) }
     val onTab = current.takeIf { it in topTabs.map { item -> item.first } }
     Scaffold(
         containerColor = PharmaPalette.Cream,
@@ -154,12 +163,19 @@ fun PharmaSIUApp() {
         },
     ) { contentPadding ->
         Surface(Modifier.fillMaxSize().padding(contentPadding), color = PharmaPalette.Cream) {
+            Crossfade(
+                targetState = current,
+                animationSpec = tween(durationMillis = animationMillis),
+                label = "screen-navigation",
+                modifier = Modifier.fillMaxSize(),
+            ) { route ->
+                screenStates.SaveableStateProvider(route) {
             when {
-                current == "onboarding" -> OnboardingScreen(onFinish = {
+                route == "onboarding" -> OnboardingScreen(onFinish = {
                     introduction.edit().putBoolean("onboarding_complete", true).apply()
                     home()
                 })
-                current == "home" -> HomeScreen(
+                route == "home" -> HomeScreen(
                     medicines = products,
                     onOpenCatalog = { go("catalog") },
                     onOpenProduct = { go("product:$it") },
@@ -168,16 +184,16 @@ fun PharmaSIUApp() {
                     favorites = favoriteIds,
                     onToggleFavorite = ::flipFavorite,
                 )
-                current == "catalog" || current.startsWith("category:") -> CatalogScreen(
+                route == "catalog" || route.startsWith("category:") -> CatalogScreen(
                     medicines = products,
                     onOpenProduct = { go("product:$it") },
                     onBack = ::back,
-                    initialCategory = if (current.startsWith("category:")) current.substringAfter(":") else "Tất cả",
+                    initialCategory = if (route.startsWith("category:")) route.substringAfter(":") else "Tất cả",
                     favorites = favoriteIds,
                     onToggleFavorite = ::flipFavorite,
                 )
-                current.startsWith("product:") -> {
-                    val product = DemoCatalogRepository.byId(current.substringAfter(":"))
+                route.startsWith("product:") -> {
+                    val product = DemoCatalogRepository.byId(route.substringAfter(":"))
                     if (product == null) {
                         Text("Không tìm thấy sản phẩm trong danh mục mẫu")
                     } else {
@@ -191,19 +207,19 @@ fun PharmaSIUApp() {
                         )
                     }
                 }
-                current == "favorites" -> FavoritesScreen(
+                route == "favorites" -> FavoritesScreen(
                     products = products.filter { it.id in favoriteIds },
                     onOpenProduct = { go("product:$it") },
                     onRemoveFavorite = ::flipFavorite,
                     onExplore = { go("catalog") },
                 )
-                current == "orders" -> RequestHistoryScreen(
+                route == "orders" -> RequestHistoryScreen(
                     requests = myRequests,
                     onOpenRequest = { go("order:$it") },
                     onExplore = { go("catalog") },
                 )
-                current.startsWith("order:") -> {
-                    val request = myRequests.firstOrNull { it.reference == current.substringAfter(":") }
+                route.startsWith("order:") -> {
+                    val request = myRequests.firstOrNull { it.reference == route.substringAfter(":") }
                     if (request == null) Text("Bản xem trước không tồn tại trong phiên này.")
                     else MockRequestDetailScreen(
                         request = request,
@@ -225,7 +241,7 @@ fun PharmaSIUApp() {
                         },
                     )
                 }
-                current == "account" -> AccountScreen(
+                route == "account" -> AccountScreen(
                     profile = profile,
                     favoriteCount = favoriteIds.size,
                     requestCount = myRequests.size,
@@ -237,7 +253,7 @@ fun PharmaSIUApp() {
                     onChangePassword = { go("change-password") },
                     onLogout = { switchOwner(null); go("account") },
                 )
-                current == "addresses" && profile != null -> AddressBookScreen(
+                route == "addresses" && profile != null -> AddressBookScreen(
                     addresses = myAddresses,
                     onBack = ::back,
                     onSave = { address ->
@@ -266,7 +282,7 @@ fun PharmaSIUApp() {
                         }
                     },
                 )
-                current == "change-password" && profile != null -> ChangePasswordScreen(
+                route == "change-password" && profile != null -> ChangePasswordScreen(
                     onBack = ::back,
                     onChange = { currentPassword, newPassword ->
                         val existing = activePhone?.let { accounts[it] }
@@ -278,7 +294,7 @@ fun PharmaSIUApp() {
                         }
                     },
                 )
-                current == "auth" -> AuthScreen(
+                route == "auth" -> AuthScreen(
                     onBack = ::back,
                     onLogin = { phone, password ->
                         val record = accounts[phone]
@@ -298,7 +314,7 @@ fun PharmaSIUApp() {
                         else { accounts[phone] = old.copy(password = newPass); null }
                     },
                 )
-                current == "edit-profile" && profile != null -> EditProfileScreen(
+                route == "edit-profile" && profile != null -> EditProfileScreen(
                     profile = profile,
                     onSave = { updated ->
                         val old = activePhone?.let { accounts[it] }
@@ -323,7 +339,7 @@ fun PharmaSIUApp() {
                     },
                     onBack = ::back,
                 )
-                current == "cart" -> CartScreen(
+                route == "cart" -> CartScreen(
                     items = cart,
                     onIncrement = { id -> quantities[id] = ((quantities[id] ?: 0) + 1).coerceAtMost(CartRules.MAX_DEMO_QUANTITY) },
                     onDecrement = { id ->
@@ -339,14 +355,14 @@ fun PharmaSIUApp() {
                     },
                     onBack = ::back,
                 )
-                current == "prescription" -> PrescriptionScreen(
+                route == "prescription" -> PrescriptionScreen(
                     onBack = ::back,
                     onChooseFile = { choosePrescription.launch(arrayOf("image/*", "application/pdf")) },
                     selectedFileName = selectedPrescription,
                     onContinue = { if (selectedPrescription != null && cart.isNotEmpty()) go("checkout") },
                     onRemoveFile = { selectedPrescription = null },
                 )
-                current == "checkout" -> CheckoutScreen(
+                route == "checkout" -> CheckoutScreen(
                     lines = cart,
                     onBack = ::back,
                     onPlaceRequest = { name, phone, pickup ->
@@ -370,10 +386,12 @@ fun PharmaSIUApp() {
                     initialName = profile?.displayName.orEmpty(),
                     initialPhone = profile?.phone.orEmpty(),
                 )
-                current == "receipt" -> OrderStatusScreen(demoReference, onHome = {
+                route == "receipt" -> OrderStatusScreen(demoReference, onHome = {
                     go("orders")
                 })
                 else -> HomeScreen(products, { go("catalog") }, { go("product:$it") }, { go("cart") })
+            }
+                }
             }
         }
     }

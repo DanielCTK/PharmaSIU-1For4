@@ -39,8 +39,12 @@ fun AccountScreen(
 ) {
     Column(Modifier.fillMaxSize()) {
         PharmaTopBar("Tài khoản")
-        Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(17.dp)) {
-            Surface(shape = RoundedCornerShape(27.dp), color = PharmaPalette.Emerald) {
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(17.dp)) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(0.dp),
+                color = PharmaPalette.Emerald,
+            ) {
                 Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Icon(Icons.Outlined.AccountCircle, null, tint = PharmaPalette.Lime, modifier = Modifier.size(43.dp))
                     Text(profile?.displayName ?: "Xin chào, khách ghé thăm!", style = MaterialTheme.typography.headlineMedium, color = androidx.compose.ui.graphics.Color.White)
@@ -49,6 +53,10 @@ fun AccountScreen(
                     else Text("Tài khoản mẫu • không liên kết máy chủ", color = PharmaPalette.Lime)
                 }
             }
+            Column(
+                Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(17.dp),
+            ) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 AccountStat(favoriteCount.toString(), "Yêu thích", Modifier.weight(1f))
                 AccountStat(requestCount.toString(), "Yêu cầu mẫu", Modifier.weight(1f))
@@ -62,6 +70,7 @@ fun AccountScreen(
             if (profile != null) OutlinedButton(onClick = onLogout, modifier = Modifier.fillMaxWidth().height(52.dp)) { Text("Đăng xuất khỏi phiên demo") }
             Text("Đây là ứng dụng mô phỏng. Không nhập thông tin đăng nhập, toa hoặc dữ liệu cá nhân thật.", color = PharmaPalette.Muted, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(14.dp))
+            }
         }
     }
 }

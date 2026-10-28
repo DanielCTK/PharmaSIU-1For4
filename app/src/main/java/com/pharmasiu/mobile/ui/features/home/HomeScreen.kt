@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -58,6 +60,7 @@ fun HomeScreen(
     val shelfLabels = listOf("Dành cho bạn", "Mỹ phẩm", "Thực phẩm", "Thiết bị", "Chăm sóc")
     // Editorial order deliberately varies sector and image heights. Mock only:
     // we do not invent "sold counts", discounts or availability.
+    val scrollState = rememberLazyStaggeredGridState()
     val featured = remember(medicines, selectedShelf) {
         val selected = if (selectedShelf == "Dành cho bạn") {
             val picks = listOf(
@@ -75,22 +78,26 @@ fun HomeScreen(
         }
         selected.distinctBy { it.id }
     }
+    val imageHeights = remember { listOf(204.dp, 242.dp, 226.dp, 184.dp, 220.dp, 252.dp) }
     LazyVerticalStaggeredGrid(
+        state = scrollState,
         columns = StaggeredGridCells.Fixed(2),
-        contentPadding = PaddingValues(start = 14.dp, end = 14.dp, bottom = 34.dp),
-        horizontalArrangement = Arrangement.spacedBy(11.dp),
+        contentPadding = PaddingValues(bottom = 34.dp),
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
         verticalItemSpacing = 12.dp,
     ) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            PharmaTopBar("PharmaSIU", trailing = {
+        item(key = "home-top", contentType = "header", span = StaggeredGridItemSpan.FullLine) {
+            Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                PharmaTopBar("PharmaSIU", trailing = {
                 IconButton(onClick = onOpenCart) {
                     Icon(Icons.Outlined.ShoppingBag, "Mở giỏ hàng", tint = PharmaPalette.Emerald)
                 }
             })
+            }
         }
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item(key = "home-search", contentType = "search", span = StaggeredGridItemSpan.FullLine) {
             Row(
-                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).heightIn(min = 56.dp)
                     .background(PharmaPalette.Paper, RoundedCornerShape(17.dp))
                     .clickable(onClickLabel = "Tìm kiếm trong danh mục") { onOpenCatalog() }
                     .padding(horizontal = 15.dp, vertical = 13.dp),
@@ -105,10 +112,10 @@ fun HomeScreen(
                 Icon(Icons.Outlined.ArrowForward, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(20.dp))
             }
         }
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item(key = "home-hero", contentType = "hero", span = StaggeredGridItemSpan.FullLine) {
             Box(
                 modifier = Modifier.fillMaxWidth().height(228.dp)
-                    .background(PharmaPalette.Emerald, RoundedCornerShape(28.dp)),
+                    .background(PharmaPalette.Emerald).clipToBounds(),
             ) {
                 Canvas(Modifier.matchParentSize()) {
                     val ring = Color(0xFF4E8B75)
@@ -139,8 +146,8 @@ fun HomeScreen(
                 }
             }
         }
-        item(span = StaggeredGridItemSpan.FullLine) {
-            Row(Modifier.fillMaxWidth().padding(top = 4.dp),
+        item(key = "home-groups", contentType = "groups", span = StaggeredGridItemSpan.FullLine) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(9.dp)) {
                 listOf("Mỹ phẩm", "Thực phẩm", "Không kê đơn").forEach { label ->
                     Surface(
@@ -161,8 +168,8 @@ fun HomeScreen(
                 }
             }
         }
-        item(span = StaggeredGridItemSpan.FullLine) {
-            Column(Modifier.fillMaxWidth().padding(top = 9.dp),
+        item(key = "home-featured-title", contentType = "section", span = StaggeredGridItemSpan.FullLine) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(top = 9.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp)) {
                 Row(Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically) {
@@ -192,24 +199,31 @@ fun HomeScreen(
             }
         }
         if (featured.isEmpty()) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "home-no-products", contentType = "empty", span = StaggeredGridItemSpan.FullLine) {
                 EmptyFeatureState("Chưa có sản phẩm mẫu", "Thử đổi nhóm hoặc mở toàn bộ danh mục.")
             }
         } else {
-            items(featured, key = { it.id }) { product ->
-                val position = featured.indexOfFirst { it.id == product.id }
-                val tallImages = listOf(204.dp, 242.dp, 226.dp, 184.dp, 220.dp, 252.dp)
+            items(
+                count = featured.size,
+                key = { featured[it].id },
+                contentType = { "featured-card" },
+            ) { position ->
+                val product = featured[position]
                 FeaturedProductCard(
                     medicine = product,
-                    pictureHeight = tallImages[position % tallImages.size],
+                    pictureHeight = imageHeights[position % imageHeights.size],
                     onClick = { onOpenProduct(product.id) },
                     isFavorite = product.id in favorites,
                     onToggleFavorite = { onToggleFavorite(product.id) },
+                    modifier = Modifier.padding(
+                        start = if (position % 2 == 0) 16.dp else 5.dp,
+                        end = if (position % 2 == 0) 5.dp else 16.dp,
+                    ),
                 )
             }
         }
-        item(span = StaggeredGridItemSpan.FullLine) {
-            Column(Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        item(key = "home-footer", contentType = "footer", span = StaggeredGridItemSpan.FullLine) {
+            Column(Modifier.padding(horizontal = 16.dp).padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Button(onClick = onOpenCatalog, modifier = Modifier.fillMaxWidth().height(52.dp)) {
                     Icon(Icons.Outlined.GridView, null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(9.dp))

@@ -34,7 +34,7 @@ fun CatalogIntroCard(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(25.dp),
+        shape = RoundedCornerShape(0.dp),
         color = PharmaPalette.Emerald,
     ) {
         Box(

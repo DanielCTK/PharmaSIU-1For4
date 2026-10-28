@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -61,22 +63,26 @@ fun CatalogScreen(
         CatalogSearchRules.filter(medicines, search, selectedFilter, selectedSort)
     }
     val groupCount = remember(medicines) { medicines.map { it.category }.distinct().size }
+    val gridState = rememberLazyGridState()
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
+        state = gridState,
         modifier = Modifier.fillMaxSize().background(FeatureColors.canvas),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 34.dp),
-        horizontalArrangement = Arrangement.spacedBy(11.dp),
+        contentPadding = PaddingValues(bottom = 34.dp),
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        item(key = "catalog-top", span = { GridItemSpan(maxLineSpan) }) {
-            FeatureHeader(title = "Danh mục", onBack = onBack)
+        item(key = "catalog-top", contentType = "header", span = { GridItemSpan(maxLineSpan) }) {
+            Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                FeatureHeader(title = "Danh mục", onBack = onBack)
+            }
         }
-        item(key = "catalog-hero", span = { GridItemSpan(maxLineSpan) }) {
+        item(key = "catalog-hero", contentType = "hero", span = { GridItemSpan(maxLineSpan) }) {
             CatalogIntroCard(productCount = medicines.size, groupCount = groupCount)
         }
-        item(key = "catalog-search", span = { GridItemSpan(maxLineSpan) }) {
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        item(key = "catalog-search", contentType = "search", span = { GridItemSpan(maxLineSpan) }) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 OutlinedTextField(
                     value = search,
                     onValueChange = { search = it },
@@ -109,9 +115,9 @@ fun CatalogScreen(
                 )
             }
         }
-        item(key = "catalog-categories", span = { GridItemSpan(maxLineSpan) }) {
+        item(key = "catalog-categories", contentType = "filters", span = { GridItemSpan(maxLineSpan) }) {
             Row(
-                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 filters.forEach { option ->
@@ -139,17 +145,18 @@ fun CatalogScreen(
                 }
             }
         }
-        item(key = "catalog-toolbar", span = { GridItemSpan(maxLineSpan) }) {
+        item(key = "catalog-toolbar", contentType = "toolbar", span = { GridItemSpan(maxLineSpan) }) {
             CatalogResultsToolbar(
                 resultCount = filtered.size,
                 sort = selectedSort,
                 expanded = sortExpanded,
                 onExpandChange = { sortExpanded = it },
                 onSortChange = { selectedSort = it },
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
         if (filtered.isEmpty()) {
-            item(key = "catalog-empty", span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "catalog-empty", contentType = "empty", span = { GridItemSpan(maxLineSpan) }) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     EmptyFeatureState(
                         title = if (medicines.isEmpty()) "Danh mục đang cập nhật" else "Không tìm thấy sản phẩm",
@@ -165,17 +172,21 @@ fun CatalogScreen(
                 }
             }
         } else {
-            items(filtered, key = { it.id }) { product ->
+            itemsIndexed(filtered, key = { _, product -> product.id }, contentType = { _, _ -> "product" }) { index, product ->
                 MedicineCard(
                     medicine = product,
                     onOpenProduct = onOpenProduct,
+                    modifier = Modifier.padding(
+                        start = if (index % 2 == 0) 16.dp else 5.dp,
+                        end = if (index % 2 == 0) 5.dp else 16.dp,
+                    ),
                     isFavorite = product.id in favorites,
                     onToggleFavorite = { onToggleFavorite(product.id) },
                 )
             }
         }
-        item(key = "catalog-disclosure", span = { GridItemSpan(maxLineSpan) }) {
-            DemoDisclosure(modifier = Modifier.padding(top = 6.dp))
+        item(key = "catalog-disclosure", contentType = "footer", span = { GridItemSpan(maxLineSpan) }) {
+            DemoDisclosure(modifier = Modifier.padding(horizontal = 16.dp).padding(top = 6.dp))
         }
     }
 }

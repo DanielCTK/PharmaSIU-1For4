@@ -30,6 +30,11 @@ Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previ
 Trang chủ có **LazyVerticalStaggeredGrid** hai cột như luồng khám phá sản phẩm của ứng dụng thương mại điện tử: ảnh lớn với chiều cao so le, thẻ có tên/giá tham khảo và nút yêu thích; cuộn tiếp tục để xem nhiều sản phẩm. Nhấn card mở chi tiết; các chip **Dành cho bạn / Mỹ phẩm / Thực phẩm / Thiết bị / Chăm sóc** lọc ngay trong mục nổi bật. Không dựng số lượt bán, % giảm giá hay tồn kho giả. Hình sản phẩm là minh họa offline tự thiết kế, không phải ảnh bao bì thuốc thật.
 
 Nếu muốn xem riêng phần này mà không khởi động emulator, mở [`FeaturedShowcasePreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/FeaturedShowcasePreviews.kt) để chọn preview **390dp** hoặc **320dp**. Các ảnh minh họa dựng trực tiếp bằng Compose; khi có URL ảnh sản phẩm thực được xác minh, `MedicineMedia` sẽ dùng Coil.
+### Thiết kế tràn ngang và tối ưu thao tác
+
+Các banner Emerald của Trang chủ, Danh mục và Tài khoản hiện **tràn hết bề ngang màn hình**, không bo góc/để lề như thẻ sản phẩm. Danh sách có stable keys, content types, state-save cho scroll khi chuyển tab; dùng Crossfade 130ms khi hệ thống cho phép animation, các tính toán cart/favorites/history được tối ưu bằng derivedStateOf. Mã tiếp tục dựa trên Jetpack Compose + Material 3 + Coil, không thêm thư viện chỉ để có thêm hiệu ứng. Xem [chi tiết và giới hạn kiểm tra hiệu năng](docs/UX_PERFORMANCE.md).
+
+Ảnh chụp màn hình debug: [Trang chủ](docs/screenshots/home-full-bleed.png) · [Danh mục](docs/screenshots/catalog-full-bleed.png) · [Tài khoản](docs/screenshots/account-full-bleed.png).
 ### Danh mục sản phẩm — bố cục Emerald nâng cấp
 
 Trang **Danh mục** có banner giới thiệu nhiều loại hàng với hình minh họa vector tại vùng góc phải (không quảng cáo giả), thanh tìm kiếm Material3, chip nhóm hàng, thanh công cụ tóm tắt **số kết quả + sắp xếp**, và lưới sản phẩm hai cột với artwork riêng theo ngành hàng, nhãn loại và nút yêu thích. Toàn bộ màn hình dùng **một vùng cuộn**, tránh trang trên cố định chiếm quá nhiều diện tích. Đã kiểm tra trực tiếp trên emulator kích thước 1080×2400. [Ảnh chụp danh mục Emerald](docs/screenshots/catalog-emerald.png).
