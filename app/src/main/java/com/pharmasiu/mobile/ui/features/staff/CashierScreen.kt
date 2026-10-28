@@ -38,6 +38,7 @@ fun CashierScreen(
     var payment by rememberSaveable { mutableStateOf(CounterPayment.CASH) }
     var cashInput by rememberSaveable { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    var previewProduct by remember { mutableStateOf<Medicine?>(null) }
     val lines = store.cartLines
     val total = CounterRules.total(lines)
     BackHandler(enabled = page != "sell") {
@@ -105,7 +106,7 @@ fun CashierScreen(
                 } else {
                     Column(Modifier.fillMaxSize()) {
                         Text(
-                            "Chọn sản phẩm và thêm vào giỏ. Rx chưa hỗ trợ bán ở quầy demo.",
+                            "Chạm ảnh để xem lớn • Rx chưa hỗ trợ bán ở quầy demo.",
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                             color = PharmaPalette.Muted, style = MaterialTheme.typography.bodySmall,
                         )
@@ -138,6 +139,7 @@ fun CashierScreen(
                                     product = product,
                                     available = store.stock[product.id] ?: 0,
                                     inCart = store.cart[product.id] ?: 0,
+                                    onPreview = { previewProduct = product },
                                     onAdd = { if (!store.add(product)) error = "Sản phẩm không đủ điều kiện bán trong demo." },
                                 )
                             }
@@ -182,8 +184,21 @@ fun CashierScreen(
                     items(lines, key = { it.productId }) { line ->
                         Surface(color = PharmaPalette.Paper, shape = RoundedCornerShape(15.dp)) {
                             Column(Modifier.fillMaxWidth().padding(13.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                                Text(line.name, fontWeight = FontWeight.SemiBold)
-                                Text(formatVnd(line.unitPriceVnd) + " / " + line.unit, color = PharmaPalette.Muted)
+                                Row(verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    products.firstOrNull { it.id == line.productId }?.let { product ->
+                                        StaffProductThumbnail(
+                                            medicine = product,
+                                            onOpen = { previewProduct = product },
+                                            size = 62.dp,
+                                        )
+                                    }
+                                    Column(Modifier.weight(1f)) {
+                                        Text(line.name, fontWeight = FontWeight.SemiBold)
+                                        Text(formatVnd(line.unitPriceVnd) + " / " + line.unit,
+                                            color = PharmaPalette.Muted)
+                                    }
+                                }
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     OutlinedButton(onClick = { store.reduce(line.productId) }) { Text("−") }
                                     Text(line.quantity.toString(), modifier = Modifier.padding(horizontal = 18.dp))
@@ -263,10 +278,16 @@ fun CashierScreen(
             "shift" -> CounterShift(store, onBack = { page = "sell" })
         }
     }
+    previewProduct?.let { medicine ->
+        StaffProductMediaPreview(medicine, onDismiss = { previewProduct = null })
+    }
 }
 
 @Composable
-private fun CounterCatalogRow(product: Medicine, available: Int, inCart: Int, onAdd: () -> Unit) {
+private fun CounterCatalogRow(
+    product: Medicine, available: Int, inCart: Int,
+    onPreview: () -> Unit, onAdd: () -> Unit,
+) {
     val canAdd = CounterRules.availableToAdd(product, inCart, available)
     Surface(color = PharmaPalette.Paper, shape = RoundedCornerShape(16.dp)) {
         Row(
@@ -274,13 +295,7 @@ private fun CounterCatalogRow(product: Medicine, available: Int, inCart: Int, on
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(13.dp)) {
-                Box(Modifier.size(51.dp), contentAlignment = Alignment.Center) {
-                    Icon(if (product.requiresPrescription) Icons.Outlined.Medication
-                         else Icons.Outlined.Inventory2, null, tint = PharmaPalette.Emerald,
-                        modifier = Modifier.size(25.dp))
-                }
-            }
+            StaffProductThumbnail(medicine = product, onOpen = onPreview, size = 68.dp)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(product.name, fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium, maxLines = 2)

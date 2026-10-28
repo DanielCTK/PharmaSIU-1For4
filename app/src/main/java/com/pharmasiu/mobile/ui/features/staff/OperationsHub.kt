@@ -260,6 +260,7 @@ private fun OperationQuickAction(
 private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canEdit: Boolean) {
     var search by rememberSaveable { mutableStateOf("") }
     var filter by rememberSaveable { mutableStateOf("Tất cả") }
+    var previewProduct by remember { mutableStateOf<Medicine?>(null) }
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().background(PharmaPalette.Emerald)
             .padding(horizontal = 19.dp, vertical = 17.dp),
@@ -268,8 +269,8 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                 fontSize = 10.sp, letterSpacing = 1.4.sp, fontWeight = FontWeight.Bold)
             Text("Hàng hóa", color = Color.White,
                 style = MaterialTheme.typography.headlineMedium)
-            Text(if (canEdit) "Quản lý có thể điều chỉnh tồn demo."
-                else "Chế độ xem; điều chỉnh thuộc quyền quản lý.",
+            Text(if (canEdit) "Chạm ảnh để xem lớn · Có thể điều chỉnh tồn demo."
+                else "Chạm ảnh để xem lớn · Chỉnh tồn thuộc quyền quản lý.",
                 color = PharmaPalette.Mint, style = MaterialTheme.typography.bodySmall)
         }
         OutlinedTextField(
@@ -324,12 +325,11 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                     Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(11.dp),
                             verticalAlignment = Alignment.CenterVertically) {
-                            Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(13.dp)) {
-                                Box(Modifier.size(43.dp), contentAlignment = Alignment.Center) {
-                                    Icon(if (p.requiresPrescription) Icons.Outlined.Medication
-                                        else Icons.Outlined.Inventory2, null, tint = PharmaPalette.Emerald)
-                                }
-                            }
+                            StaffProductThumbnail(
+                                medicine = p,
+                                onOpen = { previewProduct = p },
+                                size = 76.dp,
+                            )
                             Column(Modifier.weight(1f)) {
                                 Text(p.name, fontWeight = FontWeight.SemiBold, maxLines = 2,
                                     color = PharmaPalette.Ink, overflow = TextOverflow.Ellipsis)
@@ -362,6 +362,9 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                 }
             }
         }
+    }
+    previewProduct?.let { medicine ->
+        StaffProductMediaPreview(medicine, onDismiss = { previewProduct = null })
     }
 }
 

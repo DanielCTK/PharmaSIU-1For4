@@ -18,9 +18,9 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Hero Emerald full-bleed không bo góc, Lime làm điểm nhấn, khoảng đệm an toàn.
 - Header đồng nhất PharmaSIU, hiển thị vai trò và nút thoát.
 - Tổng quan có 4 chỉ số nhỏ, thao tác nhanh, trạng thái và nút mở/đóng ca.
-- Bán hàng có thanh tìm sản phẩm, từng dòng hàng với icon và tồn mock, giỏ ở cuối màn, xác nhận thanh toán theo luồng trước đó.
+- Bán hàng có thanh tìm sản phẩm, hình minh họa theo đúng adapter hình ảnh của gian hàng khách, nút thêm và giỏ. Chạm hình trong danh sách/giỏ để phóng lớn, có tên và giá sản phẩm. Ảnh chính thức sẽ hiện nếu dữ liệu danh mục có HTTPS imageUrl hợp lệ.
 - Màn kết thúc bán hiển thị phiếu hóa đơn có số tiền, phương thức, số khách đưa và tiền thối.
-- Hàng hóa phân loại Rx / tồn thấp; quản lý được chỉnh tồn demo, nhân viên chỉ xem.
+- Hàng hóa phân loại Rx / tồn thấp, hiển thị thumbnail và mở ảnh lớn; quản lý được chỉnh tồn demo, nhân viên chỉ xem.
 - Lịch sử có danh sách gọn và bottom sheet chi tiết hóa đơn.
 
 ## Ràng buộc nghiệp vụ không thay đổi
@@ -50,3 +50,5 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - StaffDemoStore.kt: trạng thái trong RAM dùng chung.
 - CounterRules.kt: quy tắc POS độc lập giao diện.
 - StaffPreviews.kt: xem trước cổng và khu vận hành theo vai trò mà không cần emulator.
+
+**Hình ảnh trong bản mock:** Hiện 30 sản phẩm chỉ có hình minh họa offline, chưa có ảnh chụp thực tế hoặc imageUrl. Không coi các hình đó là ảnh bao bì thật; bán hàng và quản lý dùng cùng MedicineMedia của gian hàng khách, có fallback khi tải ảnh thất bại.
