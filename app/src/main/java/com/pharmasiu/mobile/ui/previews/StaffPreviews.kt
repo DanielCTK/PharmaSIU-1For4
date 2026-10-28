@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.tooling.preview.Preview
 import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
+import com.pharmasiu.mobile.domain.StaffRole
 import com.pharmasiu.mobile.ui.features.staff.*
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 import com.pharmasiu.mobile.ui.theme.PharmaSIUTheme
@@ -22,7 +23,7 @@ private fun StaffAccessPreview() {
     }
 }
 
-@Preview(name = "02 · Bán tại quầy", group = "PharmaSIU · staff mock",
+@Preview(name = "02 · Vận hành nhân viên", group = "PharmaSIU · operations",
     widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun CashierSalesPreview() {
@@ -31,19 +32,19 @@ private fun CashierSalesPreview() {
             StaffDemoStore(DemoCatalogRepository.medicines).apply { openShift() }
         }
         Surface(Modifier.fillMaxSize(), color = PharmaPalette.Cream) {
-            CashierScreen(DemoCatalogRepository.medicines, data, onLogout = {})
+            OperationsHub(StaffRole.CASHIER, DemoCatalogRepository.medicines, data, onLogout = {})
         }
     }
 }
 
-@Preview(name = "03 · Quản trị cơ bản", group = "PharmaSIU · staff mock",
+@Preview(name = "03 · Vận hành quản lý", group = "PharmaSIU · operations",
     widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun BasicAdminPreview() {
     PharmaSIUTheme {
         val data = remember { StaffDemoStore(DemoCatalogRepository.medicines) }
         Surface(Modifier.fillMaxSize(), color = PharmaPalette.Cream) {
-            AdminScreen(DemoCatalogRepository.medicines, data, onLogout = {})
+            OperationsHub(StaffRole.ADMIN, DemoCatalogRepository.medicines, data, onLogout = {})
         }
     }
 }

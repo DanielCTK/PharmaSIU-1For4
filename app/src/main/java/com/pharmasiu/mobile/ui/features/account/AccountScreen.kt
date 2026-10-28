@@ -69,10 +69,10 @@ fun AccountScreen(
             AccountAction("Sản phẩm yêu thích", "Danh sách đã lưu trên thiết bị", Icons.Outlined.FavoriteBorder, true, onFavorites)
             AccountAction("Đơn hàng của tôi", "Đơn đã đặt trong phiên demo", Icons.Outlined.ReceiptLong, true, onOrders)
             HorizontalDivider(color = PharmaPalette.Line)
-            Text("Dành cho nhân viên", style = MaterialTheme.typography.titleMedium, color = PharmaPalette.Emerald)
+            Text("Vận hành nhà thuốc", style = MaterialTheme.typography.titleMedium, color = PharmaPalette.Emerald)
             AccountAction(
-                "Bán hàng / Quản trị (demo)",
-                "Không ảnh hưởng tài khoản khách hàng",
+                "Vào khu vận hành",
+                "Bán tại quầy, hàng hóa và hóa đơn demo",
                 Icons.Outlined.Storefront,
                 true,
                 onStaffPortal,
