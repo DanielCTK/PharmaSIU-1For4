@@ -25,6 +25,10 @@ Trên Windows thay `./gradlew` bằng `gradlew.bat`. APK debug được tạo t�
 
 Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) trong Android Studio, chọn **Split** hoặc **Design** → **Build & Refresh**. Có **14 bản Compose Preview** cho các màn hình chính, trường hợp giỏ trống, toa đã chọn, màn hình nhỏ và chữ lớn. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
 
+### Mở nhanh trên máy đã cấu hình
+
+Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo Studio. `local.properties` được cấu hình riêng tại `C:\PharmaSIU\PharmaSIU-1For4` và không đưa lên Git. Chỉ mở thư mục gốc bằng **File → Open**; Android Studio tự thực hiện **Gradle Sync**, không cần mở terminal. Khi sync xong, xem UI tại `ui/previews/PharmaScreenPreviews.kt` bằng **Split/Design** mà không cần emulator. **Lần mở đầu có thể phải tải Gradle và thư viện trên mạng; dự án chưa được chứng nhận build thành công trên máy này.**
+
 ## Những luồng đã có trong bản demo
 
 | Màn hình | Nội dung |

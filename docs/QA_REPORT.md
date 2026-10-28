@@ -7,7 +7,7 @@
 | G2 Accessibility | NOT RUN | Cần TalkBack, 48dp targets và font scale trên emulator |
 | G3 Visual | NOT RUN | Cần ảnh chụp 320/390/412dp và review thủ công |
 | G4 Error/recovery | PARTIAL | Search empty, form invalid, no Rx file đã được xử lý; network chưa tích hợp |
-| G5 Runtime | BLOCKED | Đã thử Gradle 8.13 wrapper nhưng download chưa xong; Gradle 9.3.1 offline thiếu Kotlin 2.4.10 plugin. Bản online cũng được thử; xem kết quả sau. Chưa có bằng chứng APK/unit tests PASS |
+| G5 Runtime | BLOCKED | Đã thử Gradle 8.13 wrapper nhưng download chưa xong; Gradle 9.3.1 offline đã qua bước cấu hình Kotlin; dừng ở bước resolve thư viện AndroidX/Kotlin runtime/Coil do cache thiếu. Gradle Wrapper 8.13 chưa tải xong do đường truyền chậm. Không có bằng chứng APK/unit tests PASS |
 | G6 Consistency | REVIEWED | Màu, typography và shared components dựa PharmaPalette |
 
 Không tuyên bố production ready từ kết quả review mã nguồn. Các gate NOT RUN không phải PASS.
