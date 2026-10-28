@@ -40,7 +40,11 @@ import com.pharmasiu.mobile.ui.theme.PharmaPalette
  * No passwords are persisted or sent to a server.
  */
 @Composable
-fun StaffLoginScreen(onExit: () -> Unit, onAuthenticated: (StaffRole) -> Unit) {
+fun StaffLoginScreen(
+    onExit: (() -> Unit)? = null,
+    onCustomerLogin: (() -> Unit)? = null,
+    onAuthenticated: (StaffRole) -> Unit,
+) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
@@ -75,9 +79,11 @@ fun StaffLoginScreen(onExit: () -> Unit, onAuthenticated: (StaffRole) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            IconButton(onClick = onExit, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = "Trở về tài khoản",
-                    tint = PharmaPalette.Emerald)
+            if (onExit != null) {
+                IconButton(onClick = onExit, modifier = Modifier.size(48.dp)) {
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Quay lại",
+                        tint = PharmaPalette.Emerald)
+                }
             }
             Column(Modifier.weight(1f)) {
                 Text("PharmaSIU", style = MaterialTheme.typography.titleLarge,
@@ -256,6 +262,17 @@ fun StaffLoginScreen(onExit: () -> Unit, onAuthenticated: (StaffRole) -> Unit) {
                             }
                         }
                     }
+                }
+            }
+            if (onCustomerLogin != null) {
+                OutlinedButton(
+                    onClick = onCustomerLogin,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+                    shape = RoundedCornerShape(13.dp),
+                ) {
+                    Icon(Icons.Outlined.ShoppingBag, contentDescription = null)
+                    Spacer(Modifier.width(9.dp))
+                    Text("Đăng nhập tài khoản khách hàng")
                 }
             }
             Row(

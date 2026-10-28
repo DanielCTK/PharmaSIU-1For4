@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import com.pharmasiu.mobile.data.model.*
 import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
 import com.pharmasiu.mobile.domain.CartRules
+import com.pharmasiu.mobile.domain.AppEntryScreen
+import com.pharmasiu.mobile.domain.AppEntryState
 import com.pharmasiu.mobile.ui.features.account.*
 import com.pharmasiu.mobile.ui.features.cart.CartScreen
 import com.pharmasiu.mobile.ui.features.catalog.CatalogScreen
@@ -52,6 +54,8 @@ fun PharmaSIUApp() {
     val introduction = remember(context) {
         context.getSharedPreferences("pharmasiu_mock_setup", android.content.Context.MODE_PRIVATE)
     }
+    // Never persist a signed-in state. Every new Activity starts at the login gate.
+    var entry by remember { mutableStateOf(AppEntryState()) }
     val navigation = remember { mutableStateListOf(if (introduction.getBoolean("onboarding_complete", false)) "home" else "onboarding") }
     val current = navigation.last()
     val accounts = remember {
@@ -73,7 +77,6 @@ fun PharmaSIUApp() {
     var submitting by remember { mutableStateOf(false) }
     val products = DemoCatalogRepository.medicines
     val staffStore = remember { StaffDemoStore(products) }
-    var staffPortalOpen by remember { mutableStateOf(false) }
     // Only recompute derived collections when their underlying snapshot data changes.
     // Scrolling a lazy grid must not rebuild a cart or a history collection per frame.
     val cart by remember { derivedStateOf {
@@ -111,6 +114,19 @@ fun PharmaSIUApp() {
         navigation.clear()
         navigation.add("home")
     }
+    fun customerAuthenticated() {
+        navigation.clear()
+        navigation.add(if (introduction.getBoolean("onboarding_complete", false)) "home" else "onboarding")
+        entry = entry.customerAuthenticated()
+    }
+    fun logoutToLogin() {
+        switchOwner(null)
+        quantities.clear()
+        selectedPrescription = null
+        submitting = false
+        home() // Clear the customer back stack before hiding the shop.
+        entry = entry.returnToLogin()
+    }
     fun add(product: Medicine) {
         quantities[product.id] = ((quantities[product.id] ?: 0) + 1).coerceAtMost(CartRules.MAX_DEMO_QUANTITY)
     }
@@ -126,7 +142,11 @@ fun PharmaSIUApp() {
             } else null
         }
     }
-    BackHandler(enabled = !staffPortalOpen && (navigation.size > 1 || current != "home")) { back() }
+    BackHandler(enabled = entry.screen == AppEntryScreen.CUSTOMER_LOGIN) {
+        entry = entry.returnToLogin()
+    }
+    BackHandler(enabled = entry.screen == AppEntryScreen.CUSTOMER_APP &&
+        (navigation.size > 1 || current != "home")) { back() }
     val topTabs = remember { listOf(
         Triple("home", "Trang chủ", Icons.Outlined.Home),
         Triple("catalog", "Danh mục", Icons.Outlined.GridView),
@@ -135,11 +155,37 @@ fun PharmaSIUApp() {
         Triple("account", "Tài khoản", Icons.Outlined.PersonOutline),
     ) }
     val onTab = current.takeIf { it in topTabs.map { item -> item.first } }
-    if (staffPortalOpen) {
+    if (entry.screen == AppEntryScreen.STAFF_LOGIN) {
+        // Employee/admin logout returns here; Back cannot reveal a prior screen.
         StaffWorkspace(
             products = products,
             store = staffStore,
-            onExit = { staffPortalOpen = false },
+            onExit = { entry = entry.openCustomerLogin() },
+        )
+        return
+    }
+    if (entry.screen == AppEntryScreen.CUSTOMER_LOGIN) {
+        AuthScreen(
+            onBack = { entry = entry.returnToLogin() },
+            onLogin = { phone, password ->
+                val record = accounts[phone]
+                if (record?.password != password) "Sai thông tin tài khoản mẫu."
+                else { switchOwner(phone); customerAuthenticated(); null }
+            },
+            onRegister = { name, phone, password ->
+                if (accounts.containsKey(phone)) "Số điện thoại đã thuộc tài khoản mẫu khác."
+                else {
+                    accounts[phone] = DemoCredential(MockProfile(name, phone), password)
+                    switchOwner(phone)
+                    customerAuthenticated()
+                    null
+                }
+            },
+            onReset = { phone, newPass ->
+                val old = accounts[phone]
+                if (old == null) "Không tìm thấy tài khoản demo này."
+                else { accounts[phone] = old.copy(password = newPass); null }
+            },
         )
         return
     }
@@ -258,14 +304,14 @@ fun PharmaSIUApp() {
                     profile = profile,
                     favoriteCount = favoriteIds.size,
                     requestCount = myRequests.size,
-                    onAuth = { go("auth") },
+                    onAuth = { logoutToLogin(); entry = entry.openCustomerLogin() },
                     onEdit = { go("edit-profile") },
                     onFavorites = { go("favorites") },
                     onOrders = { go("orders") },
                     onAddresses = { go("addresses") },
                     onChangePassword = { go("change-password") },
-                    onLogout = { switchOwner(null); go("account") },
-                    onStaffPortal = { staffPortalOpen = true },
+                    onLogout = ::logoutToLogin,
+                    onStaffPortal = ::logoutToLogin,
                 )
                 route == "addresses" && profile != null -> AddressBookScreen(
                     addresses = myAddresses,
@@ -306,26 +352,6 @@ fun PharmaSIUApp() {
                             go("account")
                             null
                         }
-                    },
-                )
-                route == "auth" -> AuthScreen(
-                    onBack = ::back,
-                    onLogin = { phone, password ->
-                        val record = accounts[phone]
-                        if (record?.password != password) "Sai thông tin tài khoản mẫu."
-                        else { switchOwner(phone); go("account"); null }
-                    },
-                    onRegister = { name, phone, password ->
-                        if (accounts.containsKey(phone)) "Số điện thoại đã thuộc tài khoản mẫu khác."
-                        else {
-                            accounts[phone] = DemoCredential(MockProfile(name, phone), password)
-                            switchOwner(phone); go("account"); null
-                        }
-                    },
-                    onReset = { phone, newPass ->
-                        val old = accounts[phone]
-                        if (old == null) "Không tìm thấy tài khoản demo này."
-                        else { accounts[phone] = old.copy(password = newPass); null }
                     },
                 )
                 route == "edit-profile" && profile != null -> EditProfileScreen(

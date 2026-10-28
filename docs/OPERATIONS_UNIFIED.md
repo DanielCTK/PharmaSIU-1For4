@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Vào từ Tài khoản → Vào khu vận hành. Đăng nhập nội bộ qua **email/mật khẩu demo**: `nhanvien@pharmasiu.demo` / `1111` (nhân viên), `quanly@pharmasiu.demo` / `2222` (quản lý). Vai trò tự xác định từ tài khoản, sau đó hai vai trò dùng chung header, bottom navigation và các màn chính.
+Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Đây là **màn mặc định khi vừa mở ứng dụng**. Đăng nhập nội bộ qua **email/mật khẩu demo**: `nhanvien@pharmasiu.demo` / `1111` (nhân viên), `quanly@pharmasiu.demo` / `2222` (quản lý). Vai trò tự xác định từ tài khoản, sau đó hai vai trò dùng chung header, bottom navigation và các màn chính.
 
 | Tab | Nhân viên | Quản lý |
 |---|---|---|
@@ -65,3 +65,5 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Có bố cục thương hiệu Emerald tràn ngang, trường Email và Mật khẩu, ẩn/hiện mật khẩu, xử lý Next/Done, thông báo lỗi và nút quay về Tài khoản.
 - Chọn **Tài khoản dùng thử** để điền nhanh hai tài khoản demo. Không tạo vai trò bằng một chip thủ công; chỉ tài khoản đúng thông tin mới mở đúng giao diện Nhân viên/Quản lý.
 - Mật khẩu không được lưu sau khi vào khu vận hành. Không có backend, OTP, reset password hay phân quyền thật; cần thay bằng xác thực máy chủ khi triển khai chính thức.
+
+**Điều hướng đăng xuất mới:** Nhân viên/Quản lý nhấn biểu tượng Thoát để về ngay màn Đăng nhập nội bộ. Từ cổng này chọn Đăng nhập tài khoản khách hàng để vào gian hàng; khách đăng xuất cũng về cổng này. Không thể dùng nút Back để hiện lại nội dung đã đăng xuất. Khởi động Activity mới không tự đăng nhập.

@@ -21,7 +21,10 @@ fun StaffWorkspace(
     var role by remember { mutableStateOf<StaffRole?>(null) }
     BackHandler(enabled = role != null) { role = null }
     when (role) {
-        null -> StaffLoginScreen(onExit = onExit, onAuthenticated = { role = it })
+        null -> StaffLoginScreen(
+            onCustomerLogin = onExit,
+            onAuthenticated = { role = it },
+        )
         else -> OperationsHub(role!!, products, store, onLogout = { role = null })
     }
 }

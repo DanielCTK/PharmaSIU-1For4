@@ -4,13 +4,19 @@
 
 > **Trạng thái: ứng dụng trải nghiệm tương tác, dữ liệu mock (v0.2).** Có onboarding, đăng nhập/đăng ký demo, hồ sơ, sổ địa chỉ, danh mục 30 mặt hàng, tìm kiếm, yêu thích, giỏ, toa, checkout và lịch sử đơn hàng demo. **Chưa kết nối API nhà thuốc, chưa tạo đơn thật, chưa gửi ảnh toa, chưa xác nhận tồn, chưa thanh toán hoặc phê duyệt dược sĩ trên máy chủ.** Giá là dữ liệu ví dụ, không phải giá chào bán.
 
+## Khởi động và đăng xuất (mặc định)
+
+- **Mở ứng dụng:** luôn vào màn **Đăng nhập nội bộ**. Tài khoản Nhân viên `nhanvien@pharmasiu.demo` / `1111`, Quản lý `quanly@pharmasiu.demo` / `2222` sẽ vào đúng khu vận hành.
+- **Khách hàng:** trên màn đăng nhập chọn **Đăng nhập tài khoản khách hàng**, dùng tài khoản `0900000000` / `demo1234` (hoặc đăng ký demo) rồi mới vào gian hàng; Onboarding sẽ hiện nếu chưa hoàn thành.
+- **Đăng xuất:** từ nút thoát ở khu vận hành hoặc nút đăng xuất trong Tài khoản khách hàng đều quay về **màn Đăng nhập nội bộ**, không quay về trang đã đăng xuất. Khi mở lại Activity, phiên đăng nhập không tự khôi phục.
+- Để đổi vai trò khi đang ở gian hàng, chọn **Tài khoản → Vào khu vận hành** để quay về cổng đăng nhập. Không phải cơ chế đăng nhập an toàn: thông tin demo là công khai và không kết nối backend.
 ## Chạy trong Android Studio
 
 1. Cài Android Studio có Android SDK **API 36** và JDK **17+** (Android Studio bundled JBR được khuyến nghị).
 2. Clone repo `git clone https://github.com/DanielCTK/PharmaSIU-1For4.git`.
 3. Mở **thư mục gốc repo** (chứa `settings.gradle.kts`) trong Android Studio; chọn **Trust Project** nếu đồng ý, đợi **Gradle Sync**.
 4. Chọn cấu hình chạy **app** và emulator/thiết bị Android **8.0 / API 26 trở lên**.
-5. Nhấn **Run**. App hiện chưa yêu cầu API key hay tài khoản.
+5. Nhấn **Run**. Ứng dụng **luôn mở màn Đăng nhập nội bộ trước**, không tự vào Trang chủ hoặc Onboarding. Chọn tài khoản Nhân viên/Quản lý demo hoặc **Đăng nhập tài khoản khách hàng** để vào gian hàng. Không cần API key, nhưng phải đăng nhập bằng thông tin demo để mở các khu vực.
 
 Chạy kiểm tra từ terminal:
 
