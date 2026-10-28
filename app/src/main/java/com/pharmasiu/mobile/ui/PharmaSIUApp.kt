@@ -156,6 +156,8 @@ fun PharmaSIUApp() {
                     onOpenProduct = { go("product:$it") },
                     onOpenCart = { go("cart") },
                     onOpenCategory = { go("category:$it") },
+                    favorites = favoriteIds,
+                    onToggleFavorite = ::flipFavorite,
                 )
                 current == "catalog" || current.startsWith("category:") -> CatalogScreen(
                     medicines = products,

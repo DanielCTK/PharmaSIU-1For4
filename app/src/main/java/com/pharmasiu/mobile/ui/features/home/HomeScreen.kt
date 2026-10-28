@@ -3,46 +3,47 @@ package com.pharmasiu.mobile.ui.features.home
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.GridView
-import androidx.compose.material.icons.outlined.MedicalServices
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingBag
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.Medicine
 import com.pharmasiu.mobile.ui.components.DemoDisclosure
 import com.pharmasiu.mobile.ui.components.EmptyFeatureState
+import com.pharmasiu.mobile.ui.components.FeaturedProductCard
 import com.pharmasiu.mobile.ui.components.PharmaTopBar
-import com.pharmasiu.mobile.ui.components.ProductTile
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 
+/**
+ * Single native lazy scroll for the landing page.
+ * Full-width header/hero + two-column staggered showcase share the same scroll
+ * to avoid nesting an infinite-height vertical grid inside a LazyColumn.
+ */
 @Composable
 fun HomeScreen(
     medicines: List<Medicine>,
@@ -50,98 +51,172 @@ fun HomeScreen(
     onOpenProduct: (String) -> Unit,
     onOpenCart: () -> Unit,
     onOpenCategory: (String) -> Unit = { onOpenCatalog() },
+    favorites: Set<String> = emptySet(),
+    onToggleFavorite: (String) -> Unit = {},
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(bottom = 26.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
+    var selectedShelf by rememberSaveable { mutableStateOf("Dành cho bạn") }
+    val shelfLabels = listOf("Dành cho bạn", "Mỹ phẩm", "Thực phẩm", "Thiết bị", "Chăm sóc")
+    // Editorial order deliberately varies sector and image heights. Mock only:
+    // we do not invent "sold counts", discounts or availability.
+    val featured = remember(medicines, selectedShelf) {
+        val selected = if (selectedShelf == "Dành cho bạn") {
+            val picks = listOf(
+                "beauty-02", "food-01", "beauty-01", "food-03", "device-02",
+                "beauty-06", "food-02", "care-01", "beauty-04", "supp-01",
+                "beauty-03", "food-05", "device-03", "care-02", "supplies-02",
+                "beauty-05", "food-04", "supp-02", "otc-01", "thermometer-01",
+            )
+            picks.mapNotNull { id -> medicines.find { it.id == id } }
+        } else {
+            medicines.filter {
+                it.category == selectedShelf ||
+                    (selectedShelf == "Thực phẩm" && it.category == "Thực phẩm bổ sung")
+            }
+        }
+        selected.distinctBy { it.id }
+    }
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        contentPadding = PaddingValues(start = 14.dp, end = 14.dp, bottom = 34.dp),
+        horizontalArrangement = Arrangement.spacedBy(11.dp),
+        verticalItemSpacing = 12.dp,
     ) {
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
             PharmaTopBar("PharmaSIU", trailing = {
                 IconButton(onClick = onOpenCart) {
                     Icon(Icons.Outlined.ShoppingBag, "Mở giỏ hàng", tint = PharmaPalette.Emerald)
                 }
             })
         }
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Row(
+                modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                    .background(PharmaPalette.Paper, RoundedCornerShape(17.dp))
+                    .clickable(onClickLabel = "Tìm kiếm trong danh mục") { onOpenCatalog() }
+                    .padding(horizontal = 15.dp, vertical = 13.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Icon(Icons.Outlined.Search, null, tint = PharmaPalette.Muted)
+                Text("Tìm thuốc, mỹ phẩm, thực phẩm...", color = PharmaPalette.Muted,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f))
+                Icon(Icons.Outlined.ArrowForward, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(20.dp))
+            }
+        }
+        item(span = StaggeredGridItemSpan.FullLine) {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp)
-                    .height(294.dp).background(PharmaPalette.Emerald, RoundedCornerShape(30.dp)),
+                modifier = Modifier.fillMaxWidth().height(228.dp)
+                    .background(PharmaPalette.Emerald, RoundedCornerShape(28.dp)),
             ) {
                 Canvas(Modifier.matchParentSize()) {
-                    val ring = Color(0xFF45806C)
-                    drawCircle(ring, radius = size.height * .64f, center = Offset(size.width * .9f, size.height * .08f), style = Stroke(2.dp.toPx()))
-                    drawCircle(ring, radius = size.height * .43f, center = Offset(size.width * .92f, size.height * .14f), style = Stroke(1.dp.toPx()))
-                    drawCircle(PharmaPalette.Lime, radius = 28.dp.toPx(), center = Offset(size.width * .89f, size.height * .75f))
+                    val ring = Color(0xFF4E8B75)
+                    drawCircle(ring, radius = size.height * .61f,
+                        center = Offset(size.width * .91f, size.height * .13f), style = Stroke(2.dp.toPx()))
+                    drawCircle(ring, radius = size.height * .36f,
+                        center = Offset(size.width * .90f, size.height * .16f), style = Stroke(1.dp.toPx()))
+                    drawCircle(PharmaPalette.Lime, radius = 24.dp.toPx(),
+                        center = Offset(size.width * .91f, size.height * .78f))
                 }
-                Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(11.dp)) {
-                    Text("NHÀ THUỐC PHARMASIU", fontSize = 11.sp, color = PharmaPalette.Lime, letterSpacing = 2.sp, fontWeight = FontWeight.Bold)
-                    Text("Chăm sóc mỗi ngày,\nan tâm mỗi bước.", color = Color.White, style = MaterialTheme.typography.headlineLarge)
-                    Text("Khám phá sản phẩm và gửi yêu cầu đặt trước để nhận tại quầy.", color = Color(0xFFD9E8E0), style = MaterialTheme.typography.bodyMedium)
+                Column(Modifier.fillMaxSize().padding(22.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("PHARMASIU  •  KHÁM PHÁ", color = PharmaPalette.Lime,
+                        fontSize = 10.sp, letterSpacing = 1.8.sp, fontWeight = FontWeight.Bold)
+                    Text("Chăm sóc mỗi ngày,\nan tâm mỗi bước.", color = Color.White,
+                        style = MaterialTheme.typography.headlineMedium)
+                    Text("Từ chăm sóc da đến nhu yếu phẩm, tất cả trong một không gian.",
+                        color = Color(0xFFDCEAE1), style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2, overflow = TextOverflow.Ellipsis)
                     Spacer(Modifier.weight(1f))
                     Button(
                         onClick = onOpenCatalog,
-                        colors = ButtonDefaults.buttonColors(containerColor = PharmaPalette.Lime, contentColor = PharmaPalette.Forest),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = PharmaPalette.Lime, contentColor = PharmaPalette.Forest),
                         shape = RoundedCornerShape(15.dp),
-                        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
-                    ) {
-                        Text("Khám phá sản phẩm", fontWeight = FontWeight.Bold)
-                        Icon(Icons.Outlined.ArrowForward, null, modifier = Modifier.padding(start = 10.dp).size(18.dp))
-                    }
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                    ) { Text("Khám phá ngay", fontWeight = FontWeight.Bold) }
                 }
             }
         }
-        item {
-            Column(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                    Icon(Icons.Outlined.GridView, null, tint = PharmaPalette.Emerald)
-                    Text("Khám phá theo nhu cầu", style = MaterialTheme.typography.titleLarge)
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf("Mỹ phẩm", "Thực phẩm", "Không kê đơn").forEach { title ->
-                        Box(
-                            modifier = Modifier.weight(1f).height(82.dp)
-                                .background(PharmaPalette.Paper, RoundedCornerShape(18.dp))
-                                .clickable(onClickLabel = "Xem nhóm $title") { onOpenCategory(title) }
-                                .padding(12.dp),
-                        ) {
-                            Column(verticalArrangement = Arrangement.SpaceBetween) {
-                                Icon(Icons.Outlined.MedicalServices, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(21.dp))
-                                Text(title, color = PharmaPalette.Ink, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, maxLines = 2)
-                            }
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(9.dp)) {
+                listOf("Mỹ phẩm", "Thực phẩm", "Không kê đơn").forEach { label ->
+                    Surface(
+                        modifier = Modifier.weight(1f).heightIn(min = 55.dp)
+                            .clickable(onClickLabel = "Xem " + label) { onOpenCategory(label) },
+                        color = PharmaPalette.Mint,
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        Box(contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(horizontal = 5.dp, vertical = 8.dp)) {
+                            Text(label, color = PharmaPalette.Emerald,
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 2)
                         }
                     }
                 }
             }
         }
-        item {
-            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Column {
-                    Text("Danh mục nổi bật", style = MaterialTheme.typography.titleLarge)
-                    Text("Khám phá sản phẩm tại nhà thuốc", color = PharmaPalette.Muted, style = MaterialTheme.typography.bodyMedium)
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Column(Modifier.fillMaxWidth().padding(top = 9.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                Row(Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Sản phẩm nổi bật", style = MaterialTheme.typography.titleLarge,
+                            color = PharmaPalette.Emerald)
+                        Text("Gợi ý hình ảnh và giá để trải nghiệm", color = PharmaPalette.Muted,
+                            style = MaterialTheme.typography.bodySmall)
+                    }
+                    TextButton(onClick = onOpenCatalog) { Text("Xem tất cả") }
                 }
-                IconButton(onClick = onOpenCatalog) { Icon(Icons.Outlined.ArrowForward, "Xem tất cả", tint = PharmaPalette.Emerald) }
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    shelfLabels.forEach { shelf ->
+                        FilterChip(
+                            selected = selectedShelf == shelf,
+                            onClick = { selectedShelf = shelf },
+                            label = { Text(shelf, maxLines = 1) },
+                            shape = RoundedCornerShape(20.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = PharmaPalette.Emerald,
+                                selectedLabelColor = Color.White,
+                            ),
+                        )
+                    }
+                }
             }
         }
-        if (medicines.isEmpty()) {
-            item {
-                EmptyFeatureState("Danh mục đang cập nhật", "Nhà thuốc sẽ cập nhật thông tin sản phẩm để bạn tham khảo.")
+        if (featured.isEmpty()) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                EmptyFeatureState("Chưa có sản phẩm mẫu", "Thử đổi nhóm hoặc mở toàn bộ danh mục.")
             }
         } else {
-            val editorialPicks = medicines.filter {
-                it.category in listOf("Mỹ phẩm", "Thực phẩm", "Thực phẩm bổ sung", "Vật tư y tế")
-            }.distinctBy { it.category }.take(4)
-            items(editorialPicks, key = { it.id }) { medicine ->
-                Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                    ProductTile(medicine, onClick = { onOpenProduct(medicine.id) })
-                    Text(
-                        "Kiểm tra khi đặt trước",
-                        color = PharmaPalette.Muted,
-                        fontSize = 11.sp,
-                        modifier = Modifier.padding(start = 13.dp),
-                    )
-                }
+            items(featured, key = { it.id }) { product ->
+                val position = featured.indexOfFirst { it.id == product.id }
+                val tallImages = listOf(204.dp, 242.dp, 226.dp, 184.dp, 220.dp, 252.dp)
+                FeaturedProductCard(
+                    medicine = product,
+                    pictureHeight = tallImages[position % tallImages.size],
+                    onClick = { onOpenProduct(product.id) },
+                    isFavorite = product.id in favorites,
+                    onToggleFavorite = { onToggleFavorite(product.id) },
+                )
             }
         }
-        item { DemoDisclosure(Modifier.padding(horizontal = 18.dp)) }
+        item(span = StaggeredGridItemSpan.FullLine) {
+            Column(Modifier.padding(top = 10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Button(onClick = onOpenCatalog, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+                    Icon(Icons.Outlined.GridView, null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(9.dp))
+                    Text("Xem toàn bộ danh mục")
+                }
+                DemoDisclosure()
+            }
+        }
     }
 }
