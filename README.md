@@ -51,7 +51,7 @@ Người dùng thêm sản phẩm → giỏ hàng → chọn toa nếu có thu�
 Đây là thao tác **lưu đơn hàng thành công trong RAM của ứng dụng để trải nghiệm**, không phải đơn đã gửi/được nhà thuốc xác nhận. Không có thanh toán, giữ hàng, duyệt toa hay API quản lý. Phần quy trình quản lý sẽ triển khai riêng khi tích hợp backend.
 ### Vận hành nhà thuốc — gộp bán hàng và quản trị (demo)
 
-Từ tab **Tài khoản → Vào khu vận hành**, chọn Nhân viên hoặc Quản lý. Cả hai vai trò dùng **một khu vận hành thống nhất** với bốn tab Tổng quan, Bán hàng, Hàng hóa, Hóa đơn. Nhân viên bán hàng sử dụng mã **1111**, quản trị dùng mã **2222**; đây là PIN công khai để thử giao diện, hoàn toàn không phải xác thực bảo mật thật.
+Từ tab **Tài khoản → Vào khu vận hành**, sử dụng màn **Đăng nhập nội bộ** (email + mật khẩu) để vào một khu vận hành thống nhất gồm bốn tab Tổng quan, Bán hàng, Hàng hóa, Hóa đơn. Nhân viên: `nhanvien@pharmasiu.demo` / `1111`; quản lý: `quanly@pharmasiu.demo` / `2222`. Màn đăng nhập có ẩn/hiện mật khẩu, báo lỗi và mục chọn nhanh tài khoản demo. Vai trò do tài khoản xác định, không chọn thủ công. Đây là thông tin công khai để thử UI, chưa phải xác thực máy chủ.
 
 **Bán hàng:** mở ca → tìm/chọn sản phẩm không kê đơn → giỏ → tiền mặt hoặc phương thức khác demo → kiểm tra thanh toán → hoàn tất hóa đơn POS-DEMO → bán tiếp/lịch sử → đóng ca. Tồn giả lập giảm khi lập hóa đơn hợp lệ; thuốc kê đơn bị khóa vì chưa tích hợp dược sĩ duyệt.
 

@@ -68,8 +68,30 @@ data class CounterSale(
 
 enum class StaffRole(val label: String) { CASHIER("Nhân viên bán hàng"), ADMIN("Quản trị") }
 
-/** The demo PINs are publicly displayed, not real credentials or security. */
+/** Local accounts are public mock credentials, never production authentication. */
 object StaffDemoAccess {
+    const val CASHIER_EMAIL = "nhanvien@pharmasiu.demo"
+    const val ADMIN_EMAIL = "quanly@pharmasiu.demo"
+
+    data class Account(
+        val email: String,
+        val password: String,
+        val role: StaffRole,
+        val displayName: String,
+    )
+
+    val demoAccounts = listOf(
+        Account(CASHIER_EMAIL, "1111", StaffRole.CASHIER, "Nhân viên quầy"),
+        Account(ADMIN_EMAIL, "2222", StaffRole.ADMIN, "Quản lý nhà thuốc"),
+    )
+
+    fun authenticate(email: String, password: String): StaffRole? {
+        val normalizedEmail = email.trim().lowercase(java.util.Locale.ROOT)
+        return demoAccounts.firstOrNull {
+            it.email == normalizedEmail && it.password == password
+        }?.role
+    }
+
     fun accepts(role: StaffRole, pin: String): Boolean = when (role) {
         StaffRole.CASHIER -> pin == "1111"
         StaffRole.ADMIN -> pin == "2222"

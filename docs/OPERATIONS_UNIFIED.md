@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Vào từ Tài khoản → Vào khu vận hành. Cổng PIN demo vẫn hỗ trợ vai trò Nhân viên (1111) và Quản lý (2222), nhưng sau đó dùng cùng header, bottom navigation và các màn chính.
+Gộp hai màn Quản trị và Nhân viên thành **một giao diện Vận hành nhà thuốc**. Vào từ Tài khoản → Vào khu vận hành. Đăng nhập nội bộ qua **email/mật khẩu demo**: `nhanvien@pharmasiu.demo` / `1111` (nhân viên), `quanly@pharmasiu.demo` / `2222` (quản lý). Vai trò tự xác định từ tài khoản, sau đó hai vai trò dùng chung header, bottom navigation và các màn chính.
 
 | Tab | Nhân viên | Quản lý |
 |---|---|---|
@@ -30,7 +30,7 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Sau hóa đơn thành công, tồn mock trừ theo số lượng, giỏ được làm trống; quản lý nhìn được cùng dữ liệu.
 - Không đóng ca khi giỏ còn hàng.
 - Không tạo SQL, SQLite, Room, DAO hoặc đồng bộ backend.
-- PIN demo công khai chỉ để thử UI, không phải xác thực bảo mật thật.
+- Email/mật khẩu demo công khai chỉ để thử UI, không phải xác thực bảo mật thật.
 - Hóa đơn, doanh số, tồn kho đều minh họa và được giữ trong RAM; không có giao dịch tiền thật hoặc FEFO theo lô.
 
 ## Kiểm tra quan trọng
@@ -61,3 +61,7 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Nhân viên bán hàng chỉ xem hình/tồn, không thấy nút tạo hàng, thay ảnh hoặc cộng tồn; quản lý có đủ nút theo vai trò UI demo. Đây chưa phải xác thực/phân quyền backend thật.
 - Giữ an toàn: không tạo thuốc kê đơn bằng form nhanh; sản phẩm Rx vẫn bị khóa ở POS; không lưu phiếu mua hàng, nhà cung cấp, lô, hạn FEFO, hóa đơn nhập hoặc SQL. Danh mục khách hàng không bị thay đổi.
 - **Dữ liệu và ảnh mới mất khi tiến trình app bị khởi tạo lại.** Muốn lưu dài hạn, cần làm cùng hệ thống dữ liệu ở giai đoạn tiếp theo. Hình đã chọn từ điện thoại không phải hình xác minh bao bì/chứng nhận thuốc.
+## Màn đăng nhập nội bộ (28/10/2026)
+- Có bố cục thương hiệu Emerald tràn ngang, trường Email và Mật khẩu, ẩn/hiện mật khẩu, xử lý Next/Done, thông báo lỗi và nút quay về Tài khoản.
+- Chọn **Tài khoản dùng thử** để điền nhanh hai tài khoản demo. Không tạo vai trò bằng một chip thủ công; chỉ tài khoản đúng thông tin mới mở đúng giao diện Nhân viên/Quản lý.
+- Mật khẩu không được lưu sau khi vào khu vận hành. Không có backend, OTP, reset password hay phân quyền thật; cần thay bằng xác thực máy chủ khi triển khai chính thức.

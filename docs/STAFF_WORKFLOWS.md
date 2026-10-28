@@ -2,13 +2,13 @@
 
 ## Phạm vi
 
-Ứng dụng giữ nguyên toàn bộ phần Khách hàng. Cổng riêng ở **Tài khoản → Dành cho nhân viên → Bán hàng / Quản trị (demo)** sử dụng dữ liệu RAM, không phải hệ thống phân quyền hoặc API thật.
+Ứng dụng giữ nguyên toàn bộ phần Khách hàng. Cổng riêng ở **Tài khoản → Vào khu vận hành → Đăng nhập nội bộ** sử dụng dữ liệu RAM, không phải hệ thống phân quyền hoặc API thật.
 
-Mã demo công khai để kiểm tra giao diện: **Nhân viên bán hàng 1111**, **Quản trị 2222**. Không dùng những mã này trong môi trường thực.
+Email và mật khẩu demo công khai để kiểm tra giao diện: **Nhân viên bán hàng `nhanvien@pharmasiu.demo` / `1111`**, **Quản lý `quanly@pharmasiu.demo` / `2222`**. Không dùng những mã này trong môi trường thực.
 
 ## Luồng nhân viên bán hàng
 
-1. Chọn **Nhân viên bán hàng** → nhập mã demo → vào quầy.
+1. Nhập email/mật khẩu demo của Nhân viên hoặc chọn tài khoản trong mục **Tài khoản dùng thử** → Đăng nhập → vào khu vận hành → tab Bán hàng.
 2. **Mở ca bán** trước khi chọn sản phẩm.
 3. Tìm theo tên/nhóm hàng → chọn **Thêm**. Chỉ bán sản phẩm có giá, không phải Rx, và chưa vượt tồn mẫu.
 4. **Xem giỏ** → tăng/giảm số lượng, kiểm tra tạm tính, có thể hủy giỏ đang lập.
