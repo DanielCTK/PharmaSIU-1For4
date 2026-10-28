@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PharmaSIU</string>
+    <string name="action_navigate_back">Quay lại</string>
+    <string name="checkout_title">Xác nhận đặt hàng</string>
+    <string name="checkout_customer_name">Họ và tên</string>
+    <string name="checkout_contact_phone">Số điện thoại</string>
+    <string name="checkout_place_order">Đặt hàng</string>
+    <string name="catalog_search_label">Tìm sản phẩm</string>
 </resources>

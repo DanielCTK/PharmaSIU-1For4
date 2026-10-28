@@ -89,13 +89,13 @@ private fun SavedFavoritesPreview() = MockPreviewShell {
         onOpenProduct = {}, onRemoveFavorite = {}, onExplore = {})
 }
 
-@Preview(name = "10 • Lịch sử yêu cầu mẫu", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)
+@Preview(name = "10 • Lịch sử đơn hàng demo", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun MockOrdersPreview() = MockPreviewShell {
     RequestHistoryScreen(listOf(sampleRequest), onOpenRequest = {}, onExplore = {})
 }
 
-@Preview(name = "11 • Chi tiết yêu cầu mẫu", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)
+@Preview(name = "11 • Chi tiết đơn hàng demo", group = "PharmaSIU • extended flows", widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun MockRequestPreview() = MockPreviewShell {
     MockRequestDetailScreen(sampleRequest, onBack = {}, onReorder = {}, onCancel = {})

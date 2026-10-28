@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.pharmasiu.mobile.data.model.CartLine
+import com.pharmasiu.mobile.data.model.MockRequest
 import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
 import com.pharmasiu.mobile.ui.features.cart.CartScreen
 import com.pharmasiu.mobile.ui.features.catalog.CatalogScreen
@@ -112,10 +113,21 @@ private fun CheckoutPhonePreview() = PreviewShell {
     )
 }
 
-@Preview(name = "07 • Bản xem trước yêu cầu", group = "PharmaSIU • 390dp", widthDp = 390, heightDp = 844, showBackground = true)
+@Preview(name = "07 • Đặt hàng thành công", group = "PharmaSIU • 390dp", widthDp = 390, heightDp = 844, showBackground = true)
 @Composable
 private fun OrderStatusPhonePreview() = PreviewShell {
-    OrderStatusScreen(reference = "DEMO-0001", onHome = {})
+    OrderStatusScreen(
+        request = MockRequest(
+            reference = "DEMO-0001",
+            lines = demoCart,
+            customerName = "Khách hàng demo",
+            contactPhone = "0900000000",
+            pickupPoint = "Điểm nhận mẫu A",
+            displayTime = "28/10/2026",
+        ),
+        onViewOrder = {},
+        onHome = {},
+    )
 }
 
 @Preview(name = "08 • Thuốc kê đơn", group = "PharmaSIU • 390dp", widthDp = 390, heightDp = 844, showBackground = true)

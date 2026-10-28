@@ -6,8 +6,8 @@
 
 - Khởi động lần đầu → Giới thiệu (Bỏ qua/Tiếp tục) → Trang chủ.
 - Tab chính: Trang chủ / Danh mục / Yêu thích / Yêu cầu / Tài khoản.
-- Danh mục → Tìm kiếm/Lọc/Sắp xếp → Chi tiết → Yêu thích hoặc Giỏ → Rx nếu có → Checkout → Lưu bản mẫu → Lịch sử.
-- Yêu cầu → Chi tiết → Hủy trên thiết bị hoặc Thêm sản phẩm vào giỏ lại.
+- Danh mục → Tìm kiếm/Lọc/Sắp xếp → Chi tiết → Yêu thích hoặc Giỏ → Rx nếu có → Checkout → Đặt hàng → Thành công (demo) → Đơn hàng.
+- Đơn hàng → Chi tiết → Hủy đơn demo hoặc Thêm sản phẩm vào giỏ lại.
 - Tài khoản → Đăng nhập/Đăng ký/Đặt lại mật khẩu demo → Chỉnh sửa hồ sơ / Địa chỉ / Đổi mật khẩu.
 
 ## Màn hình đã có mã tương tác
@@ -25,8 +25,8 @@
 | Yêu thích | Lưu và bỏ ở card/PDP, xem trong tab; tài khoản demo có danh sách riêng |
 | Giỏ hàng | Thêm, tăng, giảm, xoá, giá tạm tính; mock quantity cap |
 | Rx | Chọn ảnh toa từ thiết bị chỉ để trải nghiệm; chưa tải lên hoặc duyệt |
-| Click & Collect | Điểm nhận mẫu A/B, liên hệ, tóm tắt, lưu yêu cầu mô phỏng vào lịch sử |
-| Lịch sử | Xem chi tiết, hủy bản cục bộ, chọn lại sản phẩm để thử checkout |
+| Click & Collect | Điểm nhận mẫu A/B, liên hệ, tóm tắt, hoàn tất đặt hàng mock, chuyển sang màn thành công và ghi vào lịch sử |
+| Lịch sử | Xem chi tiết đơn thành công demo, hủy đơn cục bộ, chọn lại sản phẩm để thử checkout |
 
 ## Nguyên tắc nghiệp vụ
 
@@ -34,7 +34,7 @@
 2. Thực phẩm khác thuốc; thực phẩm bổ sung có cảnh báo không thay thế thuốc, mỹ phẩm và thực phẩm không gắn nhãn Rx.
 3. Đặt trước không có nghĩa đã giữ hàng. Không có giá/tồn real-time.
 4. Giá là dữ liệu minh họa; mặt hàng chưa báo giá không được trình bày như giá thanh toán thật.
-5. Lịch sử local chỉ có CREATED_LOCALLY và CANCELLED_LOCALLY; không có PAID/RESERVED/READY.
+5. Lịch sử local chỉ có PLACED_DEMO và CANCELLED_LOCALLY; không có PAID/RESERVED/READY.
 6. Người dùng không nhập mật khẩu hoặc thông tin thật. Demo accounts, favorites, requests nằm RAM, mất khi kết thúc tiến trình. Chỉ cờ đã xem onboarding lưu trên máy.
 
 ## Acceptance tests trọng tâm
@@ -58,7 +58,7 @@
 | F15 | Giỏ có Rx thiếu ảnh toa | Phải qua bước chọn ảnh |
 | F16 | Chọn ảnh toa → checkout | Hiện “đã chọn”, không “đã duyệt” |
 | F17 | Checkout thiếu thông tin | Không lưu yêu cầu |
-| F18 | Lưu checkout mock → tab Yêu cầu | Một bản xem trước, không có đơn thật |
+| F18 | Lưu checkout mock → tab Yêu cầu | Màn thành công và một đơn demo trong lịch sử, không có đơn thật |
 | F19 | Chi tiết yêu cầu → mua lại | Giỏ tái tạo, Rx cần ảnh mới |
 | F20 | Hủy bản local / Đăng xuất | Không phát sinh backend, hồ sơ ẩn với guest |
 

@@ -61,7 +61,7 @@ fun CartScreen(
         if (line.medicine.priceVnd > 0L) line.medicine.priceVnd * line.quantity else 0L
     }
     Column(Modifier.fillMaxSize().background(FeatureColors.canvas)) {
-        FeatureHeader(title = "Giỏ yêu cầu", onBack = onBack)
+        FeatureHeader(title = "Giỏ hàng", onBack = onBack)
         if (items.isEmpty()) {
             Column(
                 Modifier.weight(1f).fillMaxWidth().padding(bottom = 28.dp),
@@ -70,7 +70,7 @@ fun CartScreen(
             ) {
                 EmptyFeatureState(
                     title = "Giỏ của bạn đang trống",
-                    detail = "Chọn sản phẩm để gửi yêu cầu đặt trước và nhận tại nhà thuốc."
+                    detail = "Chọn sản phẩm để thử đặt hàng và nhận tại nhà thuốc."
                 )
                 FeatureButton("Khám phá sản phẩm  ↗", onBack, Modifier.fillMaxWidth().padding(horizontal = 38.dp))
             }
@@ -82,7 +82,7 @@ fun CartScreen(
             ) {
                 item {
                     Column(Modifier.padding(horizontal = 4.dp, vertical = 3.dp)) {
-                        Text("Sắp xếp yêu cầu của bạn", color = FeatureColors.emerald, fontSize = 24.sp, lineHeight = 29.sp, fontWeight = FontWeight.Bold)
+                        Text("Giỏ hàng của bạn", color = FeatureColors.emerald, fontSize = 24.sp, lineHeight = 29.sp, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(5.dp))
                         Text("${items.sumOf { it.quantity }} sản phẩm · Giá và tồn kho sẽ được kiểm tra trước khi xác nhận.", color = FeatureColors.muted, fontSize = 12.sp, lineHeight = 18.sp)
                     }
@@ -166,12 +166,12 @@ fun CartScreen(
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
                 FeatureButton(
-                    text = if (rxIncluded) "Tiếp tục kiểm tra toa  ↗" else "Tiếp tục đặt trước  ↗",
+                    text = if (rxIncluded) "Tiếp tục kiểm tra toa  ↗" else "Tiếp tục đặt hàng  ↗",
                     onClick = onCheckout,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(7.dp))
-                Text("Tiếp tục không đồng nghĩa với xác nhận đơn hoặc giữ hàng.", color = FeatureColors.muted, fontSize = 10.sp, modifier = Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                Text("Đơn demo chỉ lưu trên máy, chưa xác nhận tồn hoặc giữ hàng.", color = FeatureColors.muted, fontSize = 10.sp, modifier = Modifier.fillMaxWidth(), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
     }

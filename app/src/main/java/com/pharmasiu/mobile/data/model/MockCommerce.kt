@@ -18,10 +18,14 @@ data class MockAddress(
     val isDefault: Boolean = false,
 )
 
-enum class MockRequestStatus { CREATED_LOCALLY, CANCELLED_LOCALLY }
+/**
+ * A checkout success is simulated on this device.
+ * It must never be confused with pharmacist approval, a stock hold or payment.
+ */
+enum class MockRequestStatus { PLACED_DEMO, CANCELLED_LOCALLY }
 
 /**
- * Local requests cannot become stock holds, paid orders or approved prescriptions.
+ * Local demo orders cannot become stock holds, paid orders or approved prescriptions.
  */
 data class MockRequest(
     val reference: String,
@@ -30,7 +34,7 @@ data class MockRequest(
     val contactPhone: String,
     val pickupPoint: String,
     val displayTime: String,
-    val status: MockRequestStatus = MockRequestStatus.CREATED_LOCALLY,
+    val status: MockRequestStatus = MockRequestStatus.PLACED_DEMO,
 ) {
     val hasPrescription: Boolean get() = lines.any { it.medicine.requiresPrescription }
     val illustrativeTotal: Long get() = lines.sumOf { it.medicine.priceVnd * it.quantity }

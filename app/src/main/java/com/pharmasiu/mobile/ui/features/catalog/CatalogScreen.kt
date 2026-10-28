@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
@@ -21,11 +22,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.pharmasiu.mobile.R
 import com.pharmasiu.mobile.data.model.Medicine
 import com.pharmasiu.mobile.domain.CatalogSearchRules
 import com.pharmasiu.mobile.ui.components.DemoDisclosure
@@ -51,6 +56,8 @@ fun CatalogScreen(
     var selectedFilter by rememberSaveable(initialCategory) { mutableStateOf(initialCategory) }
     var selectedSort by rememberSaveable { mutableStateOf("Đề xuất") }
     var sortExpanded by remember { mutableStateOf(false) }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     val filters = remember(medicines) {
         (
             listOf("Tất cả", "Mỹ phẩm", "Thực phẩm", "Không kê đơn", "Kê đơn") +
@@ -89,7 +96,7 @@ fun CatalogScreen(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     shape = RoundedCornerShape(17.dp),
-                    label = { Text("Tìm sản phẩm") },
+                    label = { Text(stringResource(R.string.catalog_search_label)) },
                     placeholder = { Text("Tên, danh mục hoặc nhu cầu...", maxLines = 1) },
                     leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                     trailingIcon = {
@@ -100,6 +107,10 @@ fun CatalogScreen(
                         }
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = {
+                        keyboard?.hide()
+                        focusManager.clearFocus()
+                    }),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,

@@ -26,17 +26,17 @@ fun MockRequestDetailScreen(
     onCancel: (String) -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        PharmaTopBar("Chi tiết yêu cầu mẫu", onBack)
+        PharmaTopBar("Chi tiết đơn hàng", onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
             Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(24.dp)) {
                 Column(Modifier.padding(19.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text("CHỈ MÔ PHỎNG • KHÔNG PHẢI ĐƠN HÀNG", color = PharmaPalette.Warning, fontWeight = FontWeight.Bold)
+                    Text("ĐƠN HÀNG DEMO • LƯU TRÊN THIẾT BỊ", color = PharmaPalette.Emerald, fontWeight = FontWeight.Bold)
                     Text(request.reference, style = MaterialTheme.typography.headlineMedium, color = PharmaPalette.Emerald)
-                    Text(if (request.status == MockRequestStatus.CANCELLED_LOCALLY) "Đã hủy trên thiết bị" else "Đã lưu trên thiết bị", fontWeight = FontWeight.SemiBold)
-                    Text("Chưa gửi nhà thuốc, chưa giữ hàng, chưa thanh toán hoặc duyệt toa.", color = PharmaPalette.Emerald)
+                    Text(if (request.status == MockRequestStatus.CANCELLED_LOCALLY) "Đã hủy đơn demo" else "Đặt hàng thành công!", fontWeight = FontWeight.SemiBold)
+                    Text("Chưa gửi nhà thuốc, chưa giữ hàng, chưa thanh toán hoặc duyệt toa.", color = PharmaPalette.Muted)
                 }
             }
-            Text("Sản phẩm trong bản xem trước", style = MaterialTheme.typography.titleLarge)
+            Text("Sản phẩm đã đặt (demo)", style = MaterialTheme.typography.titleLarge)
             request.lines.forEach { line ->
                 Surface(shape = RoundedCornerShape(17.dp), color = PharmaPalette.Paper) {
                     Row(Modifier.fillMaxWidth().padding(14.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -54,10 +54,10 @@ fun MockRequestDetailScreen(
             Text(request.pickupPoint, style = MaterialTheme.typography.bodyLarge)
             Text("Tạm tính minh họa: ${formatVnd(request.illustrativeTotal)}", fontWeight = FontWeight.Bold, color = PharmaPalette.Emerald)
             if (request.hasPrescription) Text("Ảnh toa chỉ được chọn trong phiên trước; toa chưa được tải lên hoặc phê duyệt.", color = PharmaPalette.Warning)
-            Button(onClick = { onReorder(request.lines) }, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("Thêm sản phẩm vào giỏ để thử lại") }
-            if (request.status == MockRequestStatus.CREATED_LOCALLY) {
+            Button(onClick = { onReorder(request.lines) }, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("Đặt lại sản phẩm") }
+            if (request.status == MockRequestStatus.PLACED_DEMO) {
                 OutlinedButton(onClick = { onCancel(request.reference) }, modifier = Modifier.fillMaxWidth().height(54.dp)) {
-                    Text("Hủy bản mẫu trên thiết bị")
+                    Text("Hủy đơn demo")
                 }
             }
             Spacer(Modifier.height(26.dp))

@@ -59,14 +59,14 @@ fun AccountScreen(
             ) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 AccountStat(favoriteCount.toString(), "Yêu thích", Modifier.weight(1f))
-                AccountStat(requestCount.toString(), "Yêu cầu mẫu", Modifier.weight(1f))
+                AccountStat(requestCount.toString(), "Đơn hàng demo", Modifier.weight(1f))
             }
             Text("Quản lý cá nhân", style = MaterialTheme.typography.titleLarge, color = PharmaPalette.Emerald)
             AccountAction("Chỉnh sửa thông tin", "Tên, số điện thoại, email", Icons.Outlined.Edit, profile != null, if (profile == null) onAuth else onEdit)
             AccountAction("Sổ địa chỉ liên hệ", "Lưu địa chỉ demo (không phải nơi nhận hàng)", Icons.Outlined.Place, profile != null, if (profile == null) onAuth else onAddresses)
             AccountAction("Đổi mật khẩu demo", "Chỉ thay đổi trong phiên ứng dụng", Icons.Outlined.Lock, profile != null, if (profile == null) onAuth else onChangePassword)
             AccountAction("Sản phẩm yêu thích", "Danh sách đã lưu trên thiết bị", Icons.Outlined.FavoriteBorder, true, onFavorites)
-            AccountAction("Lịch sử yêu cầu", "Các bản xem trước bạn đã tạo", Icons.Outlined.ReceiptLong, true, onOrders)
+            AccountAction("Đơn hàng của tôi", "Đơn đã đặt trong phiên demo", Icons.Outlined.ReceiptLong, true, onOrders)
             if (profile != null) OutlinedButton(onClick = onLogout, modifier = Modifier.fillMaxWidth().height(52.dp)) { Text("Đăng xuất khỏi phiên demo") }
             Text("Đây là ứng dụng mô phỏng. Không nhập thông tin đăng nhập, toa hoặc dữ liệu cá nhân thật.", color = PharmaPalette.Muted, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(14.dp))

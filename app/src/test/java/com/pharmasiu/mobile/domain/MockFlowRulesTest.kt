@@ -42,12 +42,25 @@ class MockFlowRulesTest {
         assertTrue(desc.last().priceVnd <= 0L)
     }
 
-    @Test fun mockRequestCannotClaimPaidOrHeld() {
+    @Test fun demoOrderIsSuccessfulLocallyWithoutImplyingPaymentOrStockHold() {
         val request = MockRequest(
             "DEMO-0001", listOf(CartLine(products.first(), 2)), "Khách demo",
             "0900000000", "Điểm nhận mẫu A", "28/10/2026",
         )
-        assertEquals(MockRequestStatus.CREATED_LOCALLY, request.status)
+        assertEquals(MockRequestStatus.PLACED_DEMO, request.status)
+        assertFalse(request.status.name.contains("PAID"))
+        assertFalse(request.status.name.contains("HELD"))
+        assertFalse(request.status.name.contains("RX_APPROVED"))
         assertTrue(request.illustrativeTotal >= 0)
+    }
+
+    @Test fun cancelledDemoOrderHasSeparateState() {
+        val order = MockRequest(
+            "DEMO-0002", listOf(CartLine(products.first(), 1)), "Khách demo",
+            "0900000000", "Điểm nhận mẫu A", "28/10/2026",
+        )
+        assertEquals(MockRequestStatus.PLACED_DEMO, order.status)
+        assertEquals(MockRequestStatus.CANCELLED_LOCALLY,
+            order.copy(status = MockRequestStatus.CANCELLED_LOCALLY).status)
     }
 }

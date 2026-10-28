@@ -35,11 +35,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.pharmasiu.mobile.R
 import com.pharmasiu.mobile.data.model.Medicine
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 import java.text.NumberFormat
@@ -55,7 +58,7 @@ fun PharmaTopBar(title: String, onBack: (() -> Unit)? = null, trailing: (@Compos
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onBack != null) {
-            IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, "Quay lại", tint = PharmaPalette.Emerald) }
+            IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, stringResource(R.string.action_navigate_back), tint = PharmaPalette.Emerald) }
         } else {
             Box(
                 modifier = Modifier.size(38.dp).clip(RoundedCornerShape(13.dp)).background(PharmaPalette.Emerald),
@@ -65,7 +68,8 @@ fun PharmaTopBar(title: String, onBack: (() -> Unit)? = null, trailing: (@Compos
             }
             Spacer(Modifier.width(12.dp))
         }
-        Text(title, style = MaterialTheme.typography.titleLarge, color = PharmaPalette.Emerald, modifier = Modifier.weight(1f))
+        Text(title, style = MaterialTheme.typography.titleLarge, color = PharmaPalette.Emerald,
+            modifier = Modifier.weight(1f).semantics { heading() })
         trailing?.invoke()
     }
 }

@@ -2,7 +2,7 @@
 
 Ứng dụng Android dành cho khách hàng nhà thuốc PharmaSIU, tập trung vào **tra cứu sản phẩm và gửi yêu cầu đặt trước – nhận tại quầy (Click & Collect)**. Giao diện xây dựng bằng **Kotlin + Jetpack Compose + Material 3**, phong cách Emerald/Lime. Mã nguồn tổ chức theo feature và layer để nhiều thành viên có thể cộng tác mà không phải sửa chung một màn hình.
 
-> **Trạng thái: ứng dụng trải nghiệm tương tác, dữ liệu mock (v0.2).** Có onboarding, đăng nhập/đăng ký demo, hồ sơ, sổ địa chỉ, danh mục 30 mặt hàng, tìm kiếm, yêu thích, giỏ, toa, checkout và lịch sử yêu cầu. **Chưa kết nối API nhà thuốc, chưa tạo đơn thật, chưa gửi ảnh toa, chưa xác nhận tồn, chưa thanh toán hoặc phê duyệt dược sĩ trên máy chủ.** Giá là dữ liệu ví dụ, không phải giá chào bán.
+> **Trạng thái: ứng dụng trải nghiệm tương tác, dữ liệu mock (v0.2).** Có onboarding, đăng nhập/đăng ký demo, hồ sơ, sổ địa chỉ, danh mục 30 mặt hàng, tìm kiếm, yêu thích, giỏ, toa, checkout và lịch sử đơn hàng demo. **Chưa kết nối API nhà thuốc, chưa tạo đơn thật, chưa gửi ảnh toa, chưa xác nhận tồn, chưa thanh toán hoặc phê duyệt dược sĩ trên máy chủ.** Giá là dữ liệu ví dụ, không phải giá chào bán.
 
 ## Chạy trong Android Studio
 
@@ -44,6 +44,11 @@ Trang **Danh mục** có banner giới thiệu nhiều loại hàng với hình 
 
 Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo Studio. `local.properties` được cấu hình riêng tại `C:\PharmaSIU\PharmaSIU-1For4` và không đưa lên Git. Chỉ mở thư mục gốc bằng **File → Open**; Android Studio tự thực hiện **Gradle Sync**, không cần mở terminal. Khi sync xong, xem UI tại `ui/previews/PharmaScreenPreviews.kt` bằng **Split/Design** mà không cần emulator. **Lần mở đầu có thể phải tải Gradle và thư viện trên mạng; đã build APK debug và chạy JUnit thành công tại máy Windows này (việc xem trên thiết bị vẫn cần xác minh).**
 
+### Luồng đặt hàng demo thành công
+
+Người dùng thêm sản phẩm → giỏ hàng → chọn toa nếu có thuốc kê đơn → nhập thông tin liên hệ & điểm nhận mẫu → **Đặt hàng** → màn **Đặt hàng thành công!**. Đơn nhận mã `DEMO-xxxx`, xuất hiện trong tab **Đơn hàng**; [xem ảnh chụp thành công](docs/screenshots/order-success-demo.png). có thể xem chi tiết, hủy hoặc đặt lại. Giỏ được xóa sau khi hoàn tất. Không quay lại checkout trống khi bấm Back từ màn thành công.
+
+Đây là thao tác **lưu đơn hàng thành công trong RAM của ứng dụng để trải nghiệm**, không phải đơn đã gửi/được nhà thuốc xác nhận. Không có thanh toán, giữ hàng, duyệt toa hay API quản lý. Phần quy trình quản lý sẽ triển khai riêng khi tích hợp backend.
 ## Những luồng đã có trong bản demo
 
 | Màn hình | Nội dung |
@@ -53,15 +58,15 @@ Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo 
 | Product | Mô tả, quy cách, giá ví dụ hoặc yêu cầu duyệt Rx, cảnh báo tồn kho |
 | Cart | Thêm/bớt số lượng, tạm tính minh họa, nhận diện mặt hàng Rx |
 | Prescription | Chọn ảnh trong thiết bị bằng trình chọn tệp Android, **chưa upload** |
-| Checkout | Nhập thông tin liên hệ tạm thời, xem tóm tắt, tạo bản xem trước |
-| Preview | Mã `DEMO-xxxx`, mô tả luồng tiếp nhận–duyệt–giữ–soạn–nhận **chưa được thực thi** |
+| Checkout | Nhập thông tin liên hệ, chọn điểm nhận mẫu, nhấn **Đặt hàng** để hoàn tất demo |
+| Thành công | Màn **Đặt hàng thành công!**, mã `DEMO-xxxx`, xem đơn hoặc tiếp tục mua sắm; chỉ thành công ở trạng thái **lưu đơn demo trên máy** |
 | Onboarding | Ba màn giới thiệu, Bỏ qua/Tiếp tục, lưu cờ đã xem |
 | Auth | Đăng nhập, đăng ký, khôi phục mật khẩu demo trong phiên RAM |
 | Account | Hồ sơ cá nhân, cập nhật thông tin, đổi mật khẩu và sổ địa chỉ liên hệ |
 | Favorites | Lưu/bỏ yêu thích từ catalog/PDP, tab danh sách sản phẩm |
 | Categories | Thuốc, mỹ phẩm, thực phẩm, thực phẩm bổ sung, thiết bị, vật tư, chăm sóc |
 | Search & sort | Tìm không dấu, lọc theo nhóm, sắp tên và giá |
-| Local requests | Lịch sử yêu cầu mẫu, xem chi tiết, huỷ mẫu và lấy lại sản phẩm để thử checkout |
+| Demo orders | Lịch sử **Đơn hàng** với trạng thái **Đặt hàng thành công**, chi tiết, hủy đơn demo và đặt lại sản phẩm |
 
 **Quy tắc an toàn:** `REQUEST_RECEIVED` không phải `HELD`; toa gửi lên không phải `RX_APPROVED`; `HELD` không phải `READY_FOR_PICKUP`. Chính sách xuất lô/hạn FEFO, tính giá cuối cùng và phân quyền phải được thực thi bởi backend; mobile không tự tạo giả xác nhận.
 

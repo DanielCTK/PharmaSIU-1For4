@@ -93,7 +93,8 @@ fun PharmaSIUApp() {
     }
     fun go(route: String) {
         if (navigation.lastOrNull() == route) return
-        if (route in listOf("home", "catalog", "favorites", "orders", "account")) {
+        // Never return to an emptied checkout after placing a demo order.
+        if (route in listOf("home", "catalog", "favorites", "orders", "account", "receipt")) {
             navigation.clear()
         }
         navigation.add(route)
@@ -126,7 +127,7 @@ fun PharmaSIUApp() {
         Triple("home", "Trang chủ", Icons.Outlined.Home),
         Triple("catalog", "Danh mục", Icons.Outlined.GridView),
         Triple("favorites", "Yêu thích", Icons.Outlined.FavoriteBorder),
-        Triple("orders", "Yêu cầu", Icons.Outlined.ReceiptLong),
+        Triple("orders", "Đơn hàng", Icons.Outlined.ReceiptLong),
         Triple("account", "Tài khoản", Icons.Outlined.PersonOutline),
     ) }
     val onTab = current.takeIf { it in topTabs.map { item -> item.first } }
@@ -386,9 +387,14 @@ fun PharmaSIUApp() {
                     initialName = profile?.displayName.orEmpty(),
                     initialPhone = profile?.phone.orEmpty(),
                 )
-                route == "receipt" -> OrderStatusScreen(demoReference, onHome = {
-                    go("orders")
-                })
+                route == "receipt" -> {
+                    val placed = myRequests.lastOrNull { it.reference == demoReference }
+                    if (placed != null) OrderStatusScreen(
+                        request = placed,
+                        onViewOrder = { go("orders"); go("order:${placed.reference}") },
+                        onHome = { go("home") },
+                    ) else Text("Đơn demo không còn trong phiên này.")
+                }
                 else -> HomeScreen(products, { go("catalog") }, { go("product:$it") }, { go("cart") })
             }
                 }

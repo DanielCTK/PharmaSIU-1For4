@@ -25,13 +25,13 @@ fun RequestHistoryScreen(
     onExplore: () -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        PharmaTopBar("Yêu cầu của tôi")
+        PharmaTopBar("Đơn hàng của tôi")
         if (requests.isEmpty()) {
             Column(Modifier.fillMaxSize().padding(22.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 Icon(Icons.Outlined.ReceiptLong, null, modifier = Modifier.size(64.dp), tint = PharmaPalette.Emerald)
                 Spacer(Modifier.height(14.dp))
-                Text("Bạn chưa tạo yêu cầu mẫu", style = MaterialTheme.typography.titleLarge)
-                Text("Sau khi hoàn tất checkout, bản xem trước sẽ xuất hiện tại đây. Không có đơn thật.", color = PharmaPalette.Muted)
+                Text("Bạn chưa có đơn hàng demo", style = MaterialTheme.typography.titleLarge)
+                Text("Sau khi đặt hàng thành công, đơn mô phỏng sẽ xuất hiện tại đây.", color = PharmaPalette.Muted)
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = onExplore) { Text("Khám phá sản phẩm") }
             }
@@ -43,12 +43,12 @@ fun RequestHistoryScreen(
                         Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(request.reference, fontWeight = FontWeight.Bold, color = PharmaPalette.Emerald)
-                                StatusPill(if (request.status == MockRequestStatus.CANCELLED_LOCALLY) "Đã hủy tại máy" else "Lưu trên máy", isWarning = true)
+                                StatusPill(if (request.status == MockRequestStatus.CANCELLED_LOCALLY) "Đã hủy" else "Đặt hàng thành công", isWarning = request.status == MockRequestStatus.CANCELLED_LOCALLY)
                             }
                             Text("${request.lines.sumOf { it.quantity }} sản phẩm • ${request.displayTime}", color = PharmaPalette.Muted)
                             Text("Tạm tính: ${formatVnd(request.illustrativeTotal)}", style = MaterialTheme.typography.titleMedium)
-                            Text("Nhà thuốc chưa tiếp nhận hoặc xác nhận yêu cầu.", color = PharmaPalette.Warning, style = MaterialTheme.typography.bodyMedium)
-                            OutlinedButton(onClick = { onOpenRequest(request.reference) }) { Text("Xem chi tiết bản mẫu") }
+                            Text("Đơn demo trên thiết bị • chưa gửi nhà thuốc.", color = PharmaPalette.Muted, style = MaterialTheme.typography.bodyMedium)
+                            OutlinedButton(onClick = { onOpenRequest(request.reference) }) { Text("Xem chi tiết đơn hàng") }
                         }
                     }
                 }

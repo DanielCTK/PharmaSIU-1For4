@@ -26,12 +26,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.pharmasiu.mobile.R
 import com.pharmasiu.mobile.data.model.CartLine
 import com.pharmasiu.mobile.domain.CartRules
+import com.pharmasiu.mobile.domain.CheckoutInputRules
 import com.pharmasiu.mobile.ui.components.DemoDisclosure
 import com.pharmasiu.mobile.ui.components.PharmaTopBar
 import com.pharmasiu.mobile.ui.components.formatVnd
@@ -48,26 +58,38 @@ fun CheckoutScreen(
     var fullName by rememberSaveable { mutableStateOf(initialName) }
     var phone by rememberSaveable { mutableStateOf(initialPhone) }
     var pickup by rememberSaveable { mutableStateOf("Điểm nhận mẫu A") }
-    val validName = fullName.trim().length >= 2
-    val validPhone = phone.length in 10..11 && phone.startsWith("0") && phone.all(Char::isDigit)
-    val canSubmit = validName && validPhone && lines.isNotEmpty()
+    val validName = CheckoutInputRules.isValidName(fullName)
+    val validPhone = CheckoutInputRules.isValidPhone(phone)
+    val canSubmit = CheckoutInputRules.canSubmit(fullName, phone, lines.isNotEmpty())
+    val phoneFocus = androidx.compose.runtime.remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
     Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(17.dp)) {
-        PharmaTopBar("Gửi yêu cầu đặt trước", onBack = onBack)
+        PharmaTopBar(stringResource(R.string.checkout_title), onBack = onBack)
         Column(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Text("Thông tin liên hệ", style = MaterialTheme.typography.headlineMedium, color = PharmaPalette.Emerald)
-            Text("Thông tin chỉ tồn tại trong phiên minh họa này, chưa được gửi đến hệ thống nhà thuốc.", style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
+            Text("Bạn đang trải nghiệm đặt hàng demo. Đơn hoàn tất sẽ được lưu trong phiên ứng dụng.", style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
             OutlinedTextField(
                 value = fullName, onValueChange = { fullName = it.take(80) },
                 modifier = Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text("Họ và tên") }, shape = RoundedCornerShape(16.dp),
+                label = { Text(stringResource(R.string.checkout_customer_name)) }, shape = RoundedCornerShape(16.dp),
                 isError = fullName.isNotBlank() && !validName,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next,
+                ),
+                keyboardActions = KeyboardActions(onNext = { phoneFocus.requestFocus() }),
             )
             OutlinedTextField(
-                value = phone, onValueChange = { phone = it.filter(Char::isDigit).take(11) },
-                modifier = Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text("Số điện thoại") }, shape = RoundedCornerShape(16.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                value = phone, onValueChange = { phone = CheckoutInputRules.normalizePhoneInput(it) },
+                modifier = Modifier.fillMaxWidth().focusRequester(phoneFocus), singleLine = true,
+                label = { Text(stringResource(R.string.checkout_contact_phone)) }, shape = RoundedCornerShape(16.dp),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    keyboard?.hide()
+                    focusManager.clearFocus()
+                }),
                 isError = phone.isNotBlank() && !validPhone,
                 supportingText = { Text("Ví dụ: 09xxxxxxxx") },
             )
@@ -92,7 +114,7 @@ fun CheckoutScreen(
             }
             Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(21.dp)) {
                 Column(Modifier.fillMaxWidth().padding(17.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    Text("Tóm tắt yêu cầu", style = MaterialTheme.typography.titleMedium)
+                    Text("Tóm tắt đơn hàng", style = MaterialTheme.typography.titleMedium)
                     lines.forEach { item ->
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text("${item.quantity} × ${item.medicine.name}", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
@@ -106,10 +128,14 @@ fun CheckoutScreen(
                 Text("Đơn có thuốc kê đơn. Dược sĩ phải duyệt toa; thao tác này không thay thế thẩm định chuyên môn.", color = PharmaPalette.Warning, style = MaterialTheme.typography.bodyMedium)
             }
             DemoDisclosure()
-            Button(onClick = { onPlaceRequest(fullName.trim(), phone, pickup) }, enabled = canSubmit, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp)) {
-                Text("Lưu yêu cầu mô phỏng", fontWeight = FontWeight.Bold)
+            Button(onClick = {
+                keyboard?.hide()
+                focusManager.clearFocus()
+                onPlaceRequest(CheckoutInputRules.normalizeName(fullName), phone, pickup)
+            }, enabled = canSubmit, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp)) {
+                Text(stringResource(R.string.checkout_place_order), fontWeight = FontWeight.Bold)
             }
-            Text("Chức năng gửi API/đặt hàng thực chưa được kết nối.", style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
+            Text("Đặt hàng thành công trong bản demo; chưa gửi đến nhà thuốc và chưa thanh toán.", style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
             Spacer(Modifier.height(20.dp))
         }
     }
