@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -32,7 +31,7 @@ fun OrderStatusScreen(reference: String, onHome: () -> Unit) {
     Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(18.dp)) {
         PharmaTopBar("Bản xem trước", onBack = onHome)
         Column(Modifier.padding(horizontal = 22.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-            Icon(Icons.Outlined.CheckCircle, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(58.dp))
+            Icon(Icons.Outlined.Info, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(58.dp))
             Text("Đã tạo bản xem trước", style = MaterialTheme.typography.headlineMedium, color = PharmaPalette.Emerald)
             Text("Chưa gửi yêu cầu đến nhà thuốc. Chưa có thuốc nào được giữ hoặc toa nào được duyệt.", style = MaterialTheme.typography.bodyLarge, color = PharmaPalette.Ink)
             Column(

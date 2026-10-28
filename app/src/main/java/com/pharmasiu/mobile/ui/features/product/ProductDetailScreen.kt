@@ -29,13 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.*
-import com.pharmasiu.mobile.ui.features.home.FeatureButton
-import com.pharmasiu.mobile.ui.features.home.FeatureColors
-import com.pharmasiu.mobile.ui.features.home.FeatureHeader
-import com.pharmasiu.mobile.ui.features.home.FeatureTag
-import com.pharmasiu.mobile.ui.features.home.MedicineArt
-import com.pharmasiu.mobile.ui.features.home.asFeatureView
-import com.pharmasiu.mobile.ui.features.home.toVnd
+import com.pharmasiu.mobile.ui.components.MedicineMedia
+import com.pharmasiu.mobile.ui.components.FeatureButton
+import com.pharmasiu.mobile.ui.components.FeatureColors
+import com.pharmasiu.mobile.ui.components.FeatureHeader
+import com.pharmasiu.mobile.ui.components.FeatureTag
+import com.pharmasiu.mobile.ui.components.MedicineArt
+import com.pharmasiu.mobile.ui.components.asFeatureView
+import com.pharmasiu.mobile.ui.components.toVnd
 
 @Composable
 fun ProductDetailScreen(
@@ -51,7 +52,11 @@ fun ProductDetailScreen(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
         ) {
             Box(Modifier.fillMaxWidth().padding(horizontal = 18.dp).height(276.dp)) {
-                MedicineArt(Modifier.fillMaxSize(), product.id)
+                MedicineMedia(
+                    medicine = medicine,
+                    modifier = Modifier.fillMaxSize(),
+                    fallback = { place -> MedicineArt(place, product.id) },
+                )
                 Box(
                     Modifier.align(Alignment.TopStart).padding(17.dp).clip(RoundedCornerShape(10.dp))
                         .background(Color.White.copy(alpha = .95f)).padding(horizontal = 12.dp, vertical = 8.dp)
@@ -122,7 +127,7 @@ fun ProductDetailScreen(
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             FeatureButton(
-                text = if (product.requiresPrescription) "Tải toa để được duyệt  ↗" else "Thêm vào giỏ  +",
+                text = if (product.requiresPrescription) "Thêm và cung cấp toa để xem xét  ↗" else "Thêm vào giỏ  +",
                 onClick = { if (product.requiresPrescription) onUploadPrescription() else onAddToCart(medicine) },
                 modifier = Modifier.fillMaxWidth()
             )

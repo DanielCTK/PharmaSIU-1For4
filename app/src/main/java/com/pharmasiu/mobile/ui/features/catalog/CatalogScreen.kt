@@ -36,17 +36,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.*
-import com.pharmasiu.mobile.ui.features.home.EmptyFeatureState
-import com.pharmasiu.mobile.ui.features.home.FeatureColors
-import com.pharmasiu.mobile.ui.features.home.FeatureHeader
-import com.pharmasiu.mobile.ui.features.home.MedicineCard
-import com.pharmasiu.mobile.ui.features.home.asFeatureView
+import com.pharmasiu.mobile.ui.components.EmptyFeatureState
+import com.pharmasiu.mobile.ui.components.FeatureColors
+import com.pharmasiu.mobile.ui.components.FeatureHeader
+import com.pharmasiu.mobile.ui.components.MedicineCard
+import com.pharmasiu.mobile.ui.components.asFeatureView
 
 @Composable
 fun CatalogScreen(
@@ -60,7 +62,7 @@ fun CatalogScreen(
     val filtered = remember(medicines, search, selectedFilter) {
         medicines.filter { medicine ->
             val view = medicine.asFeatureView()
-            val matchesQuery = search.isBlank() || listOf(view.name, view.subtitle, view.category, view.ingredient)
+            val matchesQuery = search.isBlank() || listOf(view.name, view.subtitle, view.category)
                 .any { it.contains(search.trim(), ignoreCase = true) }
             val matchesFilter = when (selectedFilter) {
                 "Kê đơn" -> view.requiresPrescription
@@ -96,16 +98,17 @@ fun CatalogScreen(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     textStyle = TextStyle(fontSize = 14.sp, color = FeatureColors.text),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).semantics { contentDescription = "Tìm sản phẩm theo tên hoặc nhóm" },
                     decorationBox = { inner ->
                         Box(contentAlignment = Alignment.CenterStart) {
-                            if (search.isEmpty()) Text("Tên sản phẩm, thành phần...", color = FeatureColors.muted, fontSize = 13.sp)
+                            if (search.isEmpty()) Text("Tên hoặc nhóm sản phẩm...", color = FeatureColors.muted, fontSize = 13.sp)
                             inner()
                         }
                     }
                 )
                 if (search.isNotEmpty()) {
-                    Box(Modifier.size(44.dp).clip(CircleShape).clickable(role = Role.Button) { search = "" }, contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp).clip(CircleShape)
+                        .clickable(role = Role.Button, onClickLabel = "Xóa từ khóa tìm kiếm") { search = "" }, contentAlignment = Alignment.Center) {
                         Text("×", color = FeatureColors.muted, fontSize = 23.sp)
                     }
                 }
@@ -119,10 +122,10 @@ fun CatalogScreen(
             filters.forEach { filter ->
                 val selected = selectedFilter == filter
                 Box(
-                    modifier = Modifier.height(42.dp).clip(CircleShape)
+                    modifier = Modifier.height(48.dp).clip(CircleShape)
                         .background(if (selected) FeatureColors.emerald else Color.White)
                         .border(1.dp, if (selected) FeatureColors.emerald else FeatureColors.line, CircleShape)
-                        .clickable(role = Role.Button) { selectedFilter = filter }
+                        .clickable(role = Role.Button, onClickLabel = "Lọc: $filter") { selectedFilter = filter }
                         .padding(horizontal = 17.dp),
                     contentAlignment = Alignment.Center
                 ) {

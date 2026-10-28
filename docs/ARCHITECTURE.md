@@ -5,6 +5,7 @@
 |---|---|---|
 | `ui/features` | Composables, màn hình, trạng thái nhập liệu, callbacks | Quyết định giá/tồn/Rx final |
 | `ui/components` | Material3 primitives, reusable artwork, trạng thái UI | Gọi API, giữ dữ liệu đơn |
+| `ui/components/MedicineMedia.kt` | Adapter Coil: ảnh HTTPS tùy chọn + fallback artwork không mạng | Biến ảnh lỗi thành dữ liệu có tồn kho; tải ảnh toa khách |
 | `ui/theme` | Brand tokens Emerald, Lime, typography, shapes | Nghiệp vụ |
 | `domain` | Pure Kotlin cart rules, state machine | Android Context, Retrofit, database |
 | `data/model` | Data class công khai | Nhét logic UI |
@@ -12,6 +13,8 @@
 | `ui/PharmaSIUApp.kt` | Root composition, stack demo, launch Android picker | Persist order thật |
 
 Hiện nay navigation stack, cart và toa đang ở RAM của root Composable để prototype dễ đọc; **chưa dùng ViewModel, Room, Hilt hoặc Navigation Compose**. Trước khi kết nối backend, chuyển state sang feature ViewModel, repository interface và xử lý process death/back stack sâu hơn.
+
+**Đồng bộ component:** Header, ProductTile, MedicineCard, FeatureButton và artwork nay thuộc `ui/components/`; feature screens chỉ import từ package này, không import component từ một feature khác. Khi nhận ảnh catalog chính thức, đặt URL ở `Medicine.imageUrl`; adapter chỉ chấp nhận HTTPS và dùng ảnh minh họa lúc đang tải/lỗi.
 
 ## Contract dữ liệu và trạng thái
 - Số lô/hạn dùng, FEFO, kiểm tra tồn khả dụng và hạn giữ hàng do backend chịu trách nhiệm.

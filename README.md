@@ -23,7 +23,7 @@ Trên Windows thay `./gradlew` bằng `gradlew.bat`. APK debug được tạo t�
 
 ### Chỉ muốn xem UI, không muốn bật Emulator?
 
-Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) trong Android Studio, chọn **Split** hoặc **Design** → **Build & Refresh**. Có **10 bản Compose Preview** cho trang chủ, danh mục, chi tiết, giỏ hàng, toa, checkout, trạng thái và màn hình nhỏ. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
+Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) trong Android Studio, chọn **Split** hoặc **Design** → **Build & Refresh**. Có **14 bản Compose Preview** cho các màn hình chính, trường hợp giỏ trống, toa đã chọn, màn hình nhỏ và chữ lớn. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
 
 ## Những luồng đã có trong bản demo
 
@@ -56,8 +56,8 @@ PharmaSIU-1For4/
 │       │       └── ui/
 │       │           ├── PharmaSIUApp.kt        # Điều hướng & demo state
 │       │           ├── theme/                 # Palette, type, shapes
-│       │           ├── components/            # Shared UI primitives
-│       │           ├── previews/              # 10 Compose Previews không cần Emulator
+│       │           ├── components/            # Shared UI + Coil 3 image adapter
+│       │           ├── previews/              # 14 Compose Previews không cần Emulator
 │       │           └── features/
 │       │               ├── home/
 │       │               ├── catalog/
@@ -82,6 +82,8 @@ PharmaSIU-1For4/
 
 ## Làm việc nhóm
 
+**Rà soát giao diện và thư viện:** xem [UI audit 28/10/2026](docs/UI_AUDIT_2026-10-28.md), bao gồm cả các trường hợp chưa được kiểm thử trên emulator.
+
 Đọc [TEAM_GUIDE.md](docs/TEAM_GUIDE.md) trước khi phân chia đầu việc, [ARCHITECTURE.md](docs/ARCHITECTURE.md) trước khi thay state/API, và [AGENTS.md](AGENTS.md) khi dùng coding agent. Mỗi feature có package riêng; pull request phải nêu luồng kiểm thử, screenshot Android nếu sửa UI, và không thay đổi schema/domain ngầm.
 
 **Android UI Brain:** các router, registry, 9 layer và quy tắc quality gate nằm ở [docs/android-ui-brain](docs/android-ui-brain/README.md). Thư mục này là bản đồng hành nằm trong Git; bản extension gốc đồng bộ với UI UX Brain v4.1.
@@ -89,7 +91,7 @@ PharmaSIU-1For4/
 ## Công nghệ & giới hạn
 
 - Kotlin, Android Gradle Plugin, Compose Compiler và Compose BOM khóa tại [version catalog](gradle/libs.versions.toml).
-- Material 3 / Compose cho UI; Coil 3 được khai báo để hỗ trợ hình ảnh trong các bước sau. Hiện artwork dựng nội bộ; **Lottie, Rive và Vico được đánh giá trong registry, chưa thêm dependencies không sử dụng**.
+- Material 3 / Compose cho UI; **Coil 3.6.3 + OkHttp đã tích hợp qua `MedicineMedia`** để tải ảnh HTTPS có fallback artwork nội bộ và cache khi có URL từ backend. Demo vẫn hoạt động hoàn toàn offline. **Lottie, Rive và Vico không được thêm** vì hiện chưa có asset tương tác/biểu đồ thực cần thiết.
 - Min SDK 26; compile SDK 36; định hướng tối ưu cho điện thoại, dùng semantic labels và màn hình có thể cuộn.
 - Để thành ứng dụng thật còn cần: API backend, authentication, quyền truy cập toa, quản lý attachment an toàn, luồng dược sĩ, availability/reservation TTL, đồng bộ giá, test device, chính sách bảo mật, release signing.
 

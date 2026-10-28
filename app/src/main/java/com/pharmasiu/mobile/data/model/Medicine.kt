@@ -13,6 +13,11 @@ data class Medicine(
     val requiresPrescription: Boolean,
     val unit: String,
     val description: String,
+    /**
+     * Optional HTTPS URL supplied by the official catalog service.
+     * The offline preview/demo uses in-app artwork and never fetches an image.
+     */
+    val imageUrl: String? = null,
 )
 
 data class CartLine(

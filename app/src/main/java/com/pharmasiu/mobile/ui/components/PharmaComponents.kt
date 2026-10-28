@@ -122,7 +122,7 @@ fun ProductTile(medicine: Medicine, onClick: () -> Unit, modifier: Modifier = Mo
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            ProductArtwork(medicine, Modifier.size(94.dp))
+            MedicineMedia(medicine, Modifier.size(94.dp))
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 Text(medicine.name, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)

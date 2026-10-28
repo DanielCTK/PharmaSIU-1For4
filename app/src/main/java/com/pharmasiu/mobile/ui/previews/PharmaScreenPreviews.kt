@@ -151,3 +151,41 @@ private fun CompactHomePhonePreview() = PreviewShell {
         onOpenCart = {},
     )
 }
+
+@Preview(name = "11 • Danh mục máy nhỏ", group = "PharmaSIU • 320dp", widthDp = 320, heightDp = 700, showBackground = true)
+@Composable
+private fun CompactCatalogPhonePreview() = PreviewShell {
+    CatalogScreen(medicines = demoCatalog, onOpenProduct = {}, onBack = {})
+}
+
+@Preview(name = "12 • Toa đã chọn (chỉ giao diện)", group = "PharmaSIU • 390dp", widthDp = 390, heightDp = 844, showBackground = true)
+@Composable
+private fun PrescriptionSelectedPreview() = PreviewShell {
+    PrescriptionScreen(
+        onBack = {},
+        onChooseFile = {},
+        selectedFileName = "Ảnh mẫu chưa tải lên",
+        onContinue = {},
+    )
+}
+
+@Preview(name = "13 • Chữ lớn / Chi tiết", group = "PharmaSIU • accessibility", widthDp = 390, heightDp = 844, fontScale = 1.5f, showBackground = true)
+@Composable
+private fun LargeTypeProductPreview() = PreviewShell {
+    ProductDetailScreen(
+        medicine = demoCatalog.first(),
+        onAddToCart = {},
+        onUploadPrescription = {},
+        onBack = {},
+    )
+}
+
+@Preview(name = "14 • Chữ lớn / Checkout", group = "PharmaSIU • accessibility", widthDp = 390, heightDp = 844, fontScale = 1.5f, showBackground = true)
+@Composable
+private fun LargeTypeCheckoutPreview() = PreviewShell {
+    CheckoutScreen(
+        lines = demoCart,
+        onBack = {},
+        onPlaceRequest = { _, _ -> },
+    )
+}

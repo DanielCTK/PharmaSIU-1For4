@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.Medicine
 import com.pharmasiu.mobile.ui.components.DemoDisclosure
+import com.pharmasiu.mobile.ui.components.EmptyFeatureState
 import com.pharmasiu.mobile.ui.components.PharmaTopBar
 import com.pharmasiu.mobile.ui.components.ProductTile
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
@@ -104,7 +105,7 @@ fun HomeScreen(
                         ) {
                             Column(verticalArrangement = Arrangement.SpaceBetween) {
                                 Icon(Icons.Outlined.MedicalServices, null, tint = PharmaPalette.Emerald, modifier = Modifier.size(21.dp))
-                                Text(title, color = PharmaPalette.Ink, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, maxLines = 1)
+                                Text(title, color = PharmaPalette.Ink, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, maxLines = 2)
                             }
                         }
                     }

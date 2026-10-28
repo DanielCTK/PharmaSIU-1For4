@@ -11,6 +11,8 @@ import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -59,6 +61,7 @@ fun PharmaSIUApp() {
         val medicine = DemoCatalogRepository.byId(id)
         if (medicine != null && quantity > 0) CartLine(medicine, quantity) else null
     }
+    val cartCount = cart.sumOf { it.quantity }
 
     fun go(route: String) {
         if (navigation.lastOrNull() == route) return
@@ -109,7 +112,20 @@ fun PharmaSIUApp() {
                         NavigationBarItem(
                             selected = current == route,
                             onClick = { go(route) },
-                            icon = { Icon(icon, contentDescription = null) },
+                            icon = {
+                                if (route == "cart" && cartCount > 0) {
+                                    BadgedBox(
+                                        badge = {
+                                            Badge(
+                                                containerColor = PharmaPalette.Lime,
+                                                contentColor = PharmaPalette.Forest,
+                                            ) { Text(if (cartCount > 99) "99+" else "$cartCount") }
+                                        },
+                                    ) { Icon(icon, contentDescription = null) }
+                                } else {
+                                    Icon(icon, contentDescription = null)
+                                }
+                            },
                             label = { Text(title) },
                             alwaysShowLabel = true,
                         )

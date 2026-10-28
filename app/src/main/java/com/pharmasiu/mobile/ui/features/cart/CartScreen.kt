@@ -38,13 +38,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.*
+import com.pharmasiu.mobile.ui.components.MedicineMedia
 import com.pharmasiu.mobile.domain.CartRules
-import com.pharmasiu.mobile.ui.features.home.EmptyFeatureState
-import com.pharmasiu.mobile.ui.features.home.FeatureButton
-import com.pharmasiu.mobile.ui.features.home.FeatureColors
-import com.pharmasiu.mobile.ui.features.home.FeatureHeader
-import com.pharmasiu.mobile.ui.features.home.MedicineArt
-import com.pharmasiu.mobile.ui.features.home.toVnd
+import com.pharmasiu.mobile.ui.components.EmptyFeatureState
+import com.pharmasiu.mobile.ui.components.FeatureButton
+import com.pharmasiu.mobile.ui.components.FeatureColors
+import com.pharmasiu.mobile.ui.components.FeatureHeader
+import com.pharmasiu.mobile.ui.components.MedicineArt
+import com.pharmasiu.mobile.ui.components.toVnd
 
 @Composable
 fun CartScreen(
@@ -94,7 +95,11 @@ fun CartScreen(
                             .padding(13.dp)
                     ) {
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            MedicineArt(Modifier.size(96.dp), seed = line.medicine.id, compact = true)
+                            MedicineMedia(
+                                medicine = line.medicine,
+                                modifier = Modifier.size(96.dp),
+                                fallback = { place -> MedicineArt(place, seed = line.medicine.id, compact = true) },
+                            )
                             Column(Modifier.weight(1f)) {
                                 Text(line.medicine.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = FeatureColors.deep, maxLines = 2, lineHeight = 19.sp, overflow = TextOverflow.Ellipsis)
                                 Spacer(Modifier.height(5.dp))

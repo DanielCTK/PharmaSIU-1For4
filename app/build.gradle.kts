@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.compose.icons)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)
