@@ -1,0 +1,22 @@
+# Local Android configuration and build output
+.gradle/
+.idea/
+.kotlin/
+build/
+**/build/
+local.properties
+*.iml
+*.apk
+*.aab
+captures/
+.cxx/
+*.hprof
+*.jks
+*.keystore
+google-services.json
+secrets.properties
+
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
