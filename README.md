@@ -49,6 +49,13 @@ Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo 
 Người dùng thêm sản phẩm → giỏ hàng → chọn toa nếu có thuốc kê đơn → nhập thông tin liên hệ & điểm nhận mẫu → **Đặt hàng** → màn **Đặt hàng thành công!**. Đơn nhận mã `DEMO-xxxx`, xuất hiện trong tab **Đơn hàng**; [xem ảnh chụp thành công](docs/screenshots/order-success-demo.png). có thể xem chi tiết, hủy hoặc đặt lại. Giỏ được xóa sau khi hoàn tất. Không quay lại checkout trống khi bấm Back từ màn thành công.
 
 Đây là thao tác **lưu đơn hàng thành công trong RAM của ứng dụng để trải nghiệm**, không phải đơn đã gửi/được nhà thuốc xác nhận. Không có thanh toán, giữ hàng, duyệt toa hay API quản lý. Phần quy trình quản lý sẽ triển khai riêng khi tích hợp backend.
+### Khu vực nhân viên bán hàng và quản trị (mock)
+
+Từ tab **Tài khoản → Dành cho nhân viên → Bán hàng / Quản trị (demo)**, chọn một trong hai vai trò. Nhân viên bán hàng sử dụng mã **1111**, quản trị dùng mã **2222**; đây là PIN công khai để thử giao diện, hoàn toàn không phải xác thực bảo mật thật.
+
+**Bán hàng:** mở ca → tìm/chọn sản phẩm không kê đơn → giỏ → tiền mặt hoặc phương thức khác demo → kiểm tra thanh toán → hoàn tất hóa đơn POS-DEMO → bán tiếp/lịch sử → đóng ca. Tồn giả lập giảm khi lập hóa đơn hợp lệ; thuốc kê đơn bị khóa vì chưa tích hợp dược sĩ duyệt.
+
+**Quản trị cơ bản:** tổng quan, danh mục và điều chỉnh tồn mẫu, danh sách hóa đơn POS trong phiên. Không phát triển quản lý phức tạp. Tất cả các số liệu chỉ nằm trong RAM, không kết nối đến dữ liệu khách, kho/lô FEFO, SQL hay backend. Xem [đặc tả staff flow](docs/STAFF_WORKFLOWS.md). [Ảnh giao diện bán tại quầy](docs/screenshots/staff-counter-demo.png), [hóa đơn demo](docs/screenshots/staff-receipt-demo.png) và [trang quản trị](docs/screenshots/staff-admin-demo.png). Có 3 [Compose Preview nhân viên](app/src/main/java/com/pharmasiu/mobile/ui/previews/StaffPreviews.kt) không cần emulator.
 ## Những luồng đã có trong bản demo
 
 | Màn hình | Nội dung |

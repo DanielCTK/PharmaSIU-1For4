@@ -36,6 +36,7 @@ fun AccountScreen(
     onAddresses: () -> Unit = {},
     onChangePassword: () -> Unit = {},
     onLogout: () -> Unit,
+    onStaffPortal: () -> Unit = {},
 ) {
     Column(Modifier.fillMaxSize()) {
         PharmaTopBar("Tài khoản")
@@ -67,6 +68,15 @@ fun AccountScreen(
             AccountAction("Đổi mật khẩu demo", "Chỉ thay đổi trong phiên ứng dụng", Icons.Outlined.Lock, profile != null, if (profile == null) onAuth else onChangePassword)
             AccountAction("Sản phẩm yêu thích", "Danh sách đã lưu trên thiết bị", Icons.Outlined.FavoriteBorder, true, onFavorites)
             AccountAction("Đơn hàng của tôi", "Đơn đã đặt trong phiên demo", Icons.Outlined.ReceiptLong, true, onOrders)
+            HorizontalDivider(color = PharmaPalette.Line)
+            Text("Dành cho nhân viên", style = MaterialTheme.typography.titleMedium, color = PharmaPalette.Emerald)
+            AccountAction(
+                "Bán hàng / Quản trị (demo)",
+                "Không ảnh hưởng tài khoản khách hàng",
+                Icons.Outlined.Storefront,
+                true,
+                onStaffPortal,
+            )
             if (profile != null) OutlinedButton(onClick = onLogout, modifier = Modifier.fillMaxWidth().height(52.dp)) { Text("Đăng xuất khỏi phiên demo") }
             Text("Đây là ứng dụng mô phỏng. Không nhập thông tin đăng nhập, toa hoặc dữ liệu cá nhân thật.", color = PharmaPalette.Muted, style = MaterialTheme.typography.bodyMedium)
             Spacer(Modifier.height(14.dp))

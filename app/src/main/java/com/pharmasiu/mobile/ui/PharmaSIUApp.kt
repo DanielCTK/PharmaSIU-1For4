@@ -31,6 +31,8 @@ import com.pharmasiu.mobile.ui.features.onboarding.OnboardingScreen
 import com.pharmasiu.mobile.ui.features.orders.OrderStatusScreen
 import com.pharmasiu.mobile.ui.features.prescription.PrescriptionScreen
 import com.pharmasiu.mobile.ui.features.product.ProductDetailScreen
+import com.pharmasiu.mobile.ui.features.staff.StaffDemoStore
+import com.pharmasiu.mobile.ui.features.staff.StaffWorkspace
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -70,6 +72,8 @@ fun PharmaSIUApp() {
     var demoReference by rememberSaveable { mutableStateOf("DEMO-0000") }
     var submitting by remember { mutableStateOf(false) }
     val products = DemoCatalogRepository.medicines
+    val staffStore = remember { StaffDemoStore(products) }
+    var staffPortalOpen by remember { mutableStateOf(false) }
     // Only recompute derived collections when their underlying snapshot data changes.
     // Scrolling a lazy grid must not rebuild a cart or a history collection per frame.
     val cart by remember { derivedStateOf {
@@ -122,7 +126,7 @@ fun PharmaSIUApp() {
             } else null
         }
     }
-    BackHandler(enabled = navigation.size > 1 || current != "home") { back() }
+    BackHandler(enabled = !staffPortalOpen && (navigation.size > 1 || current != "home")) { back() }
     val topTabs = remember { listOf(
         Triple("home", "Trang chủ", Icons.Outlined.Home),
         Triple("catalog", "Danh mục", Icons.Outlined.GridView),
@@ -131,6 +135,14 @@ fun PharmaSIUApp() {
         Triple("account", "Tài khoản", Icons.Outlined.PersonOutline),
     ) }
     val onTab = current.takeIf { it in topTabs.map { item -> item.first } }
+    if (staffPortalOpen) {
+        StaffWorkspace(
+            products = products,
+            store = staffStore,
+            onExit = { staffPortalOpen = false },
+        )
+        return
+    }
     Scaffold(
         containerColor = PharmaPalette.Cream,
         bottomBar = {
@@ -253,6 +265,7 @@ fun PharmaSIUApp() {
                     onAddresses = { go("addresses") },
                     onChangePassword = { go("change-password") },
                     onLogout = { switchOwner(null); go("account") },
+                    onStaffPortal = { staffPortalOpen = true },
                 )
                 route == "addresses" && profile != null -> AddressBookScreen(
                     addresses = myAddresses,
