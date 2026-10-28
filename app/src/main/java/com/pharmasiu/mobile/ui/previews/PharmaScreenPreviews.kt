@@ -108,7 +108,7 @@ private fun CheckoutPhonePreview() = PreviewShell {
     CheckoutScreen(
         lines = demoRxCart,
         onBack = {},
-        onPlaceRequest = { _, _ -> },
+        onPlaceRequest = { _, _, _ -> },
     )
 }
 
@@ -186,6 +186,6 @@ private fun LargeTypeCheckoutPreview() = PreviewShell {
     CheckoutScreen(
         lines = demoCart,
         onBack = {},
-        onPlaceRequest = { _, _ -> },
+        onPlaceRequest = { _, _, _ -> },
     )
 }

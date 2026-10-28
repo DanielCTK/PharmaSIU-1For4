@@ -1,19 +1,21 @@
-# QA log — PharmaSIU Mobile 0.1.0
+# QA log — PharmaSIU Mobile v0.2 (28/10/2026)
 
 | Gate | Trạng thái | Bằng chứng/việc còn thiếu |
 |---|---|---|
-| G0 Truth & scope | REVIEWED | Tất cả màn hình gắn nhãn demo; không giả xác nhận tồn hoặc toa |
-| G1 User flow | REVIEWED | Home → Catalog → PDP → Cart → Rx (nếu cần) → Checkout → Preview có callback |
+| G0 Truth & scope | REVIEWED | Dữ liệu mock phân loại thuốc, mỹ phẩm, thực phẩm; không giả xác nhận tồn, duyệt toa hoặc thanh toán |
+| G1 User flow | STATIC REVIEW | 5 tab, onboarding, auth demo, profile, addresses, favorites, search/filter/sort, cart, Rx, checkout, history, cancel/reorder được nối callbacks; cần device end-to-end |
 | G2 Accessibility | NOT RUN | Cần TalkBack, 48dp targets và font scale trên emulator |
 | G3 Visual | NOT RUN | Cần ảnh chụp 320/390/412dp và review thủ công |
-| G4 Error/recovery | PARTIAL | Search empty, form invalid, no Rx file đã được xử lý; network chưa tích hợp |
-| G5 Runtime | BLOCKED | Đã thử Gradle 8.13 wrapper nhưng download chưa xong; Gradle 9.3.1 offline đã qua bước cấu hình Kotlin; dừng ở bước resolve thư viện AndroidX/Kotlin runtime/Coil do cache thiếu. Gradle Wrapper 8.13 chưa tải xong do đường truyền chậm. Không có bằng chứng APK/unit tests PASS |
+| G4 Error/recovery | PARTIAL | Search empty, invalid login/profile/checkout, no Rx file và canceled mock request đã xử lý; network/backend chưa có |
+| G5 Runtime | PASS (Gradle), DEVICE NOT RUN | Gradle 8.13 debug APK và JUnit tests đạt. Đã build và chạy JUnit sau khi chia mỗi màn hình ra file riêng, kết quả thành công |
 | G6 Consistency | REVIEWED | Màu, typography và shared components dựa PharmaPalette |
 
 Không tuyên bố production ready từ kết quả review mã nguồn. Các gate NOT RUN không phải PASS.
 
-**Kiểm tra tĩnh đã chạy:** tất cả XML trong `app/src/main` đọc được bằng XML parser; `git diff --cached --check` không phát hiện whitespace error. Đây không phải bằng chứng app biên dịch hay chạy trên emulator.
+**Kiểm tra tĩnh:** XML parser không phát hiện lỗi ở `app/src/main`; `git diff --check` được chạy. Số lượng: 30 sản phẩm mẫu, 26 Compose @Preview ở hai gallery (14 + 12), 14 unit tests đã chạy thành công sau lần chia nhỏ file cuối.
 
-**Toolchain dự kiến:** AGP 8.13.2, Gradle 8.13, Kotlin/Compose Compiler 2.4.10 và Compose BOM 2026.09.00. Thư viện Coil 3.6.3 + OkHttp đã tích hợp để tải ảnh từ catalog HTTPS; dữ liệu demo không có URL và không gọi mạng. Có 14 Compose Preview cho các màn hình/giá trị biên; việc render vẫn NOT RUN.
+**Toolchain đã dùng:** AGP 8.13.2, Gradle Wrapper 8.13, Kotlin/Compose Compiler 2.4.10, Compose BOM 2025.12.01 và Coil 3.3.0 theo môi trường máy test (phải khóa lại những phiên bản này trong repository). Các @Preview mới chưa được Android Studio render/duyệt screenshot thực tế nên G3 vẫn NOT RUN.
 
 **Rà soát chi tiết từng màn hình:** [UI audit 28/10/2026](UI_AUDIT_2026-10-28.md).
+
+**Đặc tả flow mở rộng:** [Mobile Customer Flows](MOBILE_CUSTOMER_FLOWS.md). Các bước đăng nhập demo, gửi yêu cầu và điều hướng chưa được tự động hóa bằng Android instrumented UI tests; unit test không thay thế full user journey.

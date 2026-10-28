@@ -1,8 +1,10 @@
 # Xem giao diện PharmaSIU không cần Android Emulator
 
-PharmaSIU Mobile có **14 Compose Previews** tại:
+PharmaSIU Mobile có **26 Compose Previews** tại:
 
 `app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt`
+
+`app/src/main/java/com/pharmasiu/mobile/ui/previews/ShopFlowPreviews.kt`
 
 ## Cách xem trong Android Studio
 
@@ -12,13 +14,13 @@ PharmaSIU Mobile có **14 Compose Previews** tại:
 4. Ở thanh công cụ Preview chọn **Focus** để xem một màn hình (nhẹ hơn), hoặc **Grid** để xem nhiều màn hình.
 5. Có thể chuột phải ảnh xem trước → **Copy Image** để chia sẻ; bật **Interactive Mode** trên các preview có ô nhập liệu để xem thao tác đơn giản.
 
-Các preview dùng dữ liệu mẫu, **không cần emulator, thiết bị Android hay backend**. Ảnh toa trong preview là trạng thái mô phỏng; không upload hay truy cập tệp thực. Kích thước mặc định 390×844dp; có bản 320×700dp và fontScale 1.5 để rà soát accessibility.
+Các preview dùng dữ liệu mẫu, **không cần emulator, thiết bị Android hay backend**. Ảnh toa trong preview là trạng thái mô phỏng; không upload hay truy cập tệp thực. Kích thước mặc định 390×844dp; có bản 320×700dp và fontScale 1.5 để rà soát accessibility. Nhóm ShopFlowPreviews bao gồm onboarding, đăng nhập, tài khoản khách, hồ sơ, thực phẩm/mỹ phẩm, yêu thích, lịch sử mẫu và sổ địa chỉ.
 
 ## Cần lưu ý
 
 - Lần đầu mở có thể mất thời gian do Android Studio phải tải dependency/Gradle và biên dịch module. Sau đó Preview thường nhẹ hơn khởi động emulator.
 - Preview để xem bố cục, màu, typography và một số tương tác cục bộ. Nó **không thay thế** kiểm thử navigation thật, quyền hệ thống, tải ảnh, hiệu năng hoặc các luồng backend.
-- Nếu chỉ muốn xem một màn hình, bật **Focus Mode** để tránh render 14 bản cùng lúc.
+- Nếu chỉ muốn xem một màn hình, bật **Focus Mode** để tránh render cả 26 bản cùng lúc.
 - Nếu hiện *Unresolved reference* hoặc không render, kiểm tra Gradle Sync/build trước. Không cần tạo AVD chỉ để sửa lỗi sync.
 
 Tài liệu Android chính thức: <https://developer.android.com/develop/ui/compose/tooling/previews>

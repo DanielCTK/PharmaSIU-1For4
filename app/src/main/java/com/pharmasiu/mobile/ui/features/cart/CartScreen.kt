@@ -98,7 +98,6 @@ fun CartScreen(
                             MedicineMedia(
                                 medicine = line.medicine,
                                 modifier = Modifier.size(96.dp),
-                                fallback = { place -> MedicineArt(place, seed = line.medicine.id, compact = true) },
                             )
                             Column(Modifier.weight(1f)) {
                                 Text(line.medicine.name, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = FeatureColors.deep, maxLines = 2, lineHeight = 19.sp, overflow = TextOverflow.Ellipsis)

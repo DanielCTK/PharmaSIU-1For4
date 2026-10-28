@@ -9,6 +9,9 @@
 | Request/checkout | `ui/features/cart/`, `prescription/`, `checkout/`, `orders/` | Rx + stock/status |
 | Domain + API | `domain/`, `data/`, `src/test/` | Business rules, privacy, contracts |
 | Integration | `ui/PharmaSIUApp.kt`, `docs/QA_REPORT.md` | End-to-end smoke và regression |
+| Account / Session | `ui/features/account/`, `data/model/MockCommerce.kt` | Demo credential isolation, không lưu mật khẩu thật |
+| Social commerce | `ui/features/community/`, `domain/CatalogSearchRules.kt` | Favorites và requests không giả nhận hàng |
+| Onboarding | `ui/features/onboarding/` | Cờ first-run và nút Bỏ qua |
 
 Ownership là **đề xuất theo module**, nhóm có thể phân người sau; không gán cá nhân cứng vào source.
 

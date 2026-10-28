@@ -37,17 +37,30 @@ import com.pharmasiu.mobile.ui.components.FeatureTag
 import com.pharmasiu.mobile.ui.components.MedicineArt
 import com.pharmasiu.mobile.ui.components.asFeatureView
 import com.pharmasiu.mobile.ui.components.toVnd
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 @Composable
 fun ProductDetailScreen(
     medicine: Medicine,
     onAddToCart: (Medicine) -> Unit,
     onUploadPrescription: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    isFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
 ) {
     val product = medicine.asFeatureView()
     Column(Modifier.fillMaxSize().background(FeatureColors.canvas)) {
-        FeatureHeader("Chi tiết sản phẩm", onBack)
+        FeatureHeader("Chi tiết sản phẩm", onBack, trailing = {
+            IconButton(onClick = onToggleFavorite) {
+                Icon(if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = if (isFavorite) "Bỏ yêu thích" else "Lưu yêu thích",
+                    tint = FeatureColors.emerald)
+            }
+        })
         Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
         ) {
@@ -55,7 +68,6 @@ fun ProductDetailScreen(
                 MedicineMedia(
                     medicine = medicine,
                     modifier = Modifier.fillMaxSize(),
-                    fallback = { place -> MedicineArt(place, product.id) },
                 )
                 Box(
                     Modifier.align(Alignment.TopStart).padding(17.dp).clip(RoundedCornerShape(10.dp))
@@ -91,6 +103,14 @@ fun ProductDetailScreen(
                 Text("Thông tin sản phẩm", color = FeatureColors.deep, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(9.dp))
                 Text(product.description, color = FeatureColors.muted, fontSize = 13.sp, lineHeight = 21.sp)
+                if (product.category == "Thực phẩm bổ sung") {
+                    Spacer(Modifier.height(10.dp))
+                    Text("Sản phẩm này không phải là thuốc và không có tác dụng thay thế thuốc chữa bệnh.",
+                        color = FeatureColors.rx, fontSize = 13.sp, lineHeight = 20.sp, fontWeight = FontWeight.Bold)
+                } else if (product.category == "Thực phẩm") {
+                    Spacer(Modifier.height(10.dp))
+                    Text("Đây là thực phẩm, không phải thuốc.", color = FeatureColors.emerald, fontSize = 13.sp)
+                }
                 Spacer(Modifier.height(17.dp))
                 Column(
                     Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))

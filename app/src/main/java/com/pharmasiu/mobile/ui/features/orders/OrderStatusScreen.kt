@@ -57,7 +57,7 @@ fun OrderStatusScreen(reference: String, onHome: () -> Unit) {
                 }
             }
             Button(onClick = onHome, modifier = Modifier.fillMaxWidth().height(55.dp), shape = RoundedCornerShape(17.dp)) {
-                Text("Trở về trang chủ", fontWeight = FontWeight.Bold)
+                Text("Xem các yêu cầu mẫu", fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.height(20.dp))
         }

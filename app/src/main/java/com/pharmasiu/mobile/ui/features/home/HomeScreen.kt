@@ -49,6 +49,7 @@ fun HomeScreen(
     onOpenCatalog: () -> Unit,
     onOpenProduct: (String) -> Unit,
     onOpenCart: () -> Unit,
+    onOpenCategory: (String) -> Unit = { onOpenCatalog() },
 ) {
     LazyColumn(
         contentPadding = PaddingValues(bottom = 26.dp),
@@ -96,11 +97,11 @@ fun HomeScreen(
                     Text("Khám phá theo nhu cầu", style = MaterialTheme.typography.titleLarge)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    listOf("Vật tư y tế", "Chăm sóc", "Thiết bị").forEach { title ->
+                    listOf("Mỹ phẩm", "Thực phẩm", "Không kê đơn").forEach { title ->
                         Box(
                             modifier = Modifier.weight(1f).height(82.dp)
                                 .background(PharmaPalette.Paper, RoundedCornerShape(18.dp))
-                                .clickable(onClickLabel = "Xem nhóm $title", onClick = onOpenCatalog)
+                                .clickable(onClickLabel = "Xem nhóm $title") { onOpenCategory(title) }
                                 .padding(12.dp),
                         ) {
                             Column(verticalArrangement = Arrangement.SpaceBetween) {
@@ -126,7 +127,10 @@ fun HomeScreen(
                 EmptyFeatureState("Danh mục đang cập nhật", "Nhà thuốc sẽ cập nhật thông tin sản phẩm để bạn tham khảo.")
             }
         } else {
-            items(medicines.take(3), key = { it.id }) { medicine ->
+            val editorialPicks = medicines.filter {
+                it.category in listOf("Mỹ phẩm", "Thực phẩm", "Thực phẩm bổ sung", "Vật tư y tế")
+            }.distinctBy { it.category }.take(4)
+            items(editorialPicks, key = { it.id }) { medicine ->
                 Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                     ProductTile(medicine, onClick = { onOpenProduct(medicine.id) })
                     Text(

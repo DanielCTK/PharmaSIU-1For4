@@ -7,7 +7,7 @@ import com.pharmasiu.mobile.data.model.Medicine
  * No price, batch, stock level or medical guidance below is authoritative.
  */
 object DemoCatalogRepository {
-    val medicines = listOf(
+    private val initialMedicines = listOf(
         Medicine(
             id = "mask-01",
             name = "Khẩu trang y tế",
@@ -69,6 +69,8 @@ object DemoCatalogRepository {
             description = "Không phải thuốc được chào bán. Quy trình này yêu cầu gửi toa hợp lệ và được dược sĩ xem xét trước khi xác nhận.",
         ),
     )
+
+    val medicines: List<Medicine> = initialMedicines + ExpandedMockCatalog.products
 
     fun byId(id: String): Medicine? = medicines.firstOrNull { it.id == id }
 }

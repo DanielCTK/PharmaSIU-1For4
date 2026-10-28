@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.FilterChip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,10 +41,13 @@ import com.pharmasiu.mobile.ui.theme.PharmaPalette
 fun CheckoutScreen(
     lines: List<CartLine>,
     onBack: () -> Unit,
-    onPlaceRequest: (String, String) -> Unit,
+    onPlaceRequest: (String, String, String) -> Unit,
+    initialName: String = "",
+    initialPhone: String = "",
 ) {
-    var fullName by rememberSaveable { mutableStateOf("") }
-    var phone by rememberSaveable { mutableStateOf("") }
+    var fullName by rememberSaveable { mutableStateOf(initialName) }
+    var phone by rememberSaveable { mutableStateOf(initialPhone) }
+    var pickup by rememberSaveable { mutableStateOf("Điểm nhận mẫu A") }
     val validName = fullName.trim().length >= 2
     val validPhone = phone.length in 10..11 && phone.startsWith("0") && phone.all(Char::isDigit)
     val canSubmit = validName && validPhone && lines.isNotEmpty()
@@ -76,6 +80,16 @@ fun CheckoutScreen(
                     }
                 }
             }
+            Text("Chọn điểm nhận minh họa", style = MaterialTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                listOf("Điểm nhận mẫu A", "Điểm nhận mẫu B").forEach { location ->
+                    FilterChip(
+                        selected = pickup == location,
+                        onClick = { pickup = location },
+                        label = { Text(location, style = MaterialTheme.typography.bodySmall) },
+                    )
+                }
+            }
             Surface(color = PharmaPalette.Mint, shape = RoundedCornerShape(21.dp)) {
                 Column(Modifier.fillMaxWidth().padding(17.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
                     Text("Tóm tắt yêu cầu", style = MaterialTheme.typography.titleMedium)
@@ -92,8 +106,8 @@ fun CheckoutScreen(
                 Text("Đơn có thuốc kê đơn. Dược sĩ phải duyệt toa; thao tác này không thay thế thẩm định chuyên môn.", color = PharmaPalette.Warning, style = MaterialTheme.typography.bodyMedium)
             }
             DemoDisclosure()
-            Button(onClick = { onPlaceRequest(fullName.trim(), phone) }, enabled = canSubmit, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp)) {
-                Text("Tạo bản xem trước yêu cầu", fontWeight = FontWeight.Bold)
+            Button(onClick = { onPlaceRequest(fullName.trim(), phone, pickup) }, enabled = canSubmit, modifier = Modifier.fillMaxWidth().height(56.dp), shape = RoundedCornerShape(17.dp)) {
+                Text("Lưu yêu cầu mô phỏng", fontWeight = FontWeight.Bold)
             }
             Text("Chức năng gửi API/đặt hàng thực chưa được kết nối.", style = MaterialTheme.typography.bodyMedium, color = PharmaPalette.Muted)
             Spacer(Modifier.height(20.dp))

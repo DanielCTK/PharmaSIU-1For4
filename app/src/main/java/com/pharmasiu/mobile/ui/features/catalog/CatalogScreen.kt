@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,28 +50,27 @@ import com.pharmasiu.mobile.ui.components.FeatureColors
 import com.pharmasiu.mobile.ui.components.FeatureHeader
 import com.pharmasiu.mobile.ui.components.MedicineCard
 import com.pharmasiu.mobile.ui.components.asFeatureView
+import com.pharmasiu.mobile.domain.CatalogSearchRules
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 
 @Composable
 fun CatalogScreen(
     medicines: List<Medicine>,
     onOpenProduct: (String) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    initialCategory: String = "Tất cả",
+    favorites: Set<String> = emptySet(),
+    onToggleFavorite: (String) -> Unit = {},
 ) {
-    var search by remember { mutableStateOf("") }
-    var selectedFilter by remember { mutableStateOf("Tất cả") }
-    val filters = listOf("Tất cả", "Không kê đơn", "Kê đơn")
-    val filtered = remember(medicines, search, selectedFilter) {
-        medicines.filter { medicine ->
-            val view = medicine.asFeatureView()
-            val matchesQuery = search.isBlank() || listOf(view.name, view.subtitle, view.category)
-                .any { it.contains(search.trim(), ignoreCase = true) }
-            val matchesFilter = when (selectedFilter) {
-                "Kê đơn" -> view.requiresPrescription
-                "Không kê đơn" -> !view.requiresPrescription
-                else -> true
-            }
-            matchesQuery && matchesFilter
-        }
+    var search by rememberSaveable { mutableStateOf("") }
+    var selectedFilter by rememberSaveable(initialCategory) { mutableStateOf(initialCategory) }
+    var selectedSort by rememberSaveable { mutableStateOf("Đề xuất") }
+    var sortExpanded by remember { mutableStateOf(false) }
+    val filters = listOf("Tất cả", "Kê đơn") + medicines.map { it.category }.distinct()
+    val filtered = remember(medicines, search, selectedFilter, selectedSort) {
+        CatalogSearchRules.filter(medicines, search, selectedFilter, selectedSort)
     }
 
     Column(Modifier.fillMaxSize().background(FeatureColors.canvas)) {
@@ -135,7 +135,17 @@ fun CatalogScreen(
         }
         Row(Modifier.fillMaxWidth().padding(start = 21.dp, end = 21.dp, bottom = 11.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("SẢN PHẨM", modifier = Modifier.weight(1f), color = FeatureColors.emerald, letterSpacing = 1.7.sp, fontWeight = FontWeight.Bold, fontSize = 10.sp)
-            Text("${filtered.size} kết quả", color = FeatureColors.muted, fontSize = 11.sp)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("${filtered.size} kết quả", color = FeatureColors.muted, fontSize = 11.sp)
+                Box {
+                    OutlinedButton(onClick = { sortExpanded = true }) { Text(selectedSort, fontSize = 11.sp) }
+                    DropdownMenu(expanded = sortExpanded, onDismissRequest = { sortExpanded = false }) {
+                        listOf("Đề xuất", "Tên A–Z", "Giá thấp", "Giá cao").forEach { item ->
+                            DropdownMenuItem(text = { Text(item) }, onClick = { selectedSort = item; sortExpanded = false })
+                        }
+                    }
+                }
+            }
         }
         if (filtered.isEmpty()) {
             EmptyFeatureState(
@@ -152,7 +162,7 @@ fun CatalogScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(filtered, key = { it.asFeatureView().id }) { medicine ->
-                    MedicineCard(medicine, onOpenProduct)
+                    MedicineCard(medicine, onOpenProduct, isFavorite = medicine.id in favorites, onToggleFavorite = { onToggleFavorite(medicine.id) })
                 }
             }
         }

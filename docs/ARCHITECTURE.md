@@ -12,7 +12,9 @@
 | `data/repository` | Demo data; adapter API thật trong tương lai | Báo giả dữ liệu là real-time |
 | `ui/PharmaSIUApp.kt` | Root composition, stack demo, launch Android picker | Persist order thật |
 
-Hiện nay navigation stack, cart và toa đang ở RAM của root Composable để prototype dễ đọc; **chưa dùng ViewModel, Room, Hilt hoặc Navigation Compose**. Trước khi kết nối backend, chuyển state sang feature ViewModel, repository interface và xử lý process death/back stack sâu hơn.
+Hiện nay navigation stack, cart, hồ sơ demo, yêu thích, sổ địa chỉ, toa và các bản xem trước yêu cầu nằm trong RAM của root Composable để prototype dễ đọc; **chưa dùng ViewModel, Room, Hilt hoặc Navigation Compose**. Chỉ cờ onboarding được lưu vào Preferences. Trước khi kết nối backend, chuyển state sang feature ViewModel, repository interface, secure storage và xử lý process death/back stack sâu hơn.
+
+**Mở rộng v0.2:** `data/repository/ExpandedMockCatalog.kt` bổ sung 24 sản phẩm ngoài 6 mẫu ban đầu; `domain/CatalogSearchRules.kt` sở hữu lọc/tìm kiếm/sắp xếp; `data/model/MockCommerce.kt` có MockProfile, MockAddress và MockRequest; `ui/features/account/` sở hữu auth/hồ sơ/địa chỉ/mật khẩu; `ui/features/community/` sở hữu yêu thích và lịch sử yêu cầu mẫu. Không lưu credential demo vào Prefs.
 
 **Đồng bộ component:** Header, ProductTile, MedicineCard, FeatureButton và artwork nay thuộc `ui/components/`; feature screens chỉ import từ package này, không import component từ một feature khác. Khi nhận ảnh catalog chính thức, đặt URL ở `Medicine.imageUrl`; adapter chỉ chấp nhận HTTPS và dùng ảnh minh họa lúc đang tải/lỗi.
 

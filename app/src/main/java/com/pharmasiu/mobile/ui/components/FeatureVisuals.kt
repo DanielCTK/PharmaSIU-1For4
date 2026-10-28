@@ -41,6 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pharmasiu.mobile.data.model.Medicine
 import com.pharmasiu.mobile.ui.theme.PharmaPalette
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import com.pharmasiu.mobile.ui.components.MedicineMedia
 import java.text.NumberFormat
 import java.util.Locale
@@ -161,7 +166,13 @@ fun MedicineArt(modifier: Modifier = Modifier, seed: String = "", compact: Boole
 }
 
 @Composable
-fun MedicineCard(medicine: Medicine, onOpenProduct: (String) -> Unit, modifier: Modifier = Modifier) {
+fun MedicineCard(
+    medicine: Medicine,
+    onOpenProduct: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
+) {
     val product = medicine.asFeatureView()
     Column(
         modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color.White)
@@ -173,7 +184,6 @@ fun MedicineCard(medicine: Medicine, onOpenProduct: (String) -> Unit, modifier: 
             MedicineMedia(
                 medicine = medicine,
                 modifier = Modifier.fillMaxSize(),
-                fallback = { place -> MedicineArt(place, product.id, compact = true) },
             )
             if (product.requiresPrescription) {
                 Box(Modifier.align(Alignment.TopStart).padding(8.dp)
@@ -181,6 +191,16 @@ fun MedicineCard(medicine: Medicine, onOpenProduct: (String) -> Unit, modifier: 
                     .padding(horizontal = 9.dp, vertical = 5.dp)) {
                     Text("Rx", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
                 }
+            }
+            IconButton(
+                onClick = onToggleFavorite,
+                modifier = Modifier.align(Alignment.TopEnd).size(48.dp),
+            ) {
+                Icon(
+                    if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = if (isFavorite) "Bỏ yêu thích" else "Lưu yêu thích",
+                    tint = FeatureColors.emerald,
+                )
             }
         }
         Spacer(Modifier.height(10.dp))
