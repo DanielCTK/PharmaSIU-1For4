@@ -119,7 +119,7 @@ fun CashierScreen(
                             singleLine = true,
                             shape = RoundedCornerShape(15.dp),
                         )
-                        val matches = remember(query, products) {
+                        val matches = run {
                             val normalized = CatalogSearchRules.normalized(query)
                             products.filter {
                                 normalized.isEmpty() || CatalogSearchRules.normalized(it.name + " " + it.category)
@@ -139,6 +139,7 @@ fun CashierScreen(
                                     product = product,
                                     available = store.stock[product.id] ?: 0,
                                     inCart = store.cart[product.id] ?: 0,
+                                    photoUri = store.photoUris[product.id],
                                     onPreview = { previewProduct = product },
                                     onAdd = { if (!store.add(product)) error = "Sản phẩm không đủ điều kiện bán trong demo." },
                                 )
@@ -191,6 +192,7 @@ fun CashierScreen(
                                             medicine = product,
                                             onOpen = { previewProduct = product },
                                             size = 62.dp,
+                                            photoUri = store.photoUris[product.id],
                                         )
                                     }
                                     Column(Modifier.weight(1f)) {
@@ -279,14 +281,17 @@ fun CashierScreen(
         }
     }
     previewProduct?.let { medicine ->
-        StaffProductMediaPreview(medicine, onDismiss = { previewProduct = null })
+        StaffProductMediaPreview(
+            medicine, onDismiss = { previewProduct = null },
+            photoUri = store.photoUris[medicine.id],
+        )
     }
 }
 
 @Composable
 private fun CounterCatalogRow(
     product: Medicine, available: Int, inCart: Int,
-    onPreview: () -> Unit, onAdd: () -> Unit,
+    photoUri: String?, onPreview: () -> Unit, onAdd: () -> Unit,
 ) {
     val canAdd = CounterRules.availableToAdd(product, inCart, available)
     Surface(color = PharmaPalette.Paper, shape = RoundedCornerShape(16.dp)) {
@@ -295,7 +300,8 @@ private fun CounterCatalogRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            StaffProductThumbnail(medicine = product, onOpen = onPreview, size = 68.dp)
+            StaffProductThumbnail(medicine = product, onOpen = onPreview, size = 68.dp,
+                photoUri = photoUri)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(product.name, fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium, maxLines = 2)

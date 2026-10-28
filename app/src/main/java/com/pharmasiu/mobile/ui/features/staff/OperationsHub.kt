@@ -1,6 +1,8 @@
 package com.pharmasiu.mobile.ui.features.staff
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -92,11 +94,11 @@ fun OperationsHub(role: StaffRole, products: List<Medicine>, store: StaffDemoSto
         Box(Modifier.fillMaxSize().padding(inset)) {
             saved.SaveableStateProvider(tab) {
                 when (tab) {
-                    "overview" -> OperationOverview(role, products, store,
+                    "overview" -> OperationOverview(role, store.products, store,
                         onSell = { tab = "sell" }, onStock = { tab = "stock" },
                         onHistory = { tab = "history" })
-                    "sell" -> CashierScreen(products, store, onLogout = onLogout, embedded = true)
-                    "stock" -> OperationGoods(products, store, canEdit = role == StaffRole.ADMIN)
+                    "sell" -> CashierScreen(store.products, store, onLogout = onLogout, embedded = true)
+                    "stock" -> OperationGoods(store.products, store, canEdit = role == StaffRole.ADMIN)
                     "history" -> OperationHistory(store)
                 }
             }
@@ -261,6 +263,18 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
     var search by rememberSaveable { mutableStateOf("") }
     var filter by rememberSaveable { mutableStateOf("Tất cả") }
     var previewProduct by remember { mutableStateOf<Medicine?>(null) }
+    var showCreate by remember { mutableStateOf(false) }
+    var receivingProduct by remember { mutableStateOf<Medicine?>(null) }
+    var creatingPhotoUri by remember { mutableStateOf<String?>(null) }
+    var pickForProductId by remember { mutableStateOf<String?>(null) }
+    val photoPicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null && canEdit) {
+            val productId = pickForProductId
+            if (productId == null && showCreate) creatingPhotoUri = uri.toString()
+            else if (productId != null) store.changePhoto(productId, uri.toString())
+        }
+        pickForProductId = null
+    }
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth().background(PharmaPalette.Emerald)
             .padding(horizontal = 19.dp, vertical = 17.dp),
@@ -304,12 +318,21 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                     else -> true
                 }
         }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 7.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             Text(filtered.size.toString() + " mặt hàng", fontWeight = FontWeight.Bold,
-                color = PharmaPalette.Ink)
-            Text(if (canEdit) "CHỈNH TỒN DEMO" else "CHỈ XEM",
-                color = PharmaPalette.Muted, fontSize = 10.sp, letterSpacing = 0.7.sp)
+                color = PharmaPalette.Ink, modifier = Modifier.weight(1f))
+            if (canEdit) Button(
+                onClick = { creatingPhotoUri = null; showCreate = true },
+                modifier = Modifier.heightIn(min = 46.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp),
+            ) {
+                Icon(Icons.Outlined.Add, null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(5.dp))
+                Text("Thêm hàng", style = MaterialTheme.typography.labelMedium)
+            } else Text("CHỈ XEM", color = PharmaPalette.Muted,
+                fontSize = 10.sp, letterSpacing = 0.7.sp)
         }
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -329,6 +352,7 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                                 medicine = p,
                                 onOpen = { previewProduct = p },
                                 size = 76.dp,
+                                photoUri = store.photoUris[p.id],
                             )
                             Column(Modifier.weight(1f)) {
                                 Text(p.name, fontWeight = FontWeight.SemiBold, maxLines = 2,
@@ -358,13 +382,64 @@ private fun OperationGoods(products: List<Medicine>, store: StaffDemoStore, canE
                                 ) { Icon(Icons.Outlined.Add, "Tăng tồn của " + p.name) }
                             }
                         }
+                        if (canEdit) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                OutlinedButton(
+                                    modifier = Modifier.weight(1f).heightIn(min = 46.dp),
+                                    onClick = {
+                                        pickForProductId = p.id
+                                        photoPicker.launch("image/*")
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 8.dp),
+                                ) {
+                                    Icon(Icons.Outlined.Image, null, modifier = Modifier.size(17.dp))
+                                    Spacer(Modifier.width(5.dp))
+                                    Text("Đổi ảnh", style = MaterialTheme.typography.labelMedium)
+                                }
+                                if (!p.requiresPrescription) OutlinedButton(
+                                    modifier = Modifier.weight(1f).heightIn(min = 46.dp),
+                                    onClick = { receivingProduct = p },
+                                    contentPadding = PaddingValues(horizontal = 8.dp),
+                                ) {
+                                    Icon(Icons.Outlined.AddCircleOutline, null, modifier = Modifier.size(17.dp))
+                                    Spacer(Modifier.width(5.dp))
+                                    Text("Nhập thêm", style = MaterialTheme.typography.labelMedium)
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
     previewProduct?.let { medicine ->
-        StaffProductMediaPreview(medicine, onDismiss = { previewProduct = null })
+        StaffProductMediaPreview(
+            medicine, onDismiss = { previewProduct = null },
+            photoUri = store.photoUris[medicine.id],
+            onReplacePhoto = if (canEdit) ({
+                pickForProductId = medicine.id
+                photoPicker.launch("image/*")
+            }) else null,
+            onRemovePhoto = if (canEdit) ({ store.changePhoto(medicine.id, null) }) else null,
+        )
+    }
+    if (canEdit && showCreate) {
+        CreateDemoProductSheet(
+            onDismiss = { showCreate = false; creatingPhotoUri = null },
+            onPickPhoto = { pickForProductId = null; photoPicker.launch("image/*") },
+            photoSelected = creatingPhotoUri != null,
+            onSave = { name, category, unit, price, stock ->
+                store.createDemoProduct(name, category, unit, price, stock, creatingPhotoUri) != null
+            },
+        )
+    }
+    if (canEdit) receivingProduct?.let { medicine ->
+        ReceiveDemoStockSheet(
+            productName = medicine.name,
+            currentStock = store.stock[medicine.id] ?: 0,
+            onDismiss = { receivingProduct = null },
+            onReceive = { quantity -> store.receiveDemoStock(medicine.id, quantity) },
+        )
     }
 }
 

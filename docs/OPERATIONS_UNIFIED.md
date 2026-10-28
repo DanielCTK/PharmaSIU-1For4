@@ -52,3 +52,12 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - StaffPreviews.kt: xem trước cổng và khu vận hành theo vai trò mà không cần emulator.
 
 **Hình ảnh trong bản mock:** Hiện 30 sản phẩm chỉ có hình minh họa offline, chưa có ảnh chụp thực tế hoặc imageUrl. Không coi các hình đó là ảnh bao bì thật; bán hàng và quản lý dùng cùng MedicineMedia của gian hàng khách, có fallback khi tải ảnh thất bại.
+
+## Thêm mặt hàng, nhập tồn mẫu, thay ảnh (bổ sung 28/10/2026)
+
+- Đăng nhập vai trò **Quản lý** (PIN demo `2222`) → tab **Hàng hóa** → **Thêm hàng**: nhập tên, nhóm (Mỹ phẩm, Thực phẩm, Thực phẩm bổ sung, Chăm sóc, Thiết bị, Vật tư y tế), đơn vị, giá VNĐ và tồn đầu. Có thể chọn ảnh qua trình chọn hình của Android. Sau khi lưu, mặt hàng lập tức tìm được ở tab Bán hàng nội bộ.
+- Với mặt hàng có sẵn, chọn **Đổi ảnh** để thay thumbnail; chạm thumbnail để xem lớn và có thể thay/bỏ ảnh. Ảnh được chọn chỉ là nội dung thiết bị dùng trong phiên app, không tải lên máy chủ.
+- Chọn **Nhập thêm** để nhập số lượng dương (1–999), cộng vào tồn demo; tổng tồn không được vượt 999. Nút +/- cũ vẫn giữ để thử các thay đổi nhỏ.
+- Nhân viên bán hàng chỉ xem hình/tồn, không thấy nút tạo hàng, thay ảnh hoặc cộng tồn; quản lý có đủ nút theo vai trò UI demo. Đây chưa phải xác thực/phân quyền backend thật.
+- Giữ an toàn: không tạo thuốc kê đơn bằng form nhanh; sản phẩm Rx vẫn bị khóa ở POS; không lưu phiếu mua hàng, nhà cung cấp, lô, hạn FEFO, hóa đơn nhập hoặc SQL. Danh mục khách hàng không bị thay đổi.
+- **Dữ liệu và ảnh mới mất khi tiến trình app bị khởi tạo lại.** Muốn lưu dài hạn, cần làm cùng hệ thống dữ liệu ở giai đoạn tiếp theo. Hình đã chọn từ điện thoại không phải hình xác minh bao bì/chứng nhận thuốc.

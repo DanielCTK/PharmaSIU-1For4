@@ -18,9 +18,14 @@ import java.util.Locale
  * In-memory, counter-only sandbox shared by cashier and admin.
  * NEVER use these numbers to represent real pharmacy or customer inventory.
  */
-class StaffDemoStore(private val products: List<Medicine>) {
+class StaffDemoStore(initialProducts: List<Medicine>) {
+    /** Staff-only catalog. Never mutates the public/customer repository. */
+    val products = mutableStateListOf<Medicine>().also { it.addAll(initialProducts) }
+    /** Picked content URIs are session-only, like the rest of the POS demo. */
+    val photoUris = mutableStateMapOf<String, String>()
+    private var productSequence = 0
     val stock = mutableStateMapOf<String, Int>().also { map ->
-        products.forEachIndexed { index, p ->
+        initialProducts.forEachIndexed { index, p ->
             map[p.id] = if (p.requiresPrescription) 0 else 6 + (index % 9)
         }
     }
@@ -72,6 +77,57 @@ class StaffDemoStore(private val products: List<Medicine>) {
 
     fun clearDraft() = cart.clear()
 
+    fun createDemoProduct(
+        name: String,
+        category: String,
+        unit: String,
+        priceVnd: Long,
+        initialStock: Int,
+        photoUri: String? = null,
+    ): Medicine? {
+        val normalizedName = name.trim()
+        val normalizedUnit = unit.trim()
+        if (normalizedName.length !in 2..90 ||
+            normalizedUnit.length !in 1..24 ||
+            category !in STAFF_DEMO_CATEGORIES ||
+            priceVnd !in 1..100_000_000L ||
+            initialStock !in 0..999 ||
+            products.any { it.name.equals(normalizedName, ignoreCase = true) }
+        ) return null
+        val product = Medicine(
+            id = "staff-demo-" + (++productSequence),
+            name = normalizedName,
+            subtitle = "Mặt hàng do quản lý thêm · Dữ liệu mô phỏng",
+            priceVnd = priceVnd,
+            category = category,
+            requiresPrescription = false,
+            unit = normalizedUnit,
+            description = "Sản phẩm thử trong khu vận hành. Cần xác minh thông tin và điều kiện bán trước khi dùng thực tế.",
+        )
+        products.add(product)
+        stock[product.id] = initialStock
+        if (photoUri?.startsWith("content://") == true) photoUris[product.id] = photoUri
+        return product
+    }
+
+    fun changePhoto(productId: String, photoUri: String?): Boolean {
+        if (products.none { it.id == productId }) return false
+        if (photoUri != null && !photoUri.startsWith("content://")) return false
+        if (photoUri == null) photoUris.remove(productId)
+        else photoUris[productId] = photoUri
+        return true
+    }
+
+    fun receiveDemoStock(productId: String, quantity: Int): Boolean {
+        if (quantity !in 1..999) return false
+        val product = products.firstOrNull { it.id == productId } ?: return false
+        if (product.requiresPrescription) return false
+        val next = (stock[productId] ?: return false).toLong() + quantity
+        if (next > 999L) return false
+        stock[productId] = next.toInt()
+        return true
+    }
+
     fun adjustDemoStock(productId: String, delta: Int) {
         val product = products.firstOrNull { it.id == productId } ?: return
         if (product.requiresPrescription) return
@@ -99,5 +155,11 @@ class StaffDemoStore(private val products: List<Medicine>) {
         cart.clear()
         lastReceipt = sale
         return sale
+    }
+
+    companion object {
+        val STAFF_DEMO_CATEGORIES = listOf(
+            "Mỹ phẩm", "Thực phẩm", "Thực phẩm bổ sung", "Chăm sóc", "Thiết bị", "Vật tư y tế",
+        )
     }
 }
