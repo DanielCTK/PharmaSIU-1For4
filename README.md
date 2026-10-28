@@ -21,6 +21,10 @@ Chạy kiểm tra từ terminal:
 
 Trên Windows thay `./gradlew` bằng `gradlew.bat`. APK debug được tạo tại `app/build/outputs/apk/debug/` khi build thành công. **Không commit** `local.properties`, file ký ứng dụng hay thông tin khách hàng thật.
 
+### Chỉ muốn xem UI, không muốn bật Emulator?
+
+Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) trong Android Studio, chọn **Split** hoặc **Design** → **Build & Refresh**. Có **10 bản Compose Preview** cho trang chủ, danh mục, chi tiết, giỏ hàng, toa, checkout, trạng thái và màn hình nhỏ. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
+
 ## Những luồng đã có trong bản demo
 
 | Màn hình | Nội dung |
@@ -53,6 +57,7 @@ PharmaSIU-1For4/
 │       │           ├── PharmaSIUApp.kt        # Điều hướng & demo state
 │       │           ├── theme/                 # Palette, type, shapes
 │       │           ├── components/            # Shared UI primitives
+│       │           ├── previews/              # 10 Compose Previews không cần Emulator
 │       │           └── features/
 │       │               ├── home/
 │       │               ├── catalog/
@@ -64,6 +69,7 @@ PharmaSIU-1For4/
 │       └── test/java/com/pharmasiu/mobile/domain/
 ├── docs/
 │   ├── android-ui-brain/                      # Bản quy tắc native có thể mang theo repo
+│   ├── COMPOSE_PREVIEW.md
 │   ├── ARCHITECTURE.md
 │   ├── TEAM_GUIDE.md
 │   └── QA_REPORT.md
