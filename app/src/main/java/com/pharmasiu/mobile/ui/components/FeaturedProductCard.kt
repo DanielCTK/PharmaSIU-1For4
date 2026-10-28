@@ -105,7 +105,7 @@ fun FeaturedProductCard(
 
 /** Generic offline product silhouettes, not actual product photographs/packaging. */
 @Composable
-private fun ProductShowcaseIllustration(medicine: Medicine, modifier: Modifier = Modifier) {
+fun ProductShowcaseIllustration(medicine: Medicine, modifier: Modifier = Modifier) {
     val category = medicine.category
     val palette = when (category) {
         "Mỹ phẩm" -> listOf(Color(0xFFF9DFE5), Color(0xFFFFF5ED), Color(0xFFFFFFFF), Color(0xFFBB7491))
@@ -133,6 +133,41 @@ private fun ProductShowcaseIllustration(medicine: Medicine, modifier: Modifier =
                     drawCircle(Color(0xFFF6E6BE),
                         radius = w * .042f,
                         center = Offset(w * (.30f + .13f * (i % 4)), h * (.41f + .08f * (i / 4))))
+                }
+            } else if (category == "Vật tư y tế") {
+                // A generic folded mask silhouette, instead of a bottle icon.
+                drawOval(
+                    accent.copy(alpha = .52f),
+                    topLeft = Offset(w * .11f, h * .42f),
+                    size = Size(w * .30f, h * .26f),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(w * .018f),
+                )
+                drawOval(
+                    accent.copy(alpha = .52f),
+                    topLeft = Offset(w * .59f, h * .42f),
+                    size = Size(w * .30f, h * .26f),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(w * .018f),
+                )
+                drawRoundRect(
+                    accent.copy(alpha = .15f),
+                    topLeft = Offset(w * .22f, h * .37f),
+                    size = Size(w * .58f, h * .34f),
+                    cornerRadius = CornerRadius(w * .06f),
+                )
+                drawRoundRect(
+                    foreground,
+                    topLeft = Offset(w * .21f, h * .35f),
+                    size = Size(w * .58f, h * .34f),
+                    cornerRadius = CornerRadius(w * .06f),
+                )
+                repeat(3) { line ->
+                    val lineY = h * (.46f + .07f * line)
+                    drawLine(
+                        color = accent.copy(alpha = .40f),
+                        start = Offset(w * .31f, lineY),
+                        end = Offset(w * .69f, lineY),
+                        strokeWidth = w * .012f,
+                    )
                 }
             } else {
                 val top = h * .23f

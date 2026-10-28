@@ -1,6 +1,6 @@
 # Xem giao diện PharmaSIU không cần Android Emulator
 
-PharmaSIU Mobile có **28 Compose Previews** tại:
+PharmaSIU Mobile có **31 Compose Previews** tại:
 
 `app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt`
 
@@ -20,9 +20,11 @@ Các preview dùng dữ liệu mẫu, **không cần emulator, thiết bị Andr
 
 - Lần đầu mở có thể mất thời gian do Android Studio phải tải dependency/Gradle và biên dịch module. Sau đó Preview thường nhẹ hơn khởi động emulator.
 - Preview để xem bố cục, màu, typography và một số tương tác cục bộ. Nó **không thay thế** kiểm thử navigation thật, quyền hệ thống, tải ảnh, hiệu năng hoặc các luồng backend.
-- Nếu chỉ muốn xem một màn hình, bật **Focus Mode** để tránh render cả 28 bản cùng lúc.
+- Nếu chỉ muốn xem một màn hình, bật **Focus Mode** để tránh render cả 31 bản cùng lúc.
 - Nếu hiện *Unresolved reference* hoặc không render, kiểm tra Gradle Sync/build trước. Không cần tạo AVD chỉ để sửa lỗi sync.
 
 Tài liệu Android chính thức: <https://developer.android.com/develop/ui/compose/tooling/previews>
 
 **Xem ngay lưới nổi bật:** mở `FeaturedShowcasePreviews.kt` trong cùng thư mục, chọn preview 390dp hoặc máy nhỏ 320dp. Đây là bố cục 2 cột so le cuộn một vùng, có thao tác yêu thích trong Interactive Mode.
+
+**Danh mục đã thiết kế lại:** `app/src/main/java/com/pharmasiu/mobile/ui/previews/CatalogDesignPreviews.kt` — ba trạng thái độc lập: **390dp**, **320dp / Mỹ phẩm**, và **390dp fontScale=1.5**. Chọn Split/Design để xem mà không cần emulator.

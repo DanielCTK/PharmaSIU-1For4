@@ -175,57 +175,70 @@ fun MedicineCard(
 ) {
     val product = medicine.asFeatureView()
     Column(
-        modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(Color.White)
-            .border(1.dp, FeatureColors.line, RoundedCornerShape(22.dp))
-            .clickable(role = Role.Button, onClickLabel = "Xem chi tiết ${product.name}") { onOpenProduct(product.id) }
-            .padding(10.dp),
+        modifier.fillMaxWidth().clip(RoundedCornerShape(19.dp)).background(Color.White)
+            .border(1.dp, FeatureColors.line.copy(alpha = .82f), RoundedCornerShape(19.dp))
+            .clickable(role = Role.Button, onClickLabel = "Xem chi tiáº¿t " + product.name) {
+                onOpenProduct(product.id)
+            },
     ) {
-        Box(Modifier.fillMaxWidth().height(126.dp)) {
+        Box(Modifier.fillMaxWidth().height(156.dp).padding(6.dp)) {
             MedicineMedia(
                 medicine = medicine,
                 modifier = Modifier.fillMaxSize(),
+                fallback = { imageModifier -> ProductShowcaseIllustration(medicine, imageModifier) },
             )
-            if (product.requiresPrescription) {
-                Box(Modifier.align(Alignment.TopStart).padding(8.dp)
-                    .background(FeatureColors.emerald, RoundedCornerShape(7.dp))
-                    .padding(horizontal = 9.dp, vertical = 5.dp)) {
-                    Text("Rx", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                }
+            val categoryLabel = when {
+                product.requiresPrescription -> "Cáº¦N TOA"
+                product.category == "Thá»±c pháº©m bá»• sung" -> "Bá»” SUNG"
+                product.category == "KhÃ´ng kÃª Ä‘Æ¡n" -> "OTC"
+                product.category == "Váº­t tÆ° y táº¿" -> "Váº¬T TÆ¯"
+                else -> product.category.uppercase(Locale("vi", "VN"))
+            }
+            Box(
+                Modifier.align(Alignment.TopStart).padding(5.dp)
+                    .clip(RoundedCornerShape(8.dp)).background(Color.White.copy(alpha = .94f))
+                    .padding(horizontal = 7.dp, vertical = 5.dp),
+            ) {
+                Text(categoryLabel, color = FeatureColors.deep,
+                    fontWeight = FontWeight.Bold, fontSize = 9.sp,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             IconButton(
                 onClick = onToggleFavorite,
-                modifier = Modifier.align(Alignment.TopEnd).size(48.dp),
+                modifier = Modifier.align(Alignment.TopEnd).padding(2.dp).size(44.dp)
+                    .background(Color.White.copy(alpha = .92f), RoundedCornerShape(13.dp)),
             ) {
                 Icon(
                     if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = if (isFavorite) "Bỏ yêu thích" else "Lưu yêu thích",
+                    contentDescription = (if (isFavorite) "Bá» yÃªu thÃ­ch " else "LÆ°u yÃªu thÃ­ch ") + product.name,
                     tint = FeatureColors.emerald,
+                    modifier = Modifier.size(21.dp),
                 )
             }
         }
-        Spacer(Modifier.height(10.dp))
-        Text(product.category.uppercase(Locale("vi", "VN")), color = FeatureColors.muted,
-            fontSize = 10.sp, letterSpacing = .8.sp, fontWeight = FontWeight.Bold,
-            maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Spacer(Modifier.height(5.dp))
-        Text(product.name, fontSize = 14.sp, lineHeight = 19.sp, color = FeatureColors.deep,
-            fontWeight = FontWeight.Bold, minLines = 2, maxLines = 2, overflow = TextOverflow.Ellipsis)
-        Spacer(Modifier.height(4.dp))
-        Text(product.subtitle, color = FeatureColors.muted, fontSize = 11.sp,
-            maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Spacer(Modifier.height(9.dp))
-        Text(product.price?.toVnd() ?: "Giá khi xác nhận", color = FeatureColors.emerald,
-            fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        Spacer(Modifier.height(6.dp))
-        Text("Kiểm tra khi đặt trước", color = FeatureColors.muted, fontSize = 10.sp, lineHeight = 14.sp)
-        if (product.requiresPrescription) {
-            Spacer(Modifier.height(4.dp))
-            Text("Cần dược sĩ duyệt toa", color = FeatureColors.rx, fontSize = 10.sp,
-                lineHeight = 14.sp, fontWeight = FontWeight.SemiBold)
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = 11.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(product.name, fontSize = 13.sp, lineHeight = 18.sp, color = FeatureColors.deep,
+                fontWeight = FontWeight.Bold, minLines = 2, maxLines = 2,
+                overflow = TextOverflow.Ellipsis)
+            Text(product.subtitle, color = FeatureColors.muted, fontSize = 11.sp,
+                maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                product.price?.toVnd() ?: "Chá» bÃ¡o giÃ¡",
+                color = FeatureColors.emerald, fontWeight = FontWeight.Bold,
+                fontSize = 15.sp, maxLines = 1, overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                if (product.requiresPrescription) "DÆ°á»£c sÄ© cáº§n kiá»ƒm tra toa" else "GiÃ¡ vÃ  hÃ ng cáº§n xÃ¡c nháº­n",
+                color = if (product.requiresPrescription) FeatureColors.rx else FeatureColors.muted,
+                fontSize = 10.sp, lineHeight = 14.sp,
+                maxLines = 2,
+            )
         }
     }
 }
-
 @Composable
 fun EmptyFeatureState(title: String, detail: String, modifier: Modifier = Modifier) {
     Column(

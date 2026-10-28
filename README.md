@@ -23,13 +23,18 @@ Trên Windows thay `./gradlew` bằng `gradlew.bat`. APK debug được tạo t�
 
 ### Chỉ muốn xem UI, không muốn bật Emulator?
 
-Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) hoặc [`ShopFlowPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/ShopFlowPreviews.kt), chọn **Split** / **Design** → **Build & Refresh**. Có **28 bản Compose Preview** cho màn hình thương mại, đăng nhập, tài khoản, lịch sử, địa chỉ, màn hình nhỏ và chữ lớn. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
+Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) hoặc [`ShopFlowPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/ShopFlowPreviews.kt), chọn **Split** / **Design** → **Build & Refresh**. Có **31 bản Compose Preview** cho màn hình thương mại, đăng nhập, tài khoản, lịch sử, địa chỉ, màn hình nhỏ và chữ lớn. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
 
 ### Sản phẩm nổi bật — lưới so le hai cột
 
 Trang chủ có **LazyVerticalStaggeredGrid** hai cột như luồng khám phá sản phẩm của ứng dụng thương mại điện tử: ảnh lớn với chiều cao so le, thẻ có tên/giá tham khảo và nút yêu thích; cuộn tiếp tục để xem nhiều sản phẩm. Nhấn card mở chi tiết; các chip **Dành cho bạn / Mỹ phẩm / Thực phẩm / Thiết bị / Chăm sóc** lọc ngay trong mục nổi bật. Không dựng số lượt bán, % giảm giá hay tồn kho giả. Hình sản phẩm là minh họa offline tự thiết kế, không phải ảnh bao bì thuốc thật.
 
 Nếu muốn xem riêng phần này mà không khởi động emulator, mở [`FeaturedShowcasePreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/FeaturedShowcasePreviews.kt) để chọn preview **390dp** hoặc **320dp**. Các ảnh minh họa dựng trực tiếp bằng Compose; khi có URL ảnh sản phẩm thực được xác minh, `MedicineMedia` sẽ dùng Coil.
+### Danh mục sản phẩm — bố cục Emerald nâng cấp
+
+Trang **Danh mục** có banner giới thiệu nhiều loại hàng với hình minh họa vector tại vùng góc phải (không quảng cáo giả), thanh tìm kiếm Material3, chip nhóm hàng, thanh công cụ tóm tắt **số kết quả + sắp xếp**, và lưới sản phẩm hai cột với artwork riêng theo ngành hàng, nhãn loại và nút yêu thích. Toàn bộ màn hình dùng **một vùng cuộn**, tránh trang trên cố định chiếm quá nhiều diện tích. Đã kiểm tra trực tiếp trên emulator kích thước 1080×2400. [Ảnh chụp danh mục Emerald](docs/screenshots/catalog-emerald.png).
+
+Để xem riêng màn hình mới mà không cần chạy app, mở [`CatalogDesignPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/CatalogDesignPreviews.kt): có bản 390dp, 320dp và chữ lớn 1,5×.
 ### Mở nhanh trên máy đã cấu hình
 
 Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo Studio. `local.properties` được cấu hình riêng tại `C:\PharmaSIU\PharmaSIU-1For4` và không đưa lên Git. Chỉ mở thư mục gốc bằng **File → Open**; Android Studio tự thực hiện **Gradle Sync**, không cần mở terminal. Khi sync xong, xem UI tại `ui/previews/PharmaScreenPreviews.kt` bằng **Split/Design** mà không cần emulator. **Lần mở đầu có thể phải tải Gradle và thư viện trên mạng; đã build APK debug và chạy JUnit thành công tại máy Windows này (việc xem trên thiết bị vẫn cần xác minh).**
@@ -75,7 +80,7 @@ PharmaSIU-1For4/
 │       │           ├── PharmaSIUApp.kt        # Điều hướng & demo state
 │       │           ├── theme/                 # Palette, type, shapes
 │       │           ├── components/            # Shared UI + Coil 3 image adapter
-│       │           ├── previews/              # 28 Compose Previews không cần Emulator
+│       │           ├── previews/              # 31 Compose Previews không cần Emulator
 │       │           └── features/
 │       │               ├── onboarding/
 │       │               ├── account/

@@ -11,6 +11,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import com.pharmasiu.mobile.data.model.*
 import com.pharmasiu.mobile.data.repository.DemoCatalogRepository
@@ -127,6 +129,13 @@ fun PharmaSIUApp() {
                     topTabs.forEach { (route, title, symbol) ->
                         NavigationBarItem(
                             selected = current == route,
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = PharmaPalette.Emerald,
+                                selectedTextColor = PharmaPalette.Emerald,
+                                indicatorColor = PharmaPalette.Lime,
+                                unselectedIconColor = PharmaPalette.Muted,
+                                unselectedTextColor = PharmaPalette.Muted,
+                            ),
                             onClick = { go(route) },
                             icon = {
                                 val count = when (route) { "favorites" -> favoriteIds.size; "orders" -> myRequests.size; else -> 0 }
@@ -136,7 +145,7 @@ fun PharmaSIUApp() {
                                     }
                                 } else Icon(symbol, contentDescription = null)
                             },
-                            label = { Text(title, maxLines = 1) },
+                            label = { Text(title, fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             alwaysShowLabel = true,
                         )
                     }
