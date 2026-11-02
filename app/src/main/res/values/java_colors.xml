@@ -11,6 +11,6 @@
   <color name="ink">#192A24</color>
   <color name="muted">#617168</color>
   <color name="line">#DCE5DC</color>
-  <color name="warning">#9B4D17</color>
-  <color name="warning_surface">#FFF1E4</color>
+  <color name="warning">#073D30</color>
+  <color name="warning_surface">#E6F3E6</color>
 </resources>

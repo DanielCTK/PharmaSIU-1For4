@@ -377,7 +377,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="9dp"
                     android:text="Hóa đơn được lưu trữ phục vụ đối soát và quản lý ca trực."
-                    android:textColor="@color/warning"
+                    android:textColor="@color/muted"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
@@ -439,7 +439,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Hóa đơn bán lẻ điện tử nhà thuốc PharmaSIU."
-                android:textColor="@color/warning"
+                android:textColor="@color/muted"
                 android:textSize="12sp" />
 
             <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"

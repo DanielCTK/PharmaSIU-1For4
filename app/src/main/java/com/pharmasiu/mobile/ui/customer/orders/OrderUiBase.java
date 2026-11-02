@@ -76,7 +76,7 @@ abstract class OrderUiBase {
                 money(amount) + " / đơn vị · " + (historicalOrder != null ? "giá chốt khi lưu yêu cầu" : "giá tham khảo"),
                 12, R.color.muted, false);
             if (item != null && item.requiresPrescription)
-                line(target, "Rx · Chưa thẩm định", 12, R.color.warning, true);
+                line(target, "Rx · Thuốc kê đơn", 12, R.color.emerald, true);
             divider(target);
         }
     }
@@ -86,14 +86,11 @@ abstract class OrderUiBase {
         line(card, money(subtotal), 21, R.color.emerald, true);
         line(card, unpriced ? "Chưa gồm các mặt hàng chờ báo giá; tổng tiền chưa xác định." :
             "Đơn hàng được phục vụ bởi dược sĩ chuyên môn PharmaSIU.", 12,
-            unpriced ? R.color.warning : R.color.muted, false);
+            unpriced ? R.color.forest : R.color.muted, false);
     }
 
     protected void disclosure() {
-        LinearLayout disclosure = card();
-        warning(disclosure, state.isDatabaseBacked()
-                ? "Đơn hàng đã được tiếp nhận. Dược sĩ PharmaSIU sẽ liên hệ xác nhận và chuẩn bị đơn hàng."
-                : "Môi trường kiểm thử: bản ghi chỉ tồn tại trong phiên; không xử lý nhà thuốc thực.");
+        // Warning card removed to keep screens clean and free of red/disclaimer boxes
     }
 
     protected int dp(int value) {

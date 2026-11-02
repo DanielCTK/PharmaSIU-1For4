@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Khu quản trị yêu cầu tài khoản được cấp quyền trong cơ sở dữ liệu."
-                android:textColor="@color/warning"
+                android:textColor="@color/muted"
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>

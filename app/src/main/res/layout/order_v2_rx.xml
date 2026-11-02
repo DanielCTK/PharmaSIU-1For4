@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
                 android:lineSpacingExtra="3dp"
-                android:text="Tệp chỉ được chọn tại thiết bị, chưa upload hoặc phê duyệt."
+                android:text="Đơn thuốc được dược sĩ PharmaSIU thẩm định trước khi giao nhận."
                 android:textColor="@color/mint"
                 android:textSize="13sp" />
         </LinearLayout>

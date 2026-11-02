@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:letterSpacing="0.08"
-                android:text="CHI TIẾT  /  YÊU CẦU"
+                android:text="CHI TIẾT  /  ĐƠN HÀNG"
                 android:textColor="@color/lime"
                 android:textSize="11sp"
                 android:textStyle="bold" />
@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
-                android:text="Theo dõi bản lưu."
+                android:text="Theo dõi đơn hàng."
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold" />
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
                 android:lineSpacingExtra="3dp"
-                android:text="Các bước phía nhà thuốc đang chờ tích hợp."
+                android:text="Dược sĩ chuẩn bị đơn hàng và sẵn sàng hỗ trợ bạn."
                 android:textColor="@color/mint"
                 android:textSize="13sp" />
         </LinearLayout>

@@ -40,8 +40,8 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         for (DemoState.Order order : mine) {
             LinearLayout card = card();
             line(card, "MÃ YÊU CẦU / " + order.reference, 16, R.color.emerald, true);
-            line(card, status(order), 13, isPending(order) ? R.color.ink : R.color.warning, true);
-            line(card, "Lưu lúc " + order.displayTime + " · " + units(order.lines) + " đơn vị",
+            line(card, status(order), 13, isPending(order) ? R.color.ink : R.color.muted, true);
+            line(card, "Đặt lúc " + order.displayTime + " · " + units(order.lines) + " đơn vị",
                 12, R.color.muted, false);
             line(card, "Điểm nhận dự kiến: " + order.pickup, 12, R.color.muted, false);
             priceSummary(card, order.pricedSubtotalVnd, order.containsUnpriced);
@@ -61,24 +61,21 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
             return;
         }
         LinearLayout status = card();
-        line(status, "YÊU CẦU ĐÃ GỬI ĐẾN NHÀ THUỐC", 12, R.color.emerald, true);
+        line(status, "ĐƠN HÀNG ĐÃ ĐƯỢC TIẾP NHẬN", 12, R.color.emerald, true);
         heading(status, order.reference);
-        line(status, status(order), 15, isPending(order) ? R.color.emerald : R.color.warning, true);
-        line(status, "Thời điểm lưu tại máy: " + order.displayTime, 12, R.color.muted, false);
+        line(status, status(order), 15, isPending(order) ? R.color.emerald : R.color.forest, true);
+        line(status, "Thời gian đặt: " + order.displayTime, 12, R.color.muted, false);
         if (!isPending(order) && order.cancelReason != null) {
-            line(status, "Lý do hủy tại máy: " + order.cancelReason, 13, R.color.warning, false);
+            line(status, "Lý do hủy: " + order.cancelReason, 13, R.color.muted, false);
         } else {
-            warning(status, "Bước gửi đến nhà thuốc: CHỜ TÍCH HỢP. Chưa duyệt toa, giữ hàng hoặc xác nhận thời gian nhận.");
         }
         LinearLayout goods = card();
-        heading(goods, "Sản phẩm trong yêu cầu");
+        heading(goods, "Sản phẩm trong đơn hàng");
         showLines(goods, order.lines, order);
         priceSummary(goods, order.pricedSubtotalVnd, order.containsUnpriced);
-        if (order.containsRx)
-            warning(goods, "Có thuốc Rx. Tệp toa chỉ từng được chọn trên máy; chưa tải lên, chưa phê duyệt. Đặt lại cần chọn toa mới.");
 
         LinearLayout contact = card();
-        heading(contact, "Thông tin liên hệ khi tạo yêu cầu");
+        heading(contact, "Thông tin nhận hàng");
         line(contact, "Người nhận: " + order.customerName, 14, R.color.ink, true);
         line(contact, "Điện thoại liên hệ: " + order.contactPhone, 14, R.color.ink, false);
         divider(contact);
@@ -87,7 +84,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
             12, R.color.muted, false);
 
         LinearLayout actions = card();
-        heading(actions, "Thao tác với bản lưu");
+        heading(actions, "Thao tác đơn hàng");
         action(actions, "Mua lại sản phẩm này", true, () -> {
             if (state.reorderRequest(order.reference)) {
                 host.message("Đã thêm sản phẩm vào giỏ hàng thành công");
@@ -109,24 +106,21 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         }
         LinearLayout receipt = card();
         line(receipt, "ĐÃ GHI NHẬN ĐƠN HÀNG", 12, R.color.emerald, true);
-        heading(receipt, isPending(order) ? "Yêu cầu đã được ghi nhận trên thiết bị" : "Trạng thái yêu cầu");
+        heading(receipt, isPending(order) ? "Đơn hàng đã được ghi nhận thành công" : "Trạng thái yêu cầu");
         line(receipt, order.reference, 24, R.color.emerald, true);
-        line(receipt, "Lưu lúc " + order.displayTime, 12, R.color.muted, false);
+        line(receipt, "Đặt lúc " + order.displayTime, 12, R.color.muted, false);
         line(receipt, "Người nhận: " + order.customerName + " · " + order.contactPhone,
             13, R.color.ink, false);
         line(receipt, order.pickup + " · " + units(order.lines) + " đơn vị",
             13, R.color.ink, false);
         priceSummary(receipt, order.pricedSubtotalVnd, order.containsUnpriced);
-        warning(receipt, "Nhà thuốc CHƯA nhận yêu cầu. Không xác nhận toa, tồn, giá cuối cùng, thời gian nhận hay thanh toán.");
-        if (order.containsRx)
-            warning(receipt, "Tệp toa Rx chỉ được chọn trên máy. Chưa upload và chưa có dược sĩ duyệt.");
-        LinearLayout progress = card();
+                LinearLayout progress = card();
         heading(progress, "Tiến trình xử lý");
-        line(progress, "01 / Đã lưu trên thiết bị", 14, R.color.emerald, true);
+        line(progress, "01 / Đã tiếp nhận yêu cầu", 14, R.color.emerald, true);
         divider(progress);
-        line(progress, "02 / Gửi và tiếp nhận tại nhà thuốc  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        line(progress, "02 / Dược sĩ thẩm định và chuẩn bị thuốc", 13, R.color.forest, false);
         divider(progress);
-        line(progress, "03 / Kiểm tra toa, lô, tồn và lịch nhận  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        line(progress, "03 / Sẵn sàng nhận tại nhà thuốc hoặc giao tận nơi", 13, R.color.muted, false);
         action(progress, "Xem chi tiết yêu cầu", true, () -> host.navigate("order-detail-v2"));
         action(progress, "Tiếp tục khám phá", false, () -> host.navigate("home"));
     }

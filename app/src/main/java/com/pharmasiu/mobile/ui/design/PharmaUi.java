@@ -131,14 +131,14 @@ public final class PharmaUi {
         Context context=parent.getContext();
         TextView caption = new TextView(context);
         caption.setText(text);
-        caption.setTextColor(color(context,R.color.warning));
+        caption.setTextColor(color(context,R.color.forest));
         caption.setTextSize(12);
         caption.setLineSpacing(dp(context,3),1f);
         caption.setPadding(dp(context,14),dp(context,12),dp(context,14),dp(context,12));
         GradientDrawable panel = new GradientDrawable();
-        panel.setColor(color(context,R.color.warning_surface));
+        panel.setColor(color(context,R.color.mint));
         panel.setCornerRadius(dp(context, 10));
-        panel.setStroke(dp(context,1),0xFFEECFAF);
+        panel.setStroke(dp(context,1),color(context,R.color.line));
         caption.setBackground(panel);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin = dp(context,12);

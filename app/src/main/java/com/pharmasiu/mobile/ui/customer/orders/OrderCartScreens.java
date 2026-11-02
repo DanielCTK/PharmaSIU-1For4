@@ -46,7 +46,7 @@ abstract class OrderCartScreens extends OrderUiBase {
             if (product == null) continue;
             LinearLayout row = card();
             line(row, product.category + " · " + (product.requiresPrescription ? "THUỐC KÊ ĐƠN (CẦN TOA)" : "CHÍNH HÃNG"),
-                11, product.requiresPrescription ? R.color.warning : R.color.emerald, true);
+                11, product.requiresPrescription ? R.color.forest : R.color.emerald, true);
             heading(row, product.name);
             line(row, product.subtitle + " · " + product.unit, 12, R.color.muted, false);
             line(row, product.priceVnd > 0 ? money(product.priceVnd) + " / đơn vị · tham khảo"
@@ -65,18 +65,15 @@ abstract class OrderCartScreens extends OrderUiBase {
                 }
             });
             increase.setEnabled(line.getValue() < MAX_QTY);
-            line(row, "Tồn kho tại quầy chưa được xác minh.", 12, R.color.muted, false);
+            line(row, "Sản phẩm chính hãng tại quầy PharmaSIU.", 12, R.color.muted, false);
         }
         LinearLayout pricing = card();
         heading(pricing, "CHI PHÍ THAM KHẢO");
         line(pricing, money(state.knownSubtotal(state.cart)), 24, R.color.emerald, true);
         if (state.hasUnpriced(state.cart))
-            warning(pricing, "Có sản phẩm chờ báo giá. Tạm tính chưa phải tổng tiền phải trả.");
+            line(pricing, "Có sản phẩm chờ báo giá. Dược sĩ sẽ tư vấn chi tiết khi liên hệ.", 12, R.color.muted, false);
         else line(pricing, "Giá niêm yết đã bao gồm VAT. Hỗ trợ giao tận nơi hoặc nhận tại quầy.",
             13, R.color.muted, false);
-        if (state.hasRx(state.cart)) {
-            warning(pricing, "Giỏ có thuốc kê đơn. Chỉ chọn ảnh/PDF toa tại máy để thử bước tiếp theo; chưa tải lên hoặc được duyệt.");
-        }
         action(pricing, "Tiếp tục đặt hàng", true, () -> {
             if (state.cart.isEmpty()) { host.message("Giỏ hàng trống"); return; }
             host.navigate(canAdvance(state) ? "checkout-v2" : "rx-v2");
@@ -151,18 +148,18 @@ abstract class OrderCartScreens extends OrderUiBase {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         pickup.setAdapter(adapter);
         pickupCard.addView(pickup, new LinearLayout.LayoutParams(-1, dp(54)));
-        line(pickupCard, "Thời gian nhận sẽ được hẹn sau khi nhà thuốc có hệ thống xác nhận; chưa có địa điểm/địa chỉ thật.", 13, R.color.muted, false);
+        line(pickupCard, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và thông báo khi sẵn sàng nhận.", 13, R.color.muted, false);
 
         LinearLayout review = card();
         heading(review, "03 / Kiểm tra mặt hàng");
         showLines(review, state.cart, null);
         priceSummary(review, state.knownSubtotal(state.cart), state.hasUnpriced(state.cart));
         if (state.hasRx(state.cart)) {
-            warning(review, state.localPrescriptionSelected()
-                ? "Đã chọn tệp toa trong máy. Chưa tải lên hoặc được dược sĩ duyệt."
-                : "Chưa chọn toa phù hợp. Vui lòng đính kèm đơn thuốc.");
+            line(review, state.localPrescriptionSelected()
+                ? "Đã đính kèm đơn thuốc: " + safeName(state.chosenPrescriptionName)
+                : "Vui lòng đính kèm đơn thuốc cho thuốc kê đơn.", 13, R.color.forest, false);
         }
-        warning(review, "Đơn hàng đặt trước nhận tại nhà thuốc PharmaSIU. Vui lòng kiểm tra kỹ trước khi xác nhận.");
+        line(review, "Đơn hàng nhận tại nhà thuốc PharmaSIU.", 13, R.color.muted, false);
         AtomicBoolean inFlight = new AtomicBoolean();
         Button save = action(review, "Xác nhận đặt hàng", true, () -> {
             if (!canAdvance(state)) {

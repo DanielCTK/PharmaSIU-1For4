@@ -49,7 +49,7 @@ public abstract class AccountFavorites extends AccountAddress {
                 text(c, product.subtitle, 13, R.color.muted, false, 6);
                 text(c, product.requiresPrescription ? "Cần thẩm định toa • RX" :
                     "Thông tin tham khảo • " + product.category, 12,
-                    product.requiresPrescription ? R.color.warning : R.color.emerald, true, 8);
+                    product.requiresPrescription ? R.color.forest : R.color.emerald, true, 8);
                 text(c, product.priceVnd <= 0 ? "Giá chưa xác nhận" :
                     String.format(new Locale("vi", "VN"), "%,d ₫ (Đã gồm VAT)", product.priceVnd),
                     15, R.color.emerald, true, 8);

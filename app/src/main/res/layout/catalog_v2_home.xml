@@ -113,10 +113,5 @@
             app:iconGravity="textEnd"
             android:textAllCaps="false"
             android:backgroundTint="@color/emerald" android:textColor="@color/white"/>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp" android:layout_marginTop="16dp"
-            android:background="@drawable/catalog_v2_surface" android:padding="14dp"
-            android:text="PharmaSIU · Cam kết 100% thuốc &amp; dược phẩm chính hãng, xuất xứ minh bạch, hóa đơn đầy đủ."
-            android:textColor="@color/warning" android:textSize="12sp"/>
     </LinearLayout>
 </ScrollView>

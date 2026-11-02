@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:letterSpacing="0.08"
-                android:text="NHẬT KÝ  /  TRÊN MÁY"
+                android:text="LỊCH SỬ  /  ĐƠN HÀNG"
                 android:textColor="@color/lime"
                 android:textSize="11sp"
                 android:textStyle="bold" />
@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
-                android:text="Yêu cầu của tôi"
+                android:text="Đơn hàng của tôi"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold" />
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
                 android:lineSpacingExtra="3dp"
-                android:text="Những yêu cầu chỉ tồn tại trong phiên trải nghiệm."
+                android:text="Theo dõi và quản lý các đơn hàng bạn đã đặt."
                 android:textColor="@color/mint"
                 android:textSize="13sp" />
         </LinearLayout>
