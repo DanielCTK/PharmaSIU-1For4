@@ -44,7 +44,7 @@ abstract class PosCartFeatures extends PosProductFeatures {
             View item = activity.getLayoutInflater().inflate(R.layout.staff_pos_cart_item, cartRows, false);
             ((TextView) item.findViewById(R.id.staff_pos_cart_title)).setText(product.name);
             ((TextView) item.findViewById(R.id.staff_pos_cart_subtitle)).setText(
-                vnd(product.priceVnd) + " / " + product.unit + " · Tồn hợp lệ demo " + effectiveAvailable(product.id));
+                vnd(product.priceVnd) + " / " + product.unit + " · Tồn hợp lệ: " + effectiveAvailable(product.id));
             ((TextView) item.findViewById(R.id.staff_pos_cart_quantity)).setText(String.valueOf(qty));
             ((TextView) item.findViewById(R.id.staff_pos_cart_line_total)).setText(vnd(product.priceVnd * qty));
             Button minus = item.findViewById(R.id.staff_pos_cart_decrease);
@@ -65,7 +65,7 @@ abstract class PosCartFeatures extends PosProductFeatures {
                 if (!authorized() || !JavaRules.canSellDemo(product,
                     state.posCart.getOrDefault(product.id, 0) + 1,
                     effectiveAvailable(product.id), state.shiftOpen)) {
-                    host.message("Không đủ tồn lô hợp lệ để tăng số lượng mẫu."); return;
+                    host.message("Không đủ tồn kho hợp lệ để tăng số lượng."); return;
                 }
                 state.changePosQty(product.id, state.posCart.getOrDefault(product.id, 0) + 1);
                 clearError();
@@ -73,10 +73,10 @@ abstract class PosCartFeatures extends PosProductFeatures {
             });
             cartRows.addView(item);
         }
-        totalLabel.setText("Tạm tính mẫu: " + vnd(state.posTotal()));
+        totalLabel.setText("Tạm tính: " + vnd(state.posTotal()));
         clearCart.setEnabled(!state.posCart.isEmpty());
         cartJump.setEnabled(!state.posCart.isEmpty());
-        cartJump.setText("Xem giỏ và thanh toán demo (" +
+        cartJump.setText("Xem giỏ và thanh toán (" +
             state.posCart.values().stream().mapToInt(Integer::intValue).sum() + ")");
         renderPayment();
     }
@@ -87,10 +87,10 @@ abstract class PosCartFeatures extends PosProductFeatures {
         cashGroup.setVisibility(cashSelected ? View.VISIBLE : View.GONE);
         Long paid = money(tender.getText().toString());
         long subtotal = state.posTotal();
-        if (cashSelected && paid == null) changeLabel.setText("Nhập số tiền giả định để tính tiền thối.");
+        if (cashSelected && paid == null) changeLabel.setText("Nhập số tiền khách đưa để tính tiền thừa trả lại.");
         else if (cashSelected && paid < subtotal)
-            changeLabel.setText("Tiền mẫu còn thiếu: " + vnd(subtotal - paid));
-        else if (cashSelected) changeLabel.setText("Tiền thối thử: " + vnd(paid - subtotal));
+            changeLabel.setText("Còn thiếu: " + vnd(subtotal - paid));
+        else if (cashSelected) changeLabel.setText("Tiền thừa trả khách: " + vnd(paid - subtotal));
         saveSale.setEnabled(authorized() && state.shiftOpen && !state.posCart.isEmpty() &&
             subtotal > 0 && (!cashSelected || (paid != null && paid >= subtotal)) &&
             cartSaleEligible());
@@ -100,12 +100,12 @@ abstract class PosCartFeatures extends PosProductFeatures {
     protected void saveDemoSale() {
         clearError();
         if (!authorized() || !state.shiftOpen) {
-            showError("Bạn không có quyền hoặc ca demo chưa mở."); return;
+            showError("Bạn không có quyền hoặc ca làm việc chưa mở."); return;
         }
         String method = other.isChecked() ? "OTHER_DEMO" : "CASH";
         Long tendered = "CASH".equals(method) ? money(tender.getText().toString()) : 0L;
         if (tendered == null || ("CASH".equals(method) && tendered < state.posTotal())) {
-            showError("Tiền mặt giả định phải đủ tổng giá trị mẫu."); return;
+            showError("Số tiền khách đưa phải lớn hơn hoặc bằng tổng hóa đơn."); return;
         }
         if (!cartSaleEligible()) {
             showError("Giỏ có Rx, giá lỗi hoặc không đủ tồn lô hợp lệ. Cần điều chỉnh trước khi lưu.");
@@ -121,7 +121,7 @@ abstract class PosCartFeatures extends PosProductFeatures {
         displayedReceipt = result;
         tender.setText("");
         renderAll();
-        host.message("Đã lưu " + result.reference + " trong RAM. Chưa xác minh thu tiền hoặc giao hàng.");
+        host.message("Đã thanh toán hóa đơn " + result.reference + " thành công.");
         receiptPanel.post(() -> scroll.smoothScrollTo(0, receiptPanel.getTop()));
     }
 

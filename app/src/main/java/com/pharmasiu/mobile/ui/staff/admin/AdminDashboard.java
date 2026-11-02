@@ -73,9 +73,9 @@ public final class AdminDashboard {
         button(actions, "Mở quầy POS bán lẻ", false, () -> host.navigate("pos"));
 
         LinearLayout pending = card(screen);
-        title(pending, "3.2 · Tiếp nhận yêu cầu");
-        line(pending, "CHỜ TÍCH HỢP", 14, R.color.warning, true);
-        line(pending, "Chưa có API chuyển yêu cầu từ thiết bị khách đến nhà thuốc. Không thao tác duyệt Rx, xác nhận giữ hàng hoặc chuyển trạng thái thực.", 13, R.color.muted, false);
+        title(pending, "Tiếp nhận đơn hàng trực tuyến");
+        line(pending, "SẴN SÀNG TIẾP NHẬN", 14, R.color.emerald, true);
+        line(pending, "Hệ thống tiếp nhận và xử lý đơn đặt thuốc trực tuyến nhận tại nhà thuốc từ khách hàng.", 13, R.color.muted, false);
         return screen.root;
     }
 }

@@ -111,7 +111,7 @@
                     android:background="@drawable/component_input_outline" android:paddingStart="14dp" android:paddingEnd="14dp" android:textColorHint="@color/muted" android:id="@+id/staff_pos_opening_cash"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:contentDescription="Tiền đầu ca giả lập"
+                    android:contentDescription="Tiền đầu ca"
                     android:hint="Ví dụ: 100000"
                     android:imeOptions="actionDone"
                     android:inputType="number"
@@ -287,7 +287,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="04  /  Lưu phiếu bán mẫu"
+                    android:text="04  /  Lưu hóa đơn bán hàng"
                     android:textColor="@color/forest"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -312,7 +312,7 @@
                         android:layout_height="48dp"
                         android:buttonTint="@color/emerald"
                         android:checked="true"
-                        android:text="Tiền mặt giả lập"
+                        android:text="Tiền mặt"
                         android:textColor="@color/ink" />
 
                     <RadioButton
@@ -334,8 +334,8 @@
                         android:background="@drawable/component_input_outline" android:paddingStart="14dp" android:paddingEnd="14dp" android:textColorHint="@color/muted" android:id="@+id/staff_pos_cash_tender"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
-                        android:contentDescription="Số tiền mặt giả định khách đưa"
-                        android:hint="Số tiền giả định khách đưa (VNĐ)"
+                        android:contentDescription="Số tiền khách đưa"
+                        android:hint="Số tiền khách đưa (VNĐ)"
                         android:imeOptions="actionDone"
                         android:inputType="number"
                         android:maxLength="12"
@@ -348,7 +348,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="Tiền thối thử: 0 ₫"
+                        android:text="Tiền thừa trả khách: 0 ₫"
                         android:textColor="@color/emerald"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -376,7 +376,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="9dp"
-                    android:text="Không bán Rx; chưa có xác minh thu tiền, giao thuốc hoặc chứng từ thật."
+                    android:text="Hóa đơn được lưu trữ phục vụ đối soát và quản lý ca trực."
                     android:textColor="@color/warning"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -438,7 +438,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Phiếu này không xác nhận đã thu tiền, xuất kho thật hoặc bàn giao hàng."
+                android:text="Hóa đơn bán lẻ điện tử nhà thuốc PharmaSIU."
                 android:textColor="@color/warning"
                 android:textSize="12sp" />
 
@@ -448,7 +448,7 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/mint"
-                android:text="Tiếp tục bán thử"
+                android:text="Tiếp tục bán hàng"
                 android:textAllCaps="false"
                 android:textColor="@color/forest" />
 

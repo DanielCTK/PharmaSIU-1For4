@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Tổng hợp phiếu và hàng mẫu. Không thay thế báo cáo kế toán."
+                android:text="Tổng hợp doanh thu và số lượng theo ca làm việc."
                 android:textColor="@color/mint"
                 android:textSize="13sp"
                 android:lineSpacingExtra="3dp" />

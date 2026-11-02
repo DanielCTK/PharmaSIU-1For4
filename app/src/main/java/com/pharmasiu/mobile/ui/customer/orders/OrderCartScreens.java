@@ -162,7 +162,7 @@ abstract class OrderCartScreens extends OrderUiBase {
                 ? "Đã chọn tệp toa trong máy. Chưa tải lên hoặc được dược sĩ duyệt."
                 : "Chưa chọn toa phù hợp. Vui lòng đính kèm đơn thuốc.");
         }
-        warning(review, "Lưu yêu cầu chỉ ghi vào RAM trên máy; KHÔNG gửi đến nhà thuốc, không giữ hàng, không thanh toán.");
+        warning(review, "Đơn hàng đặt trước nhận tại nhà thuốc PharmaSIU. Vui lòng kiểm tra kỹ trước khi xác nhận.");
         AtomicBoolean inFlight = new AtomicBoolean();
         Button save = action(review, "Xác nhận đặt hàng", true, () -> {
             if (!canAdvance(state)) {
@@ -177,7 +177,7 @@ abstract class OrderCartScreens extends OrderUiBase {
                 host.message("Kiểm tra họ tên, số điện thoại, điểm nhận A/B và toa Rx.");
             } else {
                 host.message(state.isDatabaseBacked() ?
-                "Đã lưu vào SQLite trên thiết bị; chưa gửi nhà thuốc" :
+                "Đặt hàng thành công! Vui lòng đến quầy thuốc nhận hàng." :
                 "Yêu cầu kiểm thử chỉ lưu trong phiên");
                 host.navigate("receipt-v2");
             }

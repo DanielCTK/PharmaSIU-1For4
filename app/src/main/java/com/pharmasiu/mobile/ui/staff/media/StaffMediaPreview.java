@@ -54,10 +54,10 @@ public final class StaffMediaPreview {
 
         View root = activity.getLayoutInflater().inflate(R.layout.staff_media_preview, null, false);
         FrameLayout media = root.findViewById(R.id.staff_media_preview_picture);
-        boolean localImage = addPicture(activity, media, product, photoUri, "Ảnh sản phẩm mẫu");
+        boolean localImage = addPicture(activity, media, product, photoUri, "Ảnh sản phẩm");
         TextView note = root.findViewById(R.id.staff_media_preview_note);
         note.setText(localImage
-            ? "Ảnh đã chọn từ thiết bị · chỉ hiển thị trong phiên DEMO. Chưa được xác thực."
+            ? "Ảnh đã chọn từ thiết bị cho sản phẩm này."
             : photoUri == null
                 ? "Hình minh họa theo nhóm hàng · không phải ảnh chụp sản phẩm thật."
                 : "Không thể đọc ảnh hoặc định dạng không được hỗ trợ. Đang hiển thị hình minh họa, chưa xác minh sản phẩm.");
@@ -67,7 +67,7 @@ public final class StaffMediaPreview {
         ((TextView) root.findViewById(R.id.staff_media_preview_price)).setText(
             product.requiresPrescription ? "Rx · CẦN DƯỢC SĨ DUYỆT" :
                 product.priceVnd <= 0 ? "Chưa có giá xác minh" :
-                    String.format(new Locale("vi", "VN"), "%,d ₫ · DEMO", product.priceVnd));
+                    String.format(new Locale("vi", "VN"), "%,d ₫", product.priceVnd));
 
         View.OnClickListener dismiss = v -> onClose.run();
         root.findViewById(R.id.staff_media_preview_close_top).setOnClickListener(dismiss);
@@ -81,7 +81,7 @@ public final class StaffMediaPreview {
         if (edit && onReplace != null) {
             replace.setOnClickListener(v -> {
                 if (!mayEdit(host.state().role)) {
-                    host.message("Chỉ Quản lý DEMO được chọn ảnh hàng hóa.");
+                    host.message("Chỉ Quản lý mới có quyền chọn ảnh sản phẩm.");
                     return;
                 }
                 onReplace.run(); // The integration owner launches the staff image picker.
@@ -90,7 +90,7 @@ public final class StaffMediaPreview {
         if (edit && photoUri != null && onRemove != null) {
             remove.setOnClickListener(v -> {
                 if (!mayEdit(host.state().role)) {
-                    host.message("Chỉ Quản lý DEMO được xóa ảnh đã chọn.");
+                    host.message("Chỉ Quản lý mới có quyền xóa ảnh sản phẩm.");
                     return;
                 }
                 onRemove.run(); // The integration owner clears its own RAM photo mapping.
@@ -111,7 +111,7 @@ public final class StaffMediaPreview {
         FrameLayout root = (FrameLayout) activity.getLayoutInflater().inflate(
             R.layout.staff_media_thumbnail, null, false);
         FrameLayout picture = root.findViewById(R.id.staff_media_thumbnail_picture);
-        addPicture(activity, picture, product, photoUri, "Hình sản phẩm mẫu");
+        addPicture(activity, picture, product, photoUri, "Hình sản phẩm");
         root.setContentDescription("Xem hình sản phẩm " + product.name +
             (photoUri == null ? ". Đây là hình minh họa." : ". Ảnh chọn từ máy hoặc hình minh họa dự phòng."));
         if (onOpen != null) {
@@ -119,7 +119,7 @@ public final class StaffMediaPreview {
             root.setFocusable(true);
             root.setOnClickListener(v -> {
                 if (mayView(host.state().role)) onOpen.run();
-                else host.message("Không đủ quyền xem hình hàng hóa DEMO.");
+                else host.message("Không đủ quyền xem hình ảnh sản phẩm.");
             });
         } else {
             root.setContentDescription("Hình minh họa sản phẩm " + product.name);
@@ -133,7 +133,7 @@ public final class StaffMediaPreview {
 
     private static View denied(Activity activity) {
         TextView error = new TextView(activity);
-        error.setText("Không đủ quyền xem ảnh hàng hóa. Chỉ khu nhân viên DEMO được sử dụng.");
+        error.setText("Không đủ quyền xem ảnh sản phẩm.");
         error.setTextColor(WARNING);
         error.setTextSize(15);
         int p = dp(activity, 20);

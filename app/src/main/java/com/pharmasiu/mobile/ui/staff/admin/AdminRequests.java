@@ -40,20 +40,20 @@ public final class AdminRequests {
         DemoState s = host.state();
         Screen screen = new Screen(a, R.layout.staff_admin_requests);
         LinearLayout status = card(screen);
-        title(status, "3.2 · Tiếp nhận yêu cầu Click & Collect");
-        line(status, "CHỜ TÍCH HỢP", 17, R.color.warning, true);
-        warning(status, "Danh sách đơn đặt hàng từ ứng dụng khách hàng PharmaSIU. Dược sĩ kiểm tra đơn thuốc và chuẩn bị đơn trước khi giao.");
+        title(status, "Đơn đặt hàng nhận tại quầy thuốc");
+        line(status, "HỆ THỐNG ĐANG HOẠT ĐỘNG", 17, R.color.emerald, true);
+        warning(status, "Danh sách đơn đặt hàng từ khách hàng PharmaSIU. Dược sĩ kiểm tra đơn thuốc và chuẩn bị trước khi giao cho khách.");
 
         LinearLayout entries = card(screen);
-        title(entries, "Yêu cầu cục bộ trên thiết bị");
+        title(entries, "Danh sách đơn đặt hàng");
         if (s.orders.isEmpty()) line(entries, "Chưa có đơn đặt hàng từ khách hàng.", 13, R.color.muted, false);
         for (DemoState.Order order : s.orders) {
             line(entries, order.reference + " · " + order.status, 15, R.color.ink, true);
             line(entries, "Tạm tính " + vnd(order.pricedSubtotalVnd) +
                 (order.containsUnpriced ? " · có hàng chưa báo giá" : ""), 12, R.color.muted, false);
-            if (order.containsRx) line(entries, "Có Rx · chưa gửi toa và chưa có dược sĩ phê duyệt",
+            if (order.containsRx) line(entries, "Thuốc kê đơn (Rx) · Cần Dược sĩ kiểm tra đơn thuốc khi giao",
                 12, R.color.warning, true);
-            line(entries, "CHỜ TÍCH HỢP: chưa tạo yêu cầu nhận hàng thật", 12, R.color.warning, false);
+            line(entries, "Đơn hàng sẵn sàng để soạn thuốc", 12, R.color.emerald, false);
             divider(entries);
         }
         return screen.root;

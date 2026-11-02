@@ -7,6 +7,6 @@ public interface UiHost {
     void logout();
     void choosePrescriptionFile();
     default void chooseStaffProductPhoto(String productId) {
-        message("Chức năng chọn ảnh chỉ hỗ trợ trên màn quản trị DEMO.");
+        message("Chức năng chọn ảnh chỉ hỗ trợ trên màn hình quản trị.");
     }
 }

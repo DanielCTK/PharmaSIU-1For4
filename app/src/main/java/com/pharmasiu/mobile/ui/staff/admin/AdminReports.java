@@ -40,7 +40,7 @@ public final class AdminReports {
         DemoState s = host.state();
         Screen screen = new Screen(a, R.layout.staff_admin_reports);
         LinearLayout kpi = card(screen);
-        title(kpi, "KPI RAM trong phiên");
+        title(kpi, "Báo cáo hoạt động ca trực");
         long gross = 0;
         int blocked = 0, low = 0, rx = 0;
         for (DemoState.Sale sale : s.sales) gross += sale.amountVnd;
@@ -52,21 +52,21 @@ public final class AdminReports {
             if (s.stock.getOrDefault(p.id, 0) <= 4) low++;
         }
         line(kpi, vnd(gross), 23, R.color.emerald, true);
-        line(kpi, "Tổng doanh thu bán hàng ghi nhận tại quầy POS", 12, R.color.muted, false);
+        line(kpi, "Tổng doanh thu bán hàng tại quầy thuốc", 12, R.color.muted, false);
         divider(kpi);
         line(kpi, "Số hóa đơn đã thanh toán: " + s.sales.size(), 14, R.color.ink, true);
-        line(kpi, "Tiền mặt ghi trong RAM: " + vnd(s.cashCollectedVnd), 13, R.color.muted, false);
+        line(kpi, "Tiền mặt thu tại quầy: " + vnd(s.cashCollectedVnd), 13, R.color.muted, false);
         line(kpi, "Mặt hàng / tồn thấp: " + s.products.size() + " / " + low, 13, R.color.muted, false);
         line(kpi, "Tổng số lô / Hết hạn hoặc cách ly: " + s.lots.size() + " / " + blocked, 13, R.color.muted, false);
         line(kpi, "Hàng Rx bị khóa: " + rx, 13, R.color.muted, false);
         line(kpi, "Biên bản kiểm kê: " + s.inventoryChecks.size(), 13, R.color.muted, false);
         line(kpi, "Biên bản đối soát: " + s.shiftReconciliations.size(), 13, R.color.muted, false);
         line(kpi, "Đơn đặt hàng trực tuyến: " + s.orders.size(), 13, R.color.ink, true);
-        warning(kpi, "Các số liệu không phải báo cáo tài chính, thuế, kho hàng thật hoặc chứng nhận Rx. Chờ tích hợp backend và phân quyền.");
+        warning(kpi, "Báo cáo phục vụ theo dõi hoạt động kinh doanh và kiểm soát chất lượng tại quầy thuốc.");
 
         LinearLayout actions = card(screen);
         title(actions, "Đi tới phần liên quan");
-        button(actions, "Kiểm kê và đối soát RAM", false, () -> host.navigate("audit-v2"));
+        button(actions, "Kiểm kê và đối soát ca trực", false, () -> host.navigate("audit-v2"));
         button(actions, "Quản lý lô & cách ly", false, () -> host.navigate("lots-v2"));
         return screen.root;
     }

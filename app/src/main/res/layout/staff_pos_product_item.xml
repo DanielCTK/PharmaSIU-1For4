@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:text="Chạm thẻ để xem thông tin, giá và điều kiện bán mẫu"
+        android:text="Chạm thẻ để xem chi tiết thông tin và tồn kho"
         android:textColor="@color/muted"
         android:textSize="11sp" />
 

@@ -160,7 +160,7 @@ abstract class AuthUiState extends AuthFormBase {
         clearSuccess();
         hideKeyboard();
         refreshSubmit();
-        host.message("Đã điền thông tin DEMO; bấm Đăng nhập để xác nhận vai trò.");
+        host.message("Đã điền thông tin tài khoản; bấm Đăng nhập để tiếp tục.");
     }
 
     protected String modeName() {

@@ -59,8 +59,8 @@ abstract class PosReceiptFeatures extends PosCartFeatures {
         String details = "Thời gian: " + sale.createdAt + "\nThu ngân: " + sale.cashierName +
             "\nCa bán hàng #" + sale.shiftNumber + "\nHình thức thanh toán: " + method;
         if ("CASH".equals(sale.method)) {
-            details += "\nTiền giả định khách đưa: " + vnd(sale.receivedVnd) +
-                "\nTiền thối tính thử: " + vnd(sale.changeVnd);
+            details += "\nTiền khách đưa: " + vnd(sale.receivedVnd) +
+                "\nTiền thừa trả khách: " + vnd(sale.changeVnd);
         }
         ((TextView) root.findViewById(R.id.staff_pos_receipt_details)).setText(details);
     }

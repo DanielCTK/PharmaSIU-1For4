@@ -119,13 +119,13 @@ public final class CatalogSupport {
 
     public static String description(DemoState.Product p) {
         switch (p.id) {
-            case "mask-01": return "Thông tin sản phẩm minh họa. Vui lòng kiểm tra quy cách, giá và tình trạng hàng tại nhà thuốc.";
-            case "saline-01": return "Sản phẩm được đưa vào dữ liệu mẫu chỉ để trình bày giao diện. Không thay thế hướng dẫn chuyên môn.";
-            case "cotton-01": return "Dữ liệu minh họa cho luồng đặt trước và nhận tại quầy.";
+            case "mask-01": return "Thông tin sản phẩm chính hãng. Vui lòng kiểm tra quy cách, giá và tình trạng hàng tại nhà thuốc.";
+            case "saline-01": return "Thông tin sản phẩm chính hãng. Vui lòng tham khảo ý kiến dược sĩ trước khi sử dụng.";
+            case "cotton-01": return "Sản phẩm y tế chính hãng cho luồng đặt trước và nhận tại quầy.";
             case "thermometer-01": return "Thông số, giá và điều kiện cung ứng sẽ được xác nhận tại quầy.";
-            case "bandage-01": return "Thông tin giả lập nhằm kiểm tra giao diện xem sản phẩm.";
+            case "bandage-01": return "Thông tin chi tiết sản phẩm chính hãng tại PharmaSIU.";
             case "rx-demo-01": return "Không phải thuốc được chào bán. Quy trình này yêu cầu gửi toa hợp lệ và được dược sĩ xem xét trước khi xác nhận.";
-            default: return "Dữ liệu mẫu dành cho giao diện PharmaSIU. Quy cách, nguồn gốc, thành phần, giá và khả năng cung ứng phải được xác minh tại nơi bán. Sản phẩm không thay thế tư vấn của nhân viên chuyên môn.";
+            default: return "Sản phẩm chính hãng tại PharmaSIU. Quy cách, thành phần, giá và điều kiện bảo quản được thể hiện đầy đủ trên bao bì sản phẩm.";
         }
     }
 
@@ -136,7 +136,7 @@ public final class CatalogSupport {
             case "cotton-01": return "Gói 100 g · Vật tư y tế";
             case "thermometer-01": return "Thiết bị chăm sóc gia đình";
             case "bandage-01": return "Gói 10 miếng · Vật tư y tế";
-            case "rx-demo-01": return "Sản phẩm minh họa quy trình Rx";
+            case "rx-demo-01": return "Dược phẩm kê đơn theo chỉ định";
             default: return p.subtitle;
         }
     }

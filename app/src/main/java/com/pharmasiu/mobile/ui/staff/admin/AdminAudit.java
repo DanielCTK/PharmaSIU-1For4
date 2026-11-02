@@ -44,7 +44,7 @@ public final class AdminAudit {
         Spinner goods = picker(inventory, productLabels(s), a);
         EditText counted = input(inventory, "Số lượng thực tế (0–999)", InputType.TYPE_CLASS_NUMBER, "");
         EditText reason = input(inventory, "Lý do lệch (>= 3 ký tự)", InputType.TYPE_CLASS_TEXT, "");
-        button(inventory, "Lưu số đếm / chênh lệch RAM", true, () -> {
+        button(inventory, "Lưu số lượng kiểm kê", true, () -> {
             if (!s.canAdmin()) { host.message("Không đủ quyền Quản lý"); return; }
             Integer amount = boundedInt(counted.getText().toString(), 0, MAX_RECEIVE);
             int index = goods.getSelectedItemPosition();
@@ -52,11 +52,11 @@ public final class AdminAudit {
                 !s.countDemoStock(s.products.get(index).id, amount, reason.getText().toString())) {
                 host.message("Số đếm hoặc lý do không hợp lệ");
             } else {
-                host.message("Đã ghi biên bản kiểm kê RAM, tồn kho không bị thay đổi");
+                host.message("Đã lưu biên bản kiểm kê kho thành công");
                 host.navigate("audit-v2");
             }
         });
-        warning(inventory, "Lưu chênh lệch chỉ tạo nhật ký trong RAM; không tự sửa tồn hay tạo chứng từ kiểm kê.");
+        warning(inventory, "Biên bản kiểm kê ghi nhận số đếm thực tế để đối soát số lượng tồn kho định kỳ.");
 
         LinearLayout shifts = card(screen);
         title(shifts, "Đối soát ca bán hàng");
@@ -67,7 +67,7 @@ public final class AdminAudit {
             " + tiền mặt POS " + vnd(s.cashCollectedVnd),
             12, R.color.muted, false);
         line(shifts, "Tiền mặt kỳ vọng: " + vnd(expected), 17, R.color.emerald, true);
-        EditText cash = input(shifts, "Tiền đếm thử (VND)", InputType.TYPE_CLASS_NUMBER, String.valueOf(expected));
+        EditText cash = input(shifts, "Tiền mặt thực tế kết ca (VNĐ)", InputType.TYPE_CLASS_NUMBER, String.valueOf(expected));
         EditText note = input(shifts, "Ghi chú đối soát", InputType.TYPE_CLASS_TEXT, "");
         button(shifts, "Lưu đối soát ca bán hàng", true, () -> {
             Long amount = positiveOrZero(cash.getText().toString());
@@ -79,12 +79,12 @@ public final class AdminAudit {
                 host.navigate("audit-v2");
             }
         });
-        warning(shifts, "Đối soát chỉ so số tiền RAM, không xác minh giao dịch ngân hàng, quỹ hay chứng từ kế toán.");
+        warning(shifts, "Đối soát đối chiếu doanh thu bán hàng tại quầy với số tiền mặt thực tế khi kết thúc ca làm việc.");
 
         LinearLayout history = card(screen);
-        title(history, "Nhật ký kiểm kê và đối soát trong phiên");
+        title(history, "Lịch sử kiểm kê và đối soát ca làm việc");
         if (s.inventoryChecks.isEmpty() && s.shiftReconciliations.isEmpty()) {
-            line(history, "Chưa có biên bản đối soát nào", 13, R.color.muted, false);
+            line(history, "Chưa có biên bản đối soát nào được ghi nhận", 13, R.color.muted, false);
         }
         for (String entry : s.inventoryChecks) { line(history, entry, 12, R.color.ink, false); divider(history); }
         for (String entry : s.shiftReconciliations) { line(history, entry, 12, R.color.ink, false); divider(history); }

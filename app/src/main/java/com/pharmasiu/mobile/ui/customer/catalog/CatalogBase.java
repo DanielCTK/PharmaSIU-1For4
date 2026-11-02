@@ -104,7 +104,7 @@ abstract class CatalogBase {
         sync.run();
         favorite.setOnClickListener(v -> {
             state.toggleFavorite(p.id);sync.run();
-            host.message(state.favorites.contains(p.id) ? "Đã lưu yêu thích DEMO" : "Đã bỏ yêu thích DEMO");
+            host.message(state.favorites.contains(p.id) ? "Đã thêm vào yêu thích" : "Đã bỏ yêu thích");
         });
         card.setContentDescription("Xem chi tiết " + p.name);
         card.setOnClickListener(v -> { state.selectedProductId = p.id; host.navigate("product"); });

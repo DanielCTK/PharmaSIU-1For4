@@ -160,7 +160,7 @@ public final class AuthFormController extends AuthUiState {
             password.setText("");
             passwordAgain.setText("");
             hideKeyboard();
-            host.message("Đã tạo tài khoản trên SQLite của thiết bị. Chưa đồng bộ máy chủ.");
+            host.message("Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.");
             host.navigate("home");
             return;
         }
@@ -170,11 +170,11 @@ public final class AuthFormController extends AuthUiState {
             return;
         }
         if (!host.state().resetCustomerPasswordDemo(account, secret)) {
-            showError("Không tìm thấy tài khoản DEMO này hoặc chưa thể đặt lại mật khẩu.");
+            showError("Không tìm thấy tài khoản này hoặc chưa thể đặt lại mật khẩu.");
             return;
         }
         hideKeyboard();
         setMode(AuthMode.LOGIN, true);
-        showSuccess("Đã cập nhật mật khẩu demo. Vui lòng đăng nhập lại.");
+        showSuccess("Đã cập nhật mật khẩu mới. Vui lòng đăng nhập lại.");
     }
 }

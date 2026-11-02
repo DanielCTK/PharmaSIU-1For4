@@ -63,10 +63,10 @@ abstract class PosProductFeatures extends PosBase {
                 "\nGiá bán: " + (product.priceVnd > 0 ? vnd(product.priceVnd) : "Chưa có giá"));
             String blocked = product.requiresPrescription ? "Rx: CHỜ DƯỢC SĨ / KHÔNG ĐƯỢC BÁN" :
                 product.priceVnd <= 0 ? "Chưa cập nhật giá bán" :
-                dated ? "Tồn tổng " + aggregate + " · Lô hợp lệ " + usable +
-                    " · Đang chọn " + inCart + "\n" + lotDescription(product.id) :
-                    "Tồn kho " + aggregate + " · Đang chọn " + inCart +
-                        "\nLô hàng khả dụng theo tiêu chuẩn FEFO";
+                dated ? "Tồn tổng " + aggregate + " · Lô khả dụng " + usable +
+                    " · Đang chọn trong giỏ " + inCart + "\n" + lotDescription(product.id) :
+                    "Tồn kho " + aggregate + " · Đang chọn trong giỏ " + inCart +
+                        "\nLô hàng khả dụng theo hạn dùng sớm nhất";
             status.setText(blocked);
             row.setFocusable(true);
             row.setClickable(true);
@@ -79,12 +79,12 @@ abstract class PosProductFeatures extends PosBase {
             add.setEnabled(canAdd);
             add.setAlpha(canAdd ? 1f : .5f);
             add.setText(canAdd ? "+ Thêm vào giỏ" :
-                product.requiresPrescription ? "Rx · Chờ duyệt đơn" : "Hết tồn khả dụng");
+                product.requiresPrescription ? "Rx · Cần Dược sĩ duyệt" : "Hết tồn khả dụng");
             add.setOnClickListener(v -> {
                 if (!authorized() || !JavaRules.canSellDemo(product,
                     state.posCart.getOrDefault(product.id, 0) + 1,
                     effectiveAvailable(product.id), state.shiftOpen) || !state.addPos(product.id)) {
-                    host.message("Không thể thêm. Kiểm tra vai trò, Rx, giá, lô/hạn và tồn kho.");
+                    host.message("Không thể thêm vào giỏ. Vui lòng kiểm tra quyền, thuốc Rx, giá và số lượng tồn.");
                     renderAll();
                     return;
                 }
@@ -156,7 +156,7 @@ abstract class PosProductFeatures extends PosBase {
         available.sort(Comparator.comparing((DemoState.Lot l) -> l.expiresOn)
             .thenComparing(l -> l.code));
         String detail = available.isEmpty() ? "Không có lô đủ điều kiện thử bán" :
-            "Ưu tiên FEFO: " + available.get(0).code + " · HSD " + available.get(0).expiresOn;
+            "Hạn sử dụng: " + available.get(0).code + " · HSD " + available.get(0).expiresOn;
         if (expired > 0 || quarantined > 0)
             detail += " · " + expired + " lô hết hạn/thiếu hạn · " + quarantined + " lô cách ly";
         return detail;

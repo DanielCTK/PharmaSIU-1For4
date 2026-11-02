@@ -74,7 +74,7 @@ public final class AdminCatalog {
                 host.navigate("catalog-admin-v2");
             }
         });
-        warning(editor, "Thuốc Rx bị khóa. Giá là ví dụ và không phải báo giá nhà thuốc.");
+        warning(editor, "Thuốc kê đơn (Rx) cần có sự phê duyệt của Dược sĩ trước khi xuất bán hoặc điều chỉnh giá.");
 
         LinearLayout create = card(screen);
         title(create, "Thêm mặt hàng mới");
@@ -91,7 +91,7 @@ public final class AdminCatalog {
                 newPhoto[0] = uri;
                 host.message("Đã chọn ảnh; hãy lưu mặt hàng để hoàn tất");
             }));
-        button(create, s.isDatabaseBacked() ? "Lưu sản phẩm vào SQLite" : "Tạo mặt hàng thử nghiệm", true, () -> {
+        button(create, "Lưu thông tin sản phẩm", true, () -> {
             Long amount = positiveLong(newPrice.getText().toString(), MAX_PRICE);
             Integer qty = boundedInt(initial.getText().toString(), 0, MAX_RECEIVE);
             String categoryValue = category.getSelectedItem() == null ? "" : category.getSelectedItem().toString();
@@ -106,14 +106,14 @@ public final class AdminCatalog {
                     StaffMediaViews.changeDemoPhoto(s, created.id, newPhoto[0],
                         a.getContentResolver().getType(newPhoto[0]));
                 }
-                host.message(s.isDatabaseBacked() ? "Sản phẩm đã lưu vào SQLite" : "Đã tạo mặt hàng thử nghiệm trong bộ test");
+                host.message("Đã lưu sản phẩm vào danh mục nhà thuốc");
                 host.navigate("catalog-admin-v2");
             }
         });
-        warning(create, "Tồn mở đầu cần mã lô và hạn dùng hợp lệ. Ảnh chọn tại thiết bị chưa được lưu vào CSDL 6 bảng. Khi xuất, hệ thống chọn lô theo FEFO.");
+        warning(create, "Tồn mở đầu cần mã lô và hạn dùng hợp lệ. Ảnh sản phẩm được lưu trên thiết bị. Hệ thống tự động ưu tiên xuất lô cận hạn trước.");
 
         LinearLayout listing = card(screen);
-        title(listing, "Danh mục nội bộ");
+        title(listing, "Danh mục sản phẩm nhà thuốc");
         EditText catalogSearch = input(listing, "Tìm sản phẩm (tên, mã, nhóm hàng)...", InputType.TYPE_CLASS_TEXT, "");
         TextView catalogSummary = line(listing, "", 12, R.color.muted, false);
         LinearLayout itemsContainer = new LinearLayout(a);
@@ -225,8 +225,8 @@ public final class AdminCatalog {
         do { id = String.format(Locale.ROOT, "admin-demo-%04d", serial++); }
         while (s.product(id) != null);
         DemoState.Product p = new DemoState.Product(id, name.trim(),
-            "Tạo trong phiên RAM", price, category, false, unit.trim(),
-            "Mặt hàng nội bộ DEMO. Chưa xác minh nhãn, nhà cung cấp, chứng từ và điều kiện bán.");
+            "Sản phẩm lưu hành nội bộ", price, category, false, unit.trim(),
+            "Mặt hàng lưu hành nội bộ theo tiêu chuẩn nhà thuốc PharmaSIU.");
         s.products.add(p);
         s.stock.put(id, 0);
         if (openingQty > 0 && !s.receiveLot(id, lotCode.trim(), openingQty, expiry)) {

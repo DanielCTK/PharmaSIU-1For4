@@ -31,8 +31,8 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         headerActions("Lịch sử · trên thiết bị", "Khám phá", "catalog");
         List<DemoState.Order> mine = state.customerOrders();
         LinearLayout banner = card();
-        heading(banner, mine.isEmpty() ? "Chưa có yêu cầu" : mine.size() + " yêu cầu trong RAM");
-        line(banner, "Dữ liệu mô phỏng thuộc phiên khách hiện tại. Không có trạng thái đã gửi, giữ hàng, trả tiền hay duyệt toa.", 13, R.color.muted, false);
+        heading(banner, mine.isEmpty() ? "Chưa có yêu cầu" : mine.size() + " đơn hàng");
+        line(banner, "Lịch sử các đơn đặt hàng nhận tại quầy thuốc của bạn.", 13, R.color.muted, false);
         if (mine.isEmpty()) {
             action(banner, "Khám phá sản phẩm", true, () -> host.navigate("catalog"));
             return;
@@ -54,7 +54,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
     }
 
     protected void detail() {
-        headerActions("Chi tiết yêu cầu · bản RAM", "Lịch sử", "orders-v2");
+        headerActions("Chi tiết yêu cầu", "Lịch sử", "orders-v2");
         DemoState.Order order = selectedCustomerOrder(state);
         if (order == null) {
             missingOrder();
@@ -90,7 +90,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         heading(actions, "Thao tác với bản lưu");
         action(actions, "Mua lại sản phẩm này", true, () -> {
             if (state.reorderRequest(order.reference)) {
-                host.message("Đã thêm hàng vào giỏ RAM; toa Rx cũ đã được xóa");
+                host.message("Đã thêm sản phẩm vào giỏ hàng thành công");
                 host.navigate("cart-v2");
             } else host.message("Không thể đặt lại đơn hàng này.");
         });
@@ -101,7 +101,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
     }
 
     protected void receipt() {
-        headerActions("Yêu cầu đã lưu · chỉ RAM", "Trang chủ", "home");
+        headerActions("Xác nhận yêu cầu", "Trang chủ", "home");
         DemoState.Order order = selectedCustomerOrder(state);
         if (order == null) {
             missingOrder();

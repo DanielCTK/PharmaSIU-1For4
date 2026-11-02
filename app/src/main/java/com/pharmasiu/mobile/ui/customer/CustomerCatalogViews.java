@@ -17,7 +17,7 @@ public final class CustomerCatalogViews {
         DemoState state=host.state();
         if(!DemoState.CUSTOMER.equals(state.role)){
             TextView denied=new TextView(activity);
-            denied.setText("Chỉ tài khoản khách hàng demo được mở danh mục và thêm vào giỏ.");
+            denied.setText("Chỉ tài khoản khách hàng mới có thể mở danh mục và thêm vào giỏ.");
             denied.setPadding(24,24,24,24);
             return denied;
         }

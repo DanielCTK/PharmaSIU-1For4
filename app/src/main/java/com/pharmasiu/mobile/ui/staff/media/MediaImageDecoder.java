@@ -60,7 +60,7 @@ public final class MediaImageDecoder {
                         ImageView picture = new ImageView(activity);
                         picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
                         picture.setContentDescription(label + ": " + product.name +
-                            ". Ảnh chọn trong phiên DEMO, chưa xác minh.");
+                            ". Ảnh sản phẩm đã chọn.");
                         picture.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
                         picture.setImageBitmap(bitmap);
                         frame.addView(picture, new FrameLayout.LayoutParams(-1, -1));
@@ -74,7 +74,7 @@ public final class MediaImageDecoder {
             }
         }
         frame.setContentDescription(safe
-            ? "Ảnh đã chọn tại máy cho " + product.name + " (DEMO)"
+            ? "Ảnh đã chọn cho " + product.name
             : "Hình minh họa trừu tượng theo nhóm " + product.category +
                 " cho " + product.name);
         return safe;

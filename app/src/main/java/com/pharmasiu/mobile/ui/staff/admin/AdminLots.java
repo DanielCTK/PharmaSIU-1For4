@@ -71,11 +71,11 @@ public final class AdminLots {
                 host.message("Lô trùng, quá hạn, sản phẩm hoặc số lượng không hợp lệ");
             } else {
                 if (quarantine.isChecked()) s.quarantineLot(lotCode);
-                host.message("Đã ghi nhận lô trong RAM, chưa có phiếu nhập thật");
+                host.message("Đã ghi nhận nhập lô hàng thành công");
                 host.navigate("lots-v2");
             }
         });
-        warning(receiving, "Quyền Quản lý: Tổng tồn tối đa 999 đơn vị/mặt hàng; lô cách ly và quá hạn sẽ không xuất bán theo nguyên tắc FEFO.");
+        warning(receiving, "Quy định: Tổng tồn tối đa 999 đơn vị/mặt hàng; các lô cách ly hoặc quá hạn sẽ không được phép xuất bán.");
 
         LinearLayout existing = card(screen);
         title(existing, "Danh sách lô và hạn");
@@ -122,7 +122,7 @@ public final class AdminLots {
                         String status = lot.quarantined ? "CÁCH LY" :
                             lot.expiresOn == null ? "CHƯA XÁC MINH HẠN" :
                             !lot.expiresOn.isAfter(LocalDate.now()) ? "HẾT HẠN" :
-                            lot.quantity < 1 ? "HẾT SỐ LƯỢNG" : "ĐỦ ĐIỀU KIỆN XUẤT FEFO";
+                            lot.quantity < 1 ? "HẾT SỐ LƯỢNG" : "ĐỦ ĐIỀU KIỆN XUẤT BÁN (HSD HỢP LỆ)";
                         line(lotItemsContainer, lot.code + " · " + (p == null ? lot.productId : p.name), 15, R.color.ink, true);
                         line(lotItemsContainer, "Hạn " + lot.expiresOn + " · " + lot.quantity + " đơn vị · " + status,
                             12, lot.quarantined || lot.expiresOn == null ||
@@ -142,7 +142,7 @@ public final class AdminLots {
                                 if (restoreDemoLot(s, lot)) {
                                     host.message("Đã mở lại lô hàng hợp lệ");
                                     host.navigate("lots-v2");
-                                } else host.message("Lô không đủ điều kiện bỏ cách ly: quyền, hạn hoặc tổng tồn");
+                                } else host.message("Lô không đủ điều kiện mở lại: vui lòng kiểm tra quyền, hạn dùng hoặc số lượng tồn");
                             });
                         }
                         divider(lotItemsContainer);
@@ -171,7 +171,7 @@ public final class AdminLots {
         });
 
         renderLotList.run();
-        warning(existing, "Quản lý tồn kho theo tiêu chuẩn Thực hành tốt phân phối thuốc (GDP) và nguyên tắc FEFO.");
+        warning(existing, "Quản lý tồn kho theo tiêu chuẩn Thực hành tốt phân phối thuốc (GDP) và ưu tiên xuất lô cận hạn trước.");
         return screen.root;
     }
 

@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Chỉnh thông tin hoặc tạo mặt hàng OTC mẫu. Không đồng bộ với danh mục khách thật."
+                android:text="Chỉnh sửa giá niêm yết hoặc thêm mặt hàng mới vào danh mục nhà thuốc."
                 android:textColor="@color/mint"
                 android:textSize="13sp"
                 android:lineSpacingExtra="3dp" />

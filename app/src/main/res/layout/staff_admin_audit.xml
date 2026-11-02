@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Kiểm kê phải xác định lô và được phê duyệt; chức năng nhập biên bản chưa kết nối SQLite."
+                android:text="Kiểm kê và đối soát quỹ tiền mặt, tồn kho định kỳ theo quy trình nhà thuốc."
                 android:textColor="@color/mint"
                 android:textSize="13sp"
                 android:lineSpacingExtra="3dp" />

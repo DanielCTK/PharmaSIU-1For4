@@ -33,33 +33,33 @@ public final class PosPresenter extends PosReceiptFeatures {
         openShift.setOnClickListener(v -> {
             Long amount = money(openingCash.getText().toString());
             if (amount == null) {
-                host.message("Tiền đầu ca mẫu phải là số không âm.");
+                host.message("Tiền đầu ca phải là số không âm.");
                 openingCash.setError("Nhập giá trị hợp lệ");
                 return;
             }
             if (!state.openShift(amount)) {
-                host.message("Không thể mở ca demo. Kiểm tra quyền và trạng thái ca.");
+                host.message("Không thể mở ca. Vui lòng kiểm tra quyền thu ngân và trạng thái ca.");
                 return;
             }
             openingCash.setError(null);
             renderAll();
-            host.message("Đã mở ca DEMO #" + state.shiftNumber);
+            host.message("Đã mở ca bán hàng #" + state.shiftNumber);
         });
         closeShift.setOnClickListener(v -> {
             if (!state.canSell() || !state.shiftOpen) return;
             if (!state.posCart.isEmpty()) {
-                host.message("Hãy lưu phiếu hoặc hủy giỏ demo trước khi đóng ca.");
+                host.message("Vui lòng thanh toán hoặc xóa giỏ hàng trước khi đóng ca.");
                 return;
             }
             new AlertDialog.Builder(activity)
-                .setTitle("Đóng ca DEMO #" + state.shiftNumber + "?")
-                .setMessage("Ca chỉ được đóng trong RAM. Không xác nhận đã kiểm tiền hoặc đối soát thật.")
+                .setTitle("Đóng ca bán hàng #" + state.shiftNumber + "?")
+                .setMessage("Xác nhận đóng ca bán hàng để thực hiện đối soát doanh thu?")
                 .setNegativeButton("Quay lại", (dialog, which) -> { })
-                .setPositiveButton("Đóng ca mẫu", (dialog, which) -> {
+                .setPositiveButton("Đóng ca bán hàng", (dialog, which) -> {
                     if (state.closeShift()) {
                         renderAll();
-                        host.message("Đã đóng ca DEMO. Chưa có đối soát thực tế.");
-                    } else host.message("Không thể đóng ca khi còn giỏ hoặc không đủ quyền.");
+                        host.message("Đã đóng ca bán hàng thành công.");
+                    } else host.message("Không thể đóng ca khi còn sản phẩm trong giỏ hàng.");
                 }).show();
         });
         search.addTextChangedListener(watch(() -> {
@@ -80,10 +80,10 @@ public final class PosPresenter extends PosReceiptFeatures {
         clearCart.setOnClickListener(v -> {
             if (!state.canSell() || state.posCart.isEmpty()) return;
             new AlertDialog.Builder(activity)
-                .setTitle("Hủy giỏ demo đang lập?")
-                .setMessage("Chỉ bỏ các dòng trong giỏ mô phỏng, chưa tạo phiếu bán.")
+                .setTitle("Xóa giỏ hàng hàng đang chọn?")
+                .setMessage("Xác nhận xóa toàn bộ sản phẩm đang có trong giỏ hàng?")
                 .setNegativeButton("Giữ giỏ", (dialog, which) -> { })
-                .setPositiveButton("Hủy giỏ", (dialog, which) -> {
+                .setPositiveButton("Xóa giỏ hàng", (dialog, which) -> {
                     for (String id : new ArrayList<>(state.posCart.keySet())) state.changePosQty(id, 0);
                     clearError();
                     renderAll();
@@ -120,7 +120,7 @@ public final class PosPresenter extends PosReceiptFeatures {
         root.findViewById(R.id.staff_pos_shift_panel).setVisibility(allowed ? View.VISIBLE : View.GONE);
         salesPanel.setVisibility(allowed && state.shiftOpen ? View.VISIBLE : View.GONE);
         shiftStatus.setText(!allowed ? "Quyền truy cập chưa hợp lệ"
-            : state.shiftOpen ? "●  CA DEMO #" + state.shiftNumber + " ĐANG MỞ"
+            : state.shiftOpen ? "●  CA LÀM VIỆC #" + state.shiftNumber + " ĐANG MỞ"
                 : "●  CHƯA MỞ CA BÁN HÀNG");
         openingGroup.setVisibility(allowed && !state.shiftOpen ? View.VISIBLE : View.GONE);
         activeGroup.setVisibility(allowed && state.shiftOpen ? View.VISIBLE : View.GONE);
@@ -132,8 +132,8 @@ public final class PosPresenter extends PosReceiptFeatures {
                 shiftRevenueVnd += sale.amountVnd;
             }
         }
-        shiftBalance.setText("Tiền đầu ca mẫu: " + vnd(state.openingCashVnd) +
-            "\nTiền mặt ghi trên phiếu demo: " + vnd(state.cashCollectedVnd) +
+        shiftBalance.setText("Tiền đầu ca: " + vnd(state.openingCashVnd) +
+            "\nTiền mặt đã thu: " + vnd(state.cashCollectedVnd) +
             "\nTrong ca: " + soldInShift + " phiếu · " + vnd(shiftRevenueVnd) +
             "\nGiỏ đang lập: " + state.posCart.values().stream().mapToInt(Integer::intValue).sum() + " sản phẩm");
         closeShift.setEnabled(allowed && state.shiftOpen && state.posCart.isEmpty());

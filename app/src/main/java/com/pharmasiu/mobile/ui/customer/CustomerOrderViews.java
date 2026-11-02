@@ -33,7 +33,7 @@ public final class CustomerOrderViews {
         if(activity==null||host==null||host.state()==null)
             throw new IllegalArgumentException("Missing customer UI host");
         if(!DemoState.CUSTOMER.equals(host.state().role))
-            return error(activity,"Không đủ quyền","Đăng nhập khách DEMO để mở giỏ và yêu cầu của bạn.");
+            return error(activity,"Không đủ quyền","Đăng nhập tài khoản khách hàng để mở giỏ và xem đơn hàng.");
         if(route==null)return error(activity,"Đường dẫn không hợp lệ","Không xác định màn hình yêu cầu.");
         int layout;
         switch(route){
@@ -43,7 +43,7 @@ public final class CustomerOrderViews {
             case "orders-v2":layout=R.layout.order_v2_orders;break;
             case "order-detail-v2":layout=R.layout.order_v2_detail;break;
             case "receipt-v2":layout=R.layout.order_v2_receipt;break;
-            default:return error(activity,"Không tìm thấy trang","Đường dẫn DEMO không được hỗ trợ.");
+            default:return error(activity,"Không tìm thấy trang","Đường dẫn không được hỗ trợ.");
         }
         return new OrderScreen(activity,host,layout).display(route);
     }
