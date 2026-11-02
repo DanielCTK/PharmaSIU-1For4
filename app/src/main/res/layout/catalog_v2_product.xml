@@ -4,12 +4,17 @@
     android:background="@color/cream" android:orientation="vertical">
     <LinearLayout android:layout_width="match_parent" android:layout_height="58dp"
         android:gravity="center_vertical" android:orientation="horizontal" android:paddingHorizontal="15dp">
-        <TextView android:id="@+id/catalog_v2_product_back"
-            android:layout_width="44dp" android:layout_height="44dp" android:gravity="center"
-            android:contentDescription="Quay về danh mục"
-            app:drawableStartCompat="@drawable/ic_arrow_back"
-            android:paddingStart="10dp"
-            android:textColor="@color/emerald"/>
+        <ImageView android:id="@+id/catalog_v2_product_back"
+            android:layout_width="40dp" android:layout_height="40dp"
+            android:background="@drawable/bg_favorite_circle"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/forest"
+            android:scaleType="centerInside"
+            android:contentDescription="Quay lại danh mục"
+            android:padding="8dp"
+            android:layout_marginEnd="12dp"
+            android:clickable="true"
+            android:focusable="true"/>
         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
             android:layout_weight="1" android:text="Chi tiết sản phẩm"
             android:textColor="@color/forest" android:textSize="20sp" android:textStyle="bold"/>
@@ -61,17 +66,34 @@
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginTop="18dp" android:background="@drawable/catalog_v2_surface"
                     android:orientation="vertical" android:padding="16dp">
+                    <TextView
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="CÔNG DỤNG &amp; MÔ TẢ"
+                        android:textColor="@color/emerald" android:textSize="11sp" android:textStyle="bold"
+                        android:letterSpacing="0.08"/>
                     <TextView android:id="@+id/catalog_v2_product_description"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:textColor="@color/ink" android:textSize="13sp"/>
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/ink" android:textSize="14sp"
+                        android:lineSpacingExtra="3dp"/>
+                    <View
+                        android:layout_width="match_parent" android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#15000000"/>
+                    <TextView
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="THÔNG TIN CHI TIẾT"
+                        android:textColor="@color/emerald" android:textSize="11sp" android:textStyle="bold"
+                        android:letterSpacing="0.08"/>
                     <TextView android:id="@+id/catalog_v2_product_ingredients"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp" android:textColor="@color/muted"
-                        android:textSize="12sp"/>
+                        android:layout_marginTop="6dp" android:textColor="@color/forest"
+                        android:textSize="13sp" android:lineSpacingExtra="2dp"/>
                     <TextView android:id="@+id/catalog_v2_product_spec"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginTop="6dp" android:textColor="@color/muted"
-                        android:textSize="12sp"/>
+                        android:textSize="13sp"/>
                 </LinearLayout>
                 <TextView android:id="@+id/catalog_v2_product_food_caveat"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -89,6 +111,17 @@
                     android:padding="14dp"
                     android:text="Lưu ý: Đọc kỹ hướng dẫn sử dụng trước khi dùng. Đối với thuốc kê đơn cần có sự chỉ định của bác sĩ."
                     android:textColor="@color/warning" android:textSize="12sp"/>
+                <com.google.android.material.button.MaterialButton
+                    app:cornerRadius="14dp"
+                    android:id="@+id/catalog_v2_product_back_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/mint"
+                    android:text="← Quay lại danh mục"
+                    android:textAllCaps="false"
+                    android:textColor="@color/forest"
+                    android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

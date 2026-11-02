@@ -52,6 +52,13 @@ public final class CustomerBrowseScreen extends CatalogBase {
         TextView heroCount = root.findViewById(R.id.catalog_v2_catalog_hero_count);
         Button reset = root.findViewById(R.id.catalog_v2_catalog_reset);
         root.findViewById(R.id.catalog_v2_catalog_back).setOnClickListener(v -> host.navigate("home"));
+        View scrollTop = root.findViewById(R.id.catalog_v2_scroll_top);
+        if (scrollTop != null) {
+            scrollTop.setOnClickListener(v -> {
+                android.widget.ScrollView scroller = root.findViewById(R.id.catalog_v2_catalog_scroll);
+                if (scroller != null) scroller.smoothScrollTo(0, 0);
+            });
+        }
         Set<String> categories = new LinkedHashSet<>();
         for (DemoState.Product p : state.products) categories.add(p.category);
         List<String> filters = new ArrayList<>(Arrays.asList(ALL,"Mỹ phẩm","Thực phẩm","Không kê đơn","Kê đơn"));

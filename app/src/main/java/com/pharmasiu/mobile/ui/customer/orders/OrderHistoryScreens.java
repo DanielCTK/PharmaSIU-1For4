@@ -28,7 +28,7 @@ import static com.pharmasiu.mobile.ui.customer.CustomerOrderViews.*;
 abstract class OrderHistoryScreens extends OrderCartScreens {
     OrderHistoryScreens(Activity activity,UiHost host,int layout){super(activity,host,layout);}
     protected void orders() {
-        headerActions("Lịch sử · trên thiết bị", "Khám phá", "catalog");
+        headerActions("Lịch sử đơn hàng", "Tiếp tục mua sắm", "catalog");
         List<DemoState.Order> mine = state.customerOrders();
         LinearLayout banner = card();
         heading(banner, mine.isEmpty() ? "Chưa có yêu cầu" : mine.size() + " đơn hàng");
@@ -61,7 +61,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
             return;
         }
         LinearLayout status = card();
-        line(status, "YÊU CẦU LƯU TRÊN THIẾT BỊ", 12, R.color.emerald, true);
+        line(status, "YÊU CẦU ĐÃ GỬI ĐẾN NHÀ THUỐC", 12, R.color.emerald, true);
         heading(status, order.reference);
         line(status, status(order), 15, isPending(order) ? R.color.emerald : R.color.warning, true);
         line(status, "Thời điểm lưu tại máy: " + order.displayTime, 12, R.color.muted, false);

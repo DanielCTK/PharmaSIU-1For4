@@ -118,26 +118,22 @@ public final class CatalogSupport {
     }
 
     public static String description(DemoState.Product p) {
-        switch (p.id) {
-            case "mask-01": return "Thông tin sản phẩm chính hãng. Vui lòng kiểm tra quy cách, giá và tình trạng hàng tại nhà thuốc.";
-            case "saline-01": return "Thông tin sản phẩm chính hãng. Vui lòng tham khảo ý kiến dược sĩ trước khi sử dụng.";
-            case "cotton-01": return "Sản phẩm y tế chính hãng cho luồng đặt trước và nhận tại quầy.";
-            case "thermometer-01": return "Thông số, giá và điều kiện cung ứng sẽ được xác nhận tại quầy.";
-            case "bandage-01": return "Thông tin chi tiết sản phẩm chính hãng tại PharmaSIU.";
-            case "rx-demo-01": return "Không phải thuốc được chào bán. Quy trình này yêu cầu gửi toa hợp lệ và được dược sĩ xem xét trước khi xác nhận.";
-            default: return "Sản phẩm chính hãng tại PharmaSIU. Quy cách, thành phần, giá và điều kiện bảo quản được thể hiện đầy đủ trên bao bì sản phẩm.";
-        }
+        if (p == null) return "";
+        return ProductDetailData.getUsage(p.id, p.description);
+    }
+
+    public static String ingredients(DemoState.Product p) {
+        if (p == null) return "";
+        return ProductDetailData.getIngredients(p.id, p.description);
+    }
+
+    public static String safetyNotice(DemoState.Product p) {
+        if (p == null) return "";
+        return ProductDetailData.getSafetyNotice(p.id, p.category, p.requiresPrescription);
     }
 
     public static String subtitle(DemoState.Product p) {
-        switch (p.id) {
-            case "mask-01": return "Hộp 50 chiếc · Vật tư y tế";
-            case "saline-01": return "Chai 500 ml · Chăm sóc cá nhân";
-            case "cotton-01": return "Gói 100 g · Vật tư y tế";
-            case "thermometer-01": return "Thiết bị chăm sóc gia đình";
-            case "bandage-01": return "Gói 10 miếng · Vật tư y tế";
-            case "rx-demo-01": return "Dược phẩm kê đơn theo chỉ định";
-            default: return p.subtitle;
-        }
+        if (p == null) return "";
+        return p.subtitle != null ? p.subtitle : "";
     }
 }

@@ -64,6 +64,10 @@ public final class CustomerProductScreen extends CatalogBase {
         }
         View root = a.getLayoutInflater().inflate(R.layout.catalog_v2_product,null,false);
         root.findViewById(R.id.catalog_v2_product_back).setOnClickListener(v -> host.navigate("catalog"));
+        View backBottom = root.findViewById(R.id.catalog_v2_product_back_bottom);
+        if (backBottom != null) {
+            backBottom.setOnClickListener(v -> host.navigate("catalog"));
+        }
         FrameLayout media = root.findViewById(R.id.catalog_v2_product_media);
         media.addView(ProductImageLoader.createArtwork(a,p),0,new FrameLayout.LayoutParams(-1,-1));
         ((TextView) root.findViewById(R.id.catalog_v2_product_media_tag)).setText(
@@ -77,8 +81,8 @@ public final class CustomerProductScreen extends CatalogBase {
                 "Không có giá xác minh. Không tính mặt hàng chưa có giá vào tạm tính.");
         ((TextView) root.findViewById(R.id.catalog_v2_product_description)).setText(description(p));
         ((TextView) root.findViewById(R.id.catalog_v2_product_ingredients)).setText(
-            "Thành phần      Vui lòng tham khảo bao bì hoặc hỏi dược sĩ");
-        ((TextView) root.findViewById(R.id.catalog_v2_product_spec)).setText("Quy cách        " + subtitle(p));
+            "Thành phần:  " + ingredients(p));
+        ((TextView) root.findViewById(R.id.catalog_v2_product_spec)).setText("Quy cách:    " + subtitle(p));
         TextView caveat = root.findViewById(R.id.catalog_v2_product_food_caveat);
         if ("Thực phẩm bổ sung".equals(p.category)) {
             caveat.setVisibility(View.VISIBLE);
@@ -87,9 +91,7 @@ public final class CustomerProductScreen extends CatalogBase {
             caveat.setVisibility(View.VISIBLE);
             caveat.setText("Đây là thực phẩm, không phải thuốc.");
         }
-        ((TextView) root.findViewById(R.id.catalog_v2_product_process)).setText(p.requiresPrescription ?
-            "LƯU Ý VỀ TOA THUỐC\nThuốc kê đơn chỉ cung cấp khi có đơn thuốc hợp lệ từ bác sĩ. Dược sĩ PharmaSIU sẽ liên hệ để thẩm định toa và tư vấn chi tiết trước khi giao nhận." :
-            "QUY TRÌNH ĐẶT TRƯỚC\nĐơn hàng được chuẩn bị sẵn tại quầy nhà thuốc PharmaSIU. Quý khách kiểm tra hàng và nhận tại quầy hoặc nhận giao tận nơi.");
+        ((TextView) root.findViewById(R.id.catalog_v2_product_process)).setText(safetyNotice(p));
         TextView favorite = root.findViewById(R.id.catalog_v2_product_favorite);
         Runnable syncFavorite = () -> {
             boolean saved = state.favorites.contains(p.id);

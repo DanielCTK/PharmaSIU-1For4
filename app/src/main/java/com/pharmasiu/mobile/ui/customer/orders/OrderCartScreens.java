@@ -28,11 +28,11 @@ import static com.pharmasiu.mobile.ui.customer.CustomerOrderViews.*;
 abstract class OrderCartScreens extends OrderUiBase {
     OrderCartScreens(Activity activity,UiHost host,int layout){super(activity,host,layout);}
     protected void cart() {
-        headerActions("Chọn hàng · kiểm tra lại", "Danh mục", "catalog");
+        headerActions("Giỏ hàng của bạn", "Tiếp tục mua sắm", "catalog");
         if (state.cart.isEmpty()) {
             LinearLayout empty = card();
             heading(empty, "Giỏ của bạn đang trống");
-            line(empty, "Chọn sản phẩm để trải nghiệm lưu yêu cầu Click & Collect tại máy.", 14, R.color.muted, false);
+            line(empty, "Hãy chọn những sản phẩm bạn cần để tiến hành đặt hàng Click & Collect.", 14, R.color.muted, false);
             action(empty, "Khám phá sản phẩm", true, () -> host.navigate("catalog"));
             return;
         }
@@ -85,7 +85,7 @@ abstract class OrderCartScreens extends OrderUiBase {
     }
 
     protected void rx() {
-        headerActions("Chọn tệp toa · tại thiết bị", "Quay lại giỏ", "cart-v2");
+        headerActions("Đính kèm đơn thuốc", "Quay lại giỏ", "cart-v2");
         LinearLayout preview = card();
         heading(preview, "Toa cho thuốc kê đơn");
         if (state.cart.isEmpty() || !state.hasRx(state.cart)) {
@@ -104,15 +104,15 @@ abstract class OrderCartScreens extends OrderUiBase {
                 host.navigate("rx-v2");
             });
         }
-        warning(preview, "Chọn tệp chỉ lưu dấu trong phiên trên thiết bị. KHÔNG upload, xác thực, duyệt toa hoặc giữ thuốc. Khi thay đổi hàng Rx/số lượng, phải chọn lại tệp.");
+        warning(preview, "Đơn thuốc sẽ được gửi kèm đơn hàng. Dược sĩ PharmaSIU sẽ liên hệ thẩm định và hướng dẫn sử dụng trước khi giao nhận.");
 
         LinearLayout steps = card();
-        heading(steps, "Quy trình khi tích hợp thật");
-        line(steps, "01 / Gửi toa đến nhà thuốc  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        heading(steps, "Quy trình xử lý đơn thuốc");
+        line(steps, "01 / Tiếp nhận đơn thuốc từ khách hàng", 13, R.color.muted, false);
         divider(steps);
-        line(steps, "02 / Dược sĩ có thẩm quyền thẩm định  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        line(steps, "02 / Dược sĩ thẩm định và hướng dẫn sử dụng", 13, R.color.muted, false);
         divider(steps);
-        line(steps, "03 / Xác minh lô, tồn và lịch nhận  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        line(steps, "03 / Chuẩn bị thuốc và liên hệ giao nhận", 13, R.color.muted, false);
         Button continueButton = action(steps, "Tiếp tục đặt hàng", true, () -> {
             if (canAdvance(state)) host.navigate("checkout-v2");
             else host.message("Chưa chọn tệp toa phù hợp với giỏ Rx hiện tại");
@@ -122,7 +122,7 @@ abstract class OrderCartScreens extends OrderUiBase {
     }
 
     protected void checkout() {
-        headerActions("Thông tin liên hệ · điểm nhận", "Quay lại giỏ", "cart-v2");
+        headerActions("Thông tin nhận hàng", "Quay lại giỏ", "cart-v2");
         if (!canAdvance(state)) {
             LinearLayout guarded = card();
             heading(guarded, "Chưa đủ điều kiện hoàn tất đặt hàng");
