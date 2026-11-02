@@ -54,7 +54,8 @@ public final class DemoState {
         }
     }
     public static final class Order {
-        public final String reference, pickup, customerName, contactPhone, displayTime;
+        public final String reference, pickup, customerName, contactPhone;
+        public String displayTime;
         public final Map<String,String> productNamesSnapshot;
         public final Map<String,Long> unitPricesSnapshot;
         public String customerPhone;
@@ -400,6 +401,80 @@ public final class DemoState {
         }
         return false;
     }
+    public List<Order> allOrdersForStaff(){
+        if(repository!=null){
+            List<Order> loaded = new ArrayList<>();
+            for(PharmaRepository.OrderRow row:repository.loadAllOrders(authenticatedAccountId)){
+                Map<String,Integer> lines=new LinkedHashMap<>();
+                Map<String,String> names=new LinkedHashMap<>();
+                Map<String,Long> prices=new LinkedHashMap<>();
+                for(PharmaRepository.LineRow line:row.lines){
+                    lines.merge(line.productCode,line.quantity,Integer::sum);
+                    names.put(line.productCode,line.productName);
+                    prices.put(line.productCode,line.price);
+                }
+                String custName = row.customerName.isEmpty() ? "Khách hàng" : row.customerName;
+                String custPhone = row.customerPhone.isEmpty() ? customerPhone : row.customerPhone;
+                Order order=new Order(row.reference,custPhone,row.pickup,
+                    custName,custPhone,lines,row.total,false,row.rx,names,prices);
+                order.displayTime = row.created;
+                switch(row.status){
+                    case "DA_HUY":order.status="Đã hủy";break;
+                    case "CHO_DUYET_TOA":order.status="Chờ xác minh toa";break;
+                    case "SAN_SANG_NHAN":order.status="Sẵn sàng nhận";break;
+                    case "HOAN_TAT":order.status="Hoàn tất";break;
+                    default:order.status="Đang xử lý";
+                }
+                loaded.add(order);
+            }
+            return loaded;
+        }
+        return new ArrayList<>(orders);
+    }
+
+    public boolean approveOrder(String reference){
+        if(reference==null)return false;
+        if(repository!=null){
+            return repository.updateOrderStatus(authenticatedAccountId, reference, "SAN_SANG_NHAN", null);
+        }
+        for(Order o:orders){
+            if(o.reference.equals(reference)){
+                o.status = "Sẵn sàng nhận";
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean completeOrder(String reference){
+        if(reference==null)return false;
+        if(repository!=null){
+            return repository.updateOrderStatus(authenticatedAccountId, reference, "HOAN_TAT", null);
+        }
+        for(Order o:orders){
+            if(o.reference.equals(reference)){
+                o.status = "Hoàn tất";
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean rejectOrder(String reference, String reason){
+        if(reference==null)return false;
+        if(repository!=null){
+            return repository.updateOrderStatus(authenticatedAccountId, reference, "DA_HUY", reason);
+        }
+        for(Order o:orders){
+            if(o.reference.equals(reference)){
+                o.status = "Đã hủy";
+                o.cancelReason = reason;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Order> customerOrders(){
         if(repository!=null)reloadCustomerOrders();
         List<Order> list=new ArrayList<>();
@@ -420,8 +495,11 @@ public final class DemoState {
                 names.put(line.productCode,line.productName);
                 prices.put(line.productCode,line.price);
             }
-            Order order=new Order(row.reference,customerPhone,"Nhận tại quầy",
-                name,customerPhone,lines,row.total,false,row.rx,names,prices);
+            String custName = row.customerName.isEmpty() ? name : row.customerName;
+            String pickup = row.pickup.isEmpty() ? "11 Tống Hữu Định, Phường An Khánh, TP.HCM" : row.pickup;
+            Order order=new Order(row.reference,customerPhone,pickup,
+                custName,customerPhone,lines,row.total,false,row.rx,names,prices);
+            order.displayTime = row.created;
             switch(row.status){
                 case "DA_HUY":order.status="Đã hủy";break;
                 case "CHO_DUYET_TOA":order.status="Chờ xác minh toa";break;

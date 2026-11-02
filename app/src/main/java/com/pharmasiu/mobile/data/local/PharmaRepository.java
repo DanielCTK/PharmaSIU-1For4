@@ -64,11 +64,19 @@ public final class PharmaRepository implements AutoCloseable {
         public final long total;
         public final boolean rx;
         public final List<LineRow> lines;
+        public final String customerName, customerPhone, pickup;
         OrderRow(String ref,String channel,String status,String created,long total,
                  boolean rx,List<LineRow> lines){
+            this(ref, channel, status, created, total, rx, lines, "", "", "11 Tống Hữu Định, Phường An Khánh, TP.HCM");
+        }
+        OrderRow(String ref,String channel,String status,String created,long total,
+                 boolean rx,List<LineRow> lines, String customerName, String customerPhone, String pickup){
             this.reference=ref;this.channel=channel;this.status=status;
             this.created=created;this.total=total;this.rx=rx;
             this.lines=Collections.unmodifiableList(lines);
+            this.customerName=customerName!=null?customerName:"";
+            this.customerPhone=customerPhone!=null?customerPhone:"";
+            this.pickup=pickup!=null?pickup:"11 Tống Hữu Định, Phường An Khánh, TP.HCM";
         }
     }
 
@@ -133,6 +141,12 @@ public final class PharmaRepository implements AutoCloseable {
     }
     public synchronized List<OrderRow> loadCustomerOrders(long actor) {
         return orders.loadCustomerOrders(actor);
+    }
+    public synchronized List<OrderRow> loadAllOrders(long actor) {
+        return orders.loadAllOrdersForStaff(actor);
+    }
+    public synchronized boolean updateOrderStatus(long actor, String reference, String newStatus, String reason) {
+        return orders.updateOrderStatus(actor, reference, newStatus, reason);
     }
     public synchronized boolean cancelCustomerOrder(long actor,String reference,String reason) {
         return orders.cancelCustomerOrder(actor,reference,reason);

@@ -16,7 +16,8 @@ public final class StaffAdminViews {
     public static View create(Activity activity, UiHost host, String route) {
         if (activity == null || host == null || host.state() == null)
             throw new IllegalArgumentException("Missing Java Views host");
-        if (!host.state().canAdmin())
+        boolean isRequestRoute = "requests-admin".equals(route) || "requests-admin-v2".equals(route);
+        if (!host.state().canAdmin() && !(isRequestRoute && DemoState.CASHIER.equals(host.state().role)))
             return AdminUi.access(activity, "Không đủ quyền",
                 "Khu quản trị chỉ dành cho tài khoản Quản lý. Phiên hiện tại không có quyền chỉnh dữ liệu.");
         if (route == null)

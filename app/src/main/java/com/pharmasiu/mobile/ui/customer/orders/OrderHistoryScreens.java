@@ -83,6 +83,24 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         line(contact, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và liên hệ theo địa chỉ trên.",
             12, R.color.muted, false);
 
+        boolean isApproved = "Sẵn sàng nhận".equals(order.status) || "Hoàn tất".equals(order.status);
+        boolean isDone = "Hoàn tất".equals(order.status);
+
+        LinearLayout progress = card();
+        heading(progress, "Tiến trình đơn hàng");
+        line(progress, "01 / Đã tiếp nhận yêu cầu", 14, R.color.emerald, true);
+        divider(progress);
+        line(progress, isApproved ? "02 / Dược sĩ đã thẩm định & chuẩn bị thuốc sẵn sàng" : "02 / Dược sĩ đang thẩm định và chuẩn bị thuốc",
+            13, isApproved ? R.color.emerald : R.color.forest, isApproved);
+        divider(progress);
+        line(progress, isDone ? "03 / Đã nhận thuốc tại quầy thành công" : "03 / Sẵn sàng nhận tại " + order.pickup,
+            13, isDone ? R.color.emerald : isApproved ? R.color.forest : R.color.muted, isApproved);
+        action(progress, "🔄 Cập nhật trạng thái", false, () -> {
+            state.customerOrders();
+            host.navigate("order-detail-v2");
+            host.message("Đã làm mới thông tin đơn hàng");
+        });
+
         LinearLayout actions = card();
         heading(actions, "Thao tác đơn hàng");
         action(actions, "Mua lại sản phẩm này", true, () -> {
@@ -94,6 +112,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         if (isPending(order)) {
             action(actions, "Hủy đơn hàng này", false, () -> confirmCancellation(order));
         }
+        action(actions, "← Quay lại danh sách đơn", false, () -> host.navigate("orders-v2"));
         disclosure();
     }
 

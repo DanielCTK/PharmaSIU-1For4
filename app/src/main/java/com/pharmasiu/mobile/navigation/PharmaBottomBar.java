@@ -33,9 +33,9 @@ public final class PharmaBottomBar {
         R.drawable.nav_lots, R.drawable.nav_audit
     };
 
-    private static final String[] CASHIER = {"pos", "logout"};
-    private static final String[] CASHIER_LABELS = {"Quầy bán", "Đăng xuất"};
-    private static final int[] CASHIER_ICONS = {R.drawable.nav_pos, R.drawable.nav_logout};
+    private static final String[] CASHIER = {"pos", "requests", "logout"};
+    private static final String[] CASHIER_LABELS = {"Quầy bán", "Duyệt đơn", "Đăng xuất"};
+    private static final int[] CASHIER_ICONS = {R.drawable.nav_pos, R.drawable.nav_orders, R.drawable.nav_logout};
 
     public static String activeTab(String role, String route) {
         if (DemoState.CUSTOMER.equals(role)) {
@@ -51,7 +51,10 @@ public final class PharmaBottomBar {
                 || "change-password".equals(route)) return "account";
             return "home";
         }
-        if (DemoState.CASHIER.equals(role)) return "pos";
+        if (DemoState.CASHIER.equals(role)) {
+            if ("requests".equals(route) || route.startsWith("requests-admin")) return "requests";
+            return "pos";
+        }
         if (DemoState.ADMIN.equals(role)) {
             if ("pos".equals(route)) return "pos";
             if (route.startsWith("catalog-admin")) return "catalog-admin";

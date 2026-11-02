@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Chờ tích hợp xử lý."
+                android:text="Duyệt &amp; Chuẩn bị đơn"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold" />
@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Danh sách đơn đặt hàng trực tuyến từ khách hàng."
+                android:text="Dược sĩ thẩm định toa và xác nhận đơn thuốc."
                 android:textColor="@color/mint"
                 android:textSize="13sp"
                 android:lineSpacingExtra="3dp" />

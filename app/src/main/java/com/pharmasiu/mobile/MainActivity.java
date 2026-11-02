@@ -101,7 +101,11 @@ public final class MainActivity extends Activity implements UiHost {
                 default: route="home";
             }
         } else if(DemoState.CASHIER.equals(store.role)) {
-            route="pos";
+            if ("requests".equals(next) || "requests-admin-v2".equals(next) || "requests-admin".equals(next)) {
+                route = "requests-admin-v2";
+            } else {
+                route = "pos";
+            }
         } else if(DemoState.ADMIN.equals(store.role)) {
             switch(next) {
                 case "admin":case "catalog-admin":case "lots":case "audit":case "reports":
@@ -211,7 +215,11 @@ public final class MainActivity extends Activity implements UiHost {
                 screen=CustomerCatalogViews.create(this,this,route);
             else { route="home"; screen=CustomerCatalogViews.create(this,this,"home"); }
         } else if(DemoState.CASHIER.equals(store.role)||"pos".equals(route)) {
-            screen=StaffPosViews.create(this,this,"pos-v2");
+            if ("requests".equals(route) || "requests-admin-v2".equals(route) || "requests-admin".equals(route)) {
+                screen = StaffAdminViews.create(this, this, "requests-admin-v2");
+            } else {
+                screen = StaffPosViews.create(this, this, "pos-v2");
+            }
         } else if(DemoState.ADMIN.equals(store.role)) {
             screen=StaffAdminViews.create(this,this,route);
         } else {
