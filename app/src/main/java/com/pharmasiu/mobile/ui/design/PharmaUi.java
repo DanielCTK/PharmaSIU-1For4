@@ -156,4 +156,71 @@ public final class PharmaUi {
         explanation.setGravity(Gravity.CENTER);
         return box;
     }
+
+    public interface PageCallback {
+        void onPage(int page);
+    }
+
+    /** Clean pagination bar with previous/next controls and page position. */
+    public static View pagination(LinearLayout parent, int currentPage, int totalPages, int totalItems, String itemNoun, PageCallback callback) {
+        if (totalPages <= 1) return null;
+        Context context = parent.getContext();
+        LinearLayout bar = new LinearLayout(context);
+        bar.setOrientation(LinearLayout.HORIZONTAL);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar.setPadding(0, dp(context, 12), 0, dp(context, 8));
+
+        MaterialButton prev = new MaterialButton(context);
+        prev.setText("◀ Trước");
+        prev.setAllCaps(false);
+        prev.setTextSize(13);
+        prev.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        prev.setCornerRadius(dp(context, 10));
+        prev.setMinHeight(dp(context, 42));
+        prev.setInsetTop(0);
+        prev.setInsetBottom(0);
+        prev.setEnabled(currentPage > 0);
+        prev.setBackgroundTintList(ColorStateList.valueOf(color(context, currentPage > 0 ? R.color.mint : R.color.cream)));
+        prev.setTextColor(color(context, currentPage > 0 ? R.color.forest : R.color.muted));
+        prev.setOnClickListener(v -> {
+            if (currentPage > 0 && callback != null) callback.onPage(currentPage - 1);
+        });
+
+        TextView indicator = new TextView(context);
+        String label = (itemNoun != null && !itemNoun.isEmpty())
+            ? "Trang " + (currentPage + 1) + " / " + totalPages + "\n(" + totalItems + " " + itemNoun + ")"
+            : "Trang " + (currentPage + 1) + " / " + totalPages;
+        indicator.setText(label);
+        indicator.setTextSize(12);
+        indicator.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        indicator.setTextColor(color(context, R.color.forest));
+        indicator.setGravity(Gravity.CENTER);
+        indicator.setLineSpacing(dp(context, 2), 1f);
+
+        MaterialButton next = new MaterialButton(context);
+        next.setText("Sau ▶");
+        next.setAllCaps(false);
+        next.setTextSize(13);
+        next.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        next.setCornerRadius(dp(context, 10));
+        next.setMinHeight(dp(context, 42));
+        next.setInsetTop(0);
+        next.setInsetBottom(0);
+        next.setEnabled(currentPage < totalPages - 1);
+        next.setBackgroundTintList(ColorStateList.valueOf(color(context, currentPage < totalPages - 1 ? R.color.mint : R.color.cream)));
+        next.setTextColor(color(context, currentPage < totalPages - 1 ? R.color.forest : R.color.muted));
+        next.setOnClickListener(v -> {
+            if (currentPage < totalPages - 1 && callback != null) callback.onPage(currentPage + 1);
+        });
+
+        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, dp(context, 42), 1f);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, -2, 1.4f);
+
+        bar.addView(prev, btnParams);
+        bar.addView(indicator, textParams);
+        bar.addView(next, btnParams);
+
+        parent.addView(bar, new LinearLayout.LayoutParams(-1, -2));
+        return bar;
+    }
 }

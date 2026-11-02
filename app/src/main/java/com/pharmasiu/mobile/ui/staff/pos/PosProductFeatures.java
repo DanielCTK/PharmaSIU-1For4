@@ -33,10 +33,22 @@ abstract class PosProductFeatures extends PosBase {
         if (!authorized() || !state.shiftOpen) return;
         productRows.removeAllViews();
         String query = fold(search.getText().toString().trim());
-        int matched = 0;
+        List<DemoState.Product> matched = new ArrayList<>();
         for (DemoState.Product product : state.products) {
-            if (!fold(product.name + " " + product.id + " " + product.category).contains(query)) continue;
-            matched++;
+            if (fold(product.name + " " + product.id + " " + product.category).contains(query)) {
+                matched.add(product);
+            }
+        }
+        int totalMatches = matched.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalMatches / PRODUCT_PAGE_SIZE));
+        if (productPage >= totalPages) productPage = totalPages - 1;
+        if (productPage < 0) productPage = 0;
+
+        int start = productPage * PRODUCT_PAGE_SIZE;
+        int end = Math.min(start + PRODUCT_PAGE_SIZE, totalMatches);
+
+        for (int i = start; i < end; i++) {
+            DemoState.Product product = matched.get(i);
             View row = activity.getLayoutInflater().inflate(R.layout.staff_pos_product_item, productRows, false);
             TextView title = row.findViewById(R.id.staff_pos_product_title);
             TextView meta = row.findViewById(R.id.staff_pos_product_meta);
@@ -48,17 +60,17 @@ abstract class PosProductFeatures extends PosBase {
             int inCart = state.posCart.getOrDefault(product.id, 0);
             title.setText(product.name);
             meta.setText(product.category + " · " + product.unit + " · " + product.id +
-                "\nGiá tham khảo: " + (product.priceVnd > 0 ? vnd(product.priceVnd) : "Chưa có giá mẫu"));
+                "\nGiá bán: " + (product.priceVnd > 0 ? vnd(product.priceVnd) : "Chưa có giá"));
             String blocked = product.requiresPrescription ? "Rx: CHỜ DƯỢC SĨ / KHÔNG ĐƯỢC BÁN" :
                 product.priceVnd <= 0 ? "Chưa cập nhật giá bán" :
-                dated ? "Tồn tổng demo " + aggregate + " · Lô hợp lệ " + usable +
+                dated ? "Tồn tổng " + aggregate + " · Lô hợp lệ " + usable +
                     " · Đang chọn " + inCart + "\n" + lotDescription(product.id) :
-                    "Tồn demo " + aggregate + " · Đang chọn " + inCart +
-                        "\nChưa có dữ liệu lô; số lượng khởi tạo chỉ là mô phỏng";
+                    "Tồn kho " + aggregate + " · Đang chọn " + inCart +
+                        "\nLô hàng khả dụng theo tiêu chuẩn FEFO";
             status.setText(blocked);
             row.setFocusable(true);
             row.setClickable(true);
-            row.setContentDescription("Xem thông tin mẫu của " + product.name);
+            row.setContentDescription("Xem thông tin chi tiết " + product.name);
             row.setOnClickListener(v -> showProductDetails(product));
             status.setTextColor(activity.getColor(product.requiresPrescription || usable == 0 || product.priceVnd <= 0
                 ? R.color.warning : R.color.emerald));
@@ -67,12 +79,12 @@ abstract class PosProductFeatures extends PosBase {
             add.setEnabled(canAdd);
             add.setAlpha(canAdd ? 1f : .5f);
             add.setText(canAdd ? "+ Thêm vào giỏ" :
-                product.requiresPrescription ? "Rx · Chờ quy trình dược sĩ" : "Không đủ tồn mẫu hợp lệ");
+                product.requiresPrescription ? "Rx · Chờ duyệt đơn" : "Hết tồn khả dụng");
             add.setOnClickListener(v -> {
                 if (!authorized() || !JavaRules.canSellDemo(product,
                     state.posCart.getOrDefault(product.id, 0) + 1,
                     effectiveAvailable(product.id), state.shiftOpen) || !state.addPos(product.id)) {
-                    host.message("Không thể thêm. Kiểm tra vai trò, Rx, giá, lô/hạn và tồn mô phỏng.");
+                    host.message("Không thể thêm. Kiểm tra vai trò, Rx, giá, lô/hạn và tồn kho.");
                     renderAll();
                     return;
                 }
@@ -81,9 +93,17 @@ abstract class PosProductFeatures extends PosBase {
             });
             productRows.addView(row);
         }
-        searchSummary.setText(matched + " mặt hàng phù hợp · chỉ hàng OTC có giá và tồn hợp lệ mới được thêm");
-        if (matched == 0) productRows.addView(simpleText("Không tìm thấy sản phẩm phù hợp.", 14,
-            R.color.muted));
+
+        searchSummary.setText(totalMatches + " mặt hàng phù hợp · hiển thị " + (totalMatches == 0 ? 0 : (start + 1)) + "–" + end + " (trang " + (productPage + 1) + "/" + totalPages + ")");
+        if (totalMatches == 0) productRows.addView(simpleText("Không tìm thấy sản phẩm phù hợp.", 14, R.color.muted));
+
+        if (totalPages > 1) {
+            com.pharmasiu.mobile.ui.design.PharmaUi.pagination(productRows, productPage, totalPages, totalMatches, "mặt hàng", newPage -> {
+                productPage = newPage;
+                renderProducts();
+                scroll.smoothScrollTo(0, search.getTop());
+            });
+        }
     }
     protected void showProductDetails(DemoState.Product product) {
         if (!authorized()) return;

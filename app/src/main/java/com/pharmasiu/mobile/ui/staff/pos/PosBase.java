@@ -45,8 +45,11 @@ abstract class PosBase {
     protected final Button cartJump, historyMore, receiptHistory;
     protected final RadioGroup paymentGroup;
     protected final RadioButton cash, other;
+    protected final View scrollTop;
     protected DemoState.Sale displayedReceipt;
     protected int visibleHistoryCount = 12;
+    protected int productPage = 0;
+    protected static final int PRODUCT_PAGE_SIZE = 8;
 
     PosBase(Activity activity, UiHost host, View root) {
         this.activity = activity;
@@ -85,6 +88,7 @@ abstract class PosBase {
         paymentGroup = root.findViewById(R.id.staff_pos_payment_group);
         cash = root.findViewById(R.id.staff_pos_cash);
         other = root.findViewById(R.id.staff_pos_other);
+        scrollTop = root.findViewById(R.id.staff_pos_scroll_top);
     }
 
     protected abstract boolean authorized();

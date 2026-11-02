@@ -79,37 +79,98 @@ public final class AdminLots {
 
         LinearLayout existing = card(screen);
         title(existing, "Danh sách lô và hạn");
-        if (s.lots.isEmpty()) line(existing, "Chưa có lô theo hạn", 13, R.color.muted, false);
-        for (DemoState.Lot lot : new ArrayList<>(s.lots)) {
-            DemoState.Product p = s.product(lot.productId);
-            String status = lot.quarantined ? "CÁCH LY" :
-                lot.expiresOn == null ? "CHƯA XÁC MINH HẠN" :
-                !lot.expiresOn.isAfter(LocalDate.now()) ? "HẾT HẠN" :
-                lot.quantity < 1 ? "HẾT SỐ LƯỢNG" : "ĐỦ ĐIỀU KIỆN XUẤT FEFO";
-            line(existing, lot.code + " · " + (p == null ? lot.productId : p.name), 15, R.color.ink, true);
-            line(existing, "Hạn " + lot.expiresOn + " · " + lot.quantity + " đơn vị · " + status,
-                12, lot.quarantined || lot.expiresOn == null ||
-                    !lot.expiresOn.isAfter(LocalDate.now())
-                    ? R.color.warning : R.color.muted, false);
-            if (!lot.quarantined && lot.quantity > 0) {
-                button(existing, "Cách ly lô " + lot.code, false, () -> {
-                    if (!s.canAdmin() || !s.quarantineLot(lot.code)) {
-                        host.message("Không đủ quyền hoặc lô không thể cách ly");
-                    } else {
-                        host.message("Đã cách ly lô hàng; hệ thống đã cập nhật tồn khả dụng");
-                        host.navigate("lots-v2");
+        EditText lotSearch = input(existing, "Tìm mã lô hoặc tên sản phẩm...", InputType.TYPE_CLASS_TEXT, "");
+        TextView lotSummary = line(existing, "", 12, R.color.muted, false);
+        LinearLayout lotItemsContainer = new LinearLayout(a);
+        lotItemsContainer.setOrientation(LinearLayout.VERTICAL);
+        existing.addView(lotItemsContainer, new LinearLayout.LayoutParams(-1, -2));
+
+        final int LOT_PAGE_SIZE = 8;
+        final int[] lotPage = {0};
+
+        Runnable renderLotList = new Runnable() {
+            @Override
+            public void run() {
+                lotItemsContainer.removeAllViews();
+                String query = lotSearch.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<DemoState.Lot> matched = new ArrayList<>();
+                for (DemoState.Lot lot : new ArrayList<>(s.lots)) {
+                    DemoState.Product p = s.product(lot.productId);
+                    String pName = p == null ? "" : p.name;
+                    if (query.isEmpty() ||
+                        lot.code.toLowerCase(Locale.ROOT).contains(query) ||
+                        lot.productId.toLowerCase(Locale.ROOT).contains(query) ||
+                        pName.toLowerCase(Locale.ROOT).contains(query)) {
+                        matched.add(lot);
                     }
-                });
-            } else if (lot.quarantined && lot.quantity > 0) {
-                button(existing, "Bỏ cách ly lô " + lot.code, false, () -> {
-                    if (restoreDemoLot(s, lot)) {
-                        host.message("Đã mở lại lô hàng hợp lệ");
-                        host.navigate("lots-v2");
-                    } else host.message("Lô không đủ điều kiện bỏ cách ly: quyền, hạn hoặc tổng tồn");
-                });
+                }
+                int total = matched.size();
+                int totalPages = Math.max(1, (int) Math.ceil((double) total / LOT_PAGE_SIZE));
+                if (lotPage[0] >= totalPages) lotPage[0] = totalPages - 1;
+                if (lotPage[0] < 0) lotPage[0] = 0;
+
+                int start = lotPage[0] * LOT_PAGE_SIZE;
+                int end = Math.min(start + LOT_PAGE_SIZE, total);
+                lotSummary.setText("Hiển thị " + (total == 0 ? 0 : (start + 1)) + "–" + end + " trên tổng số " + total + " lô hàng");
+
+                if (total == 0) {
+                    line(lotItemsContainer, "Chưa có lô hàng phù hợp", 13, R.color.muted, false);
+                } else {
+                    for (int i = start; i < end; i++) {
+                        DemoState.Lot lot = matched.get(i);
+                        DemoState.Product p = s.product(lot.productId);
+                        String status = lot.quarantined ? "CÁCH LY" :
+                            lot.expiresOn == null ? "CHƯA XÁC MINH HẠN" :
+                            !lot.expiresOn.isAfter(LocalDate.now()) ? "HẾT HẠN" :
+                            lot.quantity < 1 ? "HẾT SỐ LƯỢNG" : "ĐỦ ĐIỀU KIỆN XUẤT FEFO";
+                        line(lotItemsContainer, lot.code + " · " + (p == null ? lot.productId : p.name), 15, R.color.ink, true);
+                        line(lotItemsContainer, "Hạn " + lot.expiresOn + " · " + lot.quantity + " đơn vị · " + status,
+                            12, lot.quarantined || lot.expiresOn == null ||
+                                !lot.expiresOn.isAfter(LocalDate.now())
+                                ? R.color.warning : R.color.muted, false);
+                        if (!lot.quarantined && lot.quantity > 0) {
+                            button(lotItemsContainer, "Cách ly lô " + lot.code, false, () -> {
+                                if (!s.canAdmin() || !s.quarantineLot(lot.code)) {
+                                    host.message("Không đủ quyền hoặc lô không thể cách ly");
+                                } else {
+                                    host.message("Đã cách ly lô hàng; hệ thống đã cập nhật tồn khả dụng");
+                                    host.navigate("lots-v2");
+                                }
+                            });
+                        } else if (lot.quarantined && lot.quantity > 0) {
+                            button(lotItemsContainer, "Bỏ cách ly lô " + lot.code, false, () -> {
+                                if (restoreDemoLot(s, lot)) {
+                                    host.message("Đã mở lại lô hàng hợp lệ");
+                                    host.navigate("lots-v2");
+                                } else host.message("Lô không đủ điều kiện bỏ cách ly: quyền, hạn hoặc tổng tồn");
+                            });
+                        }
+                        divider(lotItemsContainer);
+                    }
+                }
+
+                if (totalPages > 1) {
+                    PharmaUi.pagination(lotItemsContainer, lotPage[0], totalPages, total, "lô", newPage -> {
+                        lotPage[0] = newPage;
+                        this.run();
+                        if (screen.scroll != null) {
+                            screen.scroll.smoothScrollTo(0, existing.getTop());
+                        }
+                    });
+                }
             }
-            divider(existing);
-        }
+        };
+
+        lotSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                lotPage[0] = 0;
+                renderLotList.run();
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        renderLotList.run();
         warning(existing, "Quản lý tồn kho theo tiêu chuẩn Thực hành tốt phân phối thuốc (GDP) và nguyên tắc FEFO.");
         return screen.root;
     }

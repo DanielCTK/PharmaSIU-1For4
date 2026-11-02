@@ -114,19 +114,79 @@ public final class AdminCatalog {
 
         LinearLayout listing = card(screen);
         title(listing, "Danh mục nội bộ");
-        for (DemoState.Product p : s.products) {
-            Uri photo = StaffMediaViews.demoPhoto(s, p.id);
-            listing.addView(StaffMediaViews.createThumbnail(a, host, p, photo,
-                () -> showProductPhoto(a, host, p)),
-                new LinearLayout.LayoutParams(dp(a, 76), dp(a, 76)));
-            line(listing, p.name, 15, R.color.ink, true);
-            line(listing, p.category + " · " + p.id + " · " +
-                (p.priceVnd > 0 ? vnd(p.priceVnd) : "Chưa báo giá") +
-                " · tồn khả dụng " + s.stock.getOrDefault(p.id, 0), 12, R.color.muted, false);
-            if (p.requiresPrescription) line(listing, "Rx · CHỜ DUYỆT CHUYÊN MÔN", 12, R.color.warning, true);
-            button(listing, "Xem hình / đổi ảnh", false, () -> showProductPhoto(a, host, p));
-            divider(listing);
-        }
+        EditText catalogSearch = input(listing, "Tìm sản phẩm (tên, mã, nhóm hàng)...", InputType.TYPE_CLASS_TEXT, "");
+        TextView catalogSummary = line(listing, "", 12, R.color.muted, false);
+        LinearLayout itemsContainer = new LinearLayout(a);
+        itemsContainer.setOrientation(LinearLayout.VERTICAL);
+        listing.addView(itemsContainer, new LinearLayout.LayoutParams(-1, -2));
+
+        final int PAGE_SIZE = 8;
+        final int[] catalogPage = {0};
+
+        Runnable renderList = new Runnable() {
+            @Override
+            public void run() {
+                itemsContainer.removeAllViews();
+                String query = catalogSearch.getText().toString().trim().toLowerCase(Locale.ROOT);
+                List<DemoState.Product> matched = new ArrayList<>();
+                for (DemoState.Product p : s.products) {
+                    if (query.isEmpty() ||
+                        p.name.toLowerCase(Locale.ROOT).contains(query) ||
+                        p.id.toLowerCase(Locale.ROOT).contains(query) ||
+                        p.category.toLowerCase(Locale.ROOT).contains(query)) {
+                        matched.add(p);
+                    }
+                }
+                int total = matched.size();
+                int totalPages = Math.max(1, (int) Math.ceil((double) total / PAGE_SIZE));
+                if (catalogPage[0] >= totalPages) catalogPage[0] = totalPages - 1;
+                if (catalogPage[0] < 0) catalogPage[0] = 0;
+
+                int start = catalogPage[0] * PAGE_SIZE;
+                int end = Math.min(start + PAGE_SIZE, total);
+                catalogSummary.setText("Hiển thị " + (total == 0 ? 0 : (start + 1)) + "–" + end + " trên tổng số " + total + " sản phẩm");
+
+                if (total == 0) {
+                    line(itemsContainer, "Không có sản phẩm nào khớp tìm kiếm", 13, R.color.muted, false);
+                } else {
+                    for (int i = start; i < end; i++) {
+                        DemoState.Product p = matched.get(i);
+                        Uri photo = StaffMediaViews.demoPhoto(s, p.id);
+                        itemsContainer.addView(StaffMediaViews.createThumbnail(a, host, p, photo,
+                            () -> showProductPhoto(a, host, p)),
+                            new LinearLayout.LayoutParams(dp(a, 76), dp(a, 76)));
+                        line(itemsContainer, p.name, 15, R.color.ink, true);
+                        line(itemsContainer, p.category + " · " + p.id + " · " +
+                            (p.priceVnd > 0 ? vnd(p.priceVnd) : "Chưa báo giá") +
+                            " · tồn khả dụng " + s.stock.getOrDefault(p.id, 0), 12, R.color.muted, false);
+                        if (p.requiresPrescription) line(itemsContainer, "Rx · CHỜ DUYỆT CHUYÊN MÔN", 12, R.color.warning, true);
+                        button(itemsContainer, "Xem hình / đổi ảnh", false, () -> showProductPhoto(a, host, p));
+                        divider(itemsContainer);
+                    }
+                }
+
+                if (totalPages > 1) {
+                    PharmaUi.pagination(itemsContainer, catalogPage[0], totalPages, total, "sản phẩm", newPage -> {
+                        catalogPage[0] = newPage;
+                        this.run();
+                        if (screen.scroll != null) {
+                            screen.scroll.smoothScrollTo(0, listing.getTop());
+                        }
+                    });
+                }
+            }
+        };
+
+        catalogSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                catalogPage[0] = 0;
+                renderList.run();
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
+
+        renderList.run();
         return screen.root;
     }
 

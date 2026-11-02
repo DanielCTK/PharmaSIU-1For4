@@ -46,11 +46,21 @@ public final class AdminUi {
         final Activity activity;
         final View root;
         final LinearLayout body;
+        final android.widget.ScrollView scroll;
+        final View scrollTop;
         Screen(Activity a, int layout) {
             activity = a;
             root = a.getLayoutInflater().inflate(layout, null, false);
             body = root.findViewById(R.id.staff_admin_content);
             if (body == null) throw new IllegalStateException("Missing staff_admin_content");
+            scroll = root.findViewById(R.id.staff_admin_scroll);
+            scrollTop = root.findViewById(R.id.staff_admin_scroll_top);
+            if (scroll != null && scrollTop != null) {
+                scrollTop.setOnClickListener(v -> scroll.smoothScrollTo(0, 0));
+                scroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                    scrollTop.setVisibility(scrollY > 280 ? View.VISIBLE : View.GONE);
+                });
+            }
         }
     }
 

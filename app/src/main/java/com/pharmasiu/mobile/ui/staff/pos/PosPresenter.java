@@ -62,7 +62,16 @@ public final class PosPresenter extends PosReceiptFeatures {
                     } else host.message("Không thể đóng ca khi còn giỏ hoặc không đủ quyền.");
                 }).show();
         });
-        search.addTextChangedListener(watch(() -> renderProducts()));
+        search.addTextChangedListener(watch(() -> {
+            productPage = 0;
+            renderProducts();
+        }));
+        if (scrollTop != null && scroll != null) {
+            scrollTop.setOnClickListener(v -> scroll.smoothScrollTo(0, 0));
+            scroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                scrollTop.setVisibility(scrollY > 280 ? View.VISIBLE : View.GONE);
+            });
+        }
         cartJump.setOnClickListener(v -> scrollTo(cartRows));
         historyMore.setOnClickListener(v -> {
             visibleHistoryCount = Math.min(state.sales.size(), visibleHistoryCount + 12);
