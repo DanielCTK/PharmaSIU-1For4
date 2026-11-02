@@ -1,34 +1,68 @@
-# Kiến trúc ứng dụng
+# Kiến trúc PharmaSIU Android Java/XML
 
-## Phân lớp
-| Layer | Trách nhiệm | Không được làm |
-|---|---|---|
-| `ui/features` | Composables, màn hình, trạng thái nhập liệu, callbacks | Quyết định giá/tồn/Rx final |
-| `ui/components` | Material3 primitives, reusable artwork, trạng thái UI | Gọi API, giữ dữ liệu đơn |
-| `ui/components/MedicineMedia.kt` | Adapter Coil: ảnh HTTPS tùy chọn + fallback artwork không mạng | Biến ảnh lỗi thành dữ liệu có tồn kho; tải ảnh toa khách |
-| `ui/theme` | Brand tokens Emerald, Lime, typography, shapes | Nghiệp vụ |
-| `domain` | Pure Kotlin cart rules, state machine | Android Context, Retrofit, database |
-| `data/model` | Data class công khai | Nhét logic UI |
-| `data/repository` | Demo data; adapter API thật trong tương lai | Báo giả dữ liệu là real-time |
-| `ui/PharmaSIUApp.kt` | Root composition, stack demo, launch Android picker | Persist order thật |
+## Một ứng dụng duy nhất
 
-Hiện nay navigation stack, cart, hồ sơ demo, yêu thích, sổ địa chỉ, toa và các bản xem trước yêu cầu nằm trong RAM của root Composable để prototype dễ đọc; **chưa dùng ViewModel, Room, Hilt hoặc Navigation Compose**. Chỉ cờ onboarding được lưu vào Preferences. Trước khi kết nối backend, chuyển state sang feature ViewModel, repository interface, secure storage và xử lý process death/back stack sâu hơn.
+- Root project: `settings.gradle` (Groovy), `include ':app'` duy nhất.
+- Module: `app/build.gradle`, Android Gradle Plugin 8.13.2; `namespace` và `applicationId` cùng là `com.pharmasiu.mobile`.
+- Main entry: `app/src/main/java/com/pharmasiu/mobile/MainActivity.java`, Android native `Activity`; `AndroidManifest.xml` chỉ khai báo launcher này.
+- Tất cả mã nguồn trong ứng dụng là Java 17; các layout/theme/drawable ở `app/src/main/res/*.xml`. Không sử dụng Kotlin, Compose, Kotlin DSL hoặc module Java thử nghiệm.
 
-**Mở rộng v0.2:** `data/repository/ExpandedMockCatalog.kt` bổ sung 24 sản phẩm ngoài 6 mẫu ban đầu; `domain/CatalogSearchRules.kt` sở hữu lọc/tìm kiếm/sắp xếp; `data/model/MockCommerce.kt` có MockProfile, MockAddress và MockRequest; `ui/features/account/` sở hữu auth/hồ sơ/địa chỉ/mật khẩu; `ui/features/community/` sở hữu yêu thích và lịch sử yêu cầu mẫu. Không lưu credential demo vào Prefs.
+## Các lớp chính
 
-**Đồng bộ component:** Header, ProductTile, MedicineCard, FeatureButton và artwork nay thuộc `ui/components/`; feature screens chỉ import từ package này, không import component từ một feature khác. Khi nhận ảnh catalog chính thức, đặt URL ở `Medicine.imageUrl`; adapter chỉ chấp nhận HTTPS và dùng ảnh minh họa lúc đang tải/lỗi.
+| Package | Trách nhiệm |
+|---|---|
+| `com.pharmasiu.mobile.data.model` | Các model `Medicine`, `CartLine`, `MockRequest`, `MockProfile`, `MockAddress`, trạng thái |
+| `com.pharmasiu.mobile.data.repository` | Catalog demo gồm 30 mặt hàng mẫu và tra cứu theo ID |
+| `com.pharmasiu.mobile.domain` | `CounterRules`, `MockLotRules`, `OrderStateMachine`, `PrescriptionSelectionRules`, catalog search, giá, auth, quyền vai trò |
+| `com.pharmasiu.mobile.core.DemoState` | RAM state duy nhất cho 3 vai trò; mutations enforce tại store, không chỉ UI |
+| `com.pharmasiu.mobile.core.UiHost` | Giao tiếp navigation, message, chọn tệp và logout |
+| `com.pharmasiu.mobile.ui` | Màn đăng nhập, UI foundation, tuyến chuyển đổi UI |
+| `com.pharmasiu.mobile.ui.customer` | Home/Catalog/Product, Cart/Rx/Checkout/Orders, Account/Profile/Address/Onboarding |
+| `com.pharmasiu.mobile.ui.staff` | POS, lot/expiry/FEFO, inventory, shift reconciliation, media preview, admin |
+| `com.pharmasiu.mobile.legacy` | Các hợp đồng tương thích Java giúp xác minh nghiệp vụ khi chuyển từ kiến trúc cũ |
 
-## Contract dữ liệu và trạng thái
-- Số lô/hạn dùng, FEFO, kiểm tra tồn khả dụng và hạn giữ hàng do backend chịu trách nhiệm.
-- Tạo yêu cầu → máy chủ trả `REQUEST_RECEIVED`. Nếu Rx, tiếp tục `RX_REVIEW_PENDING`, `RX_NEEDS_UPDATE` hoặc `RX_REJECTED`; chỉ sau thẩm định mới chuyển sang kiểm tra khả dụng.
-- `STOCK_CONFIRMATION_PENDING` → `HELD` (có TTL) → `PREPARING` → `READY_FOR_PICKUP` → `COMPLETED`. Các trạng thái `CANCELLED`, `EXPIRED` xử lý từ backend.
-- Máy khách chỉ hiển thị trạng thái đã được backend trả về; hệ thống demo **không** giả lập API xác nhận.
-- Giá dự kiến không được cộng VAT lần hai; giá cuối cùng và chứng từ do backend POS xác minh.
+## Đảm bảo trạng thái
 
-## Khi thêm API
-Ưu tiên Retrofit/OkHttp hoặc Ktor theo phiên bản Android, DTO mapper sang domain, TLS, xác thực, idempotency key cho submit, retry có kiểm soát, pagination/search và trạng thái lỗi. Ảnh toa phải có auth, phân quyền, giới hạn định dạng/dung lượng và chính sách lưu trữ rõ ràng.
+Dữ liệu về giỏ, người dùng, tồn/lô, yêu cầu, ca và phiếu bán tồn tại trong RAM; không dùng Room/DAO/SQLite/backend. Giữ cache onboarding flag trong `SharedPreferences` nhưng không giữ session đăng nhập qua process restart. Khi Activity đổi cấu hình, state RAM được giữ bằng retained non-configuration state; khi process restart vẫn về login.
 
-## Trọng tâm test
-- Domain: không skip RX review hay bước giữ hàng, cart Rx phải đính kèm toa.
-- UI: search/filter, thêm/bớt giỏ, system Back, ảnh bị hủy chọn, form invalid/valid, review nội dung trước submit.
-- Integration khi có backend: double submit, hết TTL, stale stock, 403, mạng chập chờn, upload mờ, kiểm soát quá hạn.
+Quyền được kiểm tra ở logic state: CUSTOMER không thể ghi staff data; CASHIER không thể chỉnh danh mục/ảnh/kiểm kê; ADMIN không được làm dược sĩ, không có trạng thái duyệt toa thực. Các bản ghi Rx chỉ là yêu cầu cục bộ và chưa upload.
+
+Bán POS mô phỏng chặn Rx, mức tồn/lô không hợp lệ; ghi bản chụp bất biến tên/giá từng dòng, phiếu/giờ/ca/method/tiền nhận/tính thối DEMO; đối soát ca chỉ sau đóng ca, mỗi ca một lần. Ảnh sản phẩm là URI `content://` cục bộ với fallback Canvas minh họa; không khẳng định nguồn ảnh hay tồn thật.
+
+## Test và giới hạn
+
+JUnit Java trong `app/src/test/java`; chạy `gradlew.bat :app:clean :app:assembleDebug :app:testDebugUnitTest`. Kiểm thử backend thật, xét duyệt Rx, stock hold TTL, thanh toán thực, TalkBack và toàn bộ các kịch bản trên thiết bị thật chưa được hoàn tất. Không đánh đồng build thành công với parity từng pixel/animation.
+
+Đối với layout, mở `app/src/main/res/layout/*.xml` bằng Android Studio Design/Split. Các ảnh minh họa Java Canvas không thể xem đầy đủ như layout thuần XML; phải chạy app/emulator để kiểm tra trực quan.
+
+## As-built sau modular refactor (29/10/2026)
+
+Cấu trúc thực tế đã được chia nhỏ hơn bảng khái quát ban đầu:
+
+```text
+com.pharmasiu.mobile/
+  MainActivity.java
+  navigation/PharmaBottomBar.java
+  core/DemoState.java
+  core/state/{CustomerAccountStore,InventoryStore}.java
+  data/{model,repository}/
+  domain/
+  legacy/
+  ui/AuthScreen.java                    # façade
+  ui/auth/{AuthFormBase,AuthUiState,AuthFormController,AuthMode}.java
+  ui/design/PharmaUi.java               # Material components/typography/tokens
+  ui/customer/{CustomerCatalogViews,CustomerOrderViews,CustomerAccountViews}.java
+  ui/customer/catalog/                  # home, browse, product, artwork, filters
+  ui/customer/orders/                   # cart, Rx, checkout, orders, receipts
+  ui/customer/account/                  # profile, address, favorites, onboarding
+  ui/staff/{StaffPosViews,StaffAdminViews,StaffMediaViews}.java
+  ui/staff/pos/                          # shift/controller, catalog, cart, receipt
+  ui/staff/admin/                        # dashboard, catalog, lots, audit, reports
+  ui/staff/media/                        # URI store, preview, bounded local decoder
+```
+
+Public façade giữ chữ ký `create(Activity, UiHost, String)` cho những luồng tương ứng. `DemoState` giữ phương thức public đã có nhưng account và inventory được ủy quyền xuống `core/state`. `MainActivity` giữ lifecycle + picker, `PharmaBottomBar` quyết định cách hiển thị thanh nav phù hợp vai trò; không được dùng UI để cấp quyền thật.
+
+Mã XML trải qua theme Material 3 `Theme.PharmaSIUJava`, token ở `ui_tokens.xml`, dùng MaterialButton/Card/TextField/BottomNavigationView qua `com.google.android.material:material:1.14.0`, không phải Compose. Các XML như `staff_pos_*`, `order_v2_*`, `catalog_v2_*` là màn hoạt động. Những layout thử nghiệm `customer_page`, `admin_page`, `pos_page`, `login_page` đã được dọn khỏi source active.
+
+**Tình trạng kiểm chứng:** 87 Java production, 29 Java JUnit, 59 XML, 0 Kotlin; Gradle build/debug + JUnit 141/141 PASS. Emulator API28 đã mở login, Customer Home/Account/Cart, Cashier POS và Admin Dashboard; phần lớn kịch bản kinh doanh sâu/E2E và accessibility trên thiết bị thật chưa xác nhận. Bản nghiệm thu chi tiết: `docs/JAVA_UI_REFACTOR_HANDOFF_2026-10-29.md`.

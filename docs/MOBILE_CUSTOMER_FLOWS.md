@@ -4,11 +4,11 @@
 
 ## Điều hướng
 
-- Khởi động lần đầu → Giới thiệu (Bỏ qua/Tiếp tục) → Trang chủ.
-- Tab chính: Trang chủ / Danh mục / Yêu thích / Yêu cầu / Tài khoản.
+- Mọi lần tạo Activity mới → màn Đăng nhập PharmaSIU chung. Sau khi đăng nhập tài khoản khách demo, lần đầu mới xem Giới thiệu (Bỏ qua/Tiếp tục) → Trang chủ; không có truy cập gian hàng khách khi chưa xác thực demo.
+- Tab chính: Trang chủ / Danh mục / Yêu thích / Đơn hàng / Tài khoản.
 - Danh mục → Tìm kiếm/Lọc/Sắp xếp → Chi tiết → Yêu thích hoặc Giỏ → Rx nếu có → Checkout → Đặt hàng → Thành công (demo) → Đơn hàng.
 - Đơn hàng → Chi tiết → Hủy đơn demo hoặc Thêm sản phẩm vào giỏ lại.
-- Tài khoản → Đăng nhập/Đăng ký/Đặt lại mật khẩu demo → Chỉnh sửa hồ sơ / Địa chỉ / Đổi mật khẩu.
+- Đăng nhập/Đăng ký/Quên mật khẩu demo nằm trong màn đăng nhập chung → Tài khoản → Chỉnh sửa hồ sơ / Địa chỉ / Đổi mật khẩu; Đăng xuất trở về màn đăng nhập chung.
 
 ## Màn hình đã có mã tương tác
 
@@ -41,14 +41,14 @@
 
 | Mã | Thao tác | Kết quả |
 |---|---|---|
-| F01 | Cài mới → Bỏ qua giới thiệu → chạy lại | Không hiện onboarding lần nữa |
-| F02 | Guest → Danh mục → Chi tiết → Back | Quay lại danh mục |
+| F01 | Cài mới → đăng nhập khách → Bỏ qua giới thiệu → khởi động mới và đăng nhập lại | Không hiện onboarding lần nữa; vẫn bắt buộc màn đăng nhập |
+| F02 | Đăng nhập khách → Danh mục → Chi tiết → Back | Quay lại danh mục |
 | F03 | Lọc “Mỹ phẩm” | Chỉ hiện mỹ phẩm |
 | F04 | Tìm “sua rua mat” và “SỮA RỬA MẶT” | Cùng kết quả |
 | F05 | Tìm không thấy | Có empty state |
 | F06 | Sắp giá tăng/giảm | Hàng chưa giá nằm cuối |
 | F07 | Lưu yêu thích từ card → tab Yêu thích → bỏ lưu | Đồng bộ |
-| F08 | Guest đăng nhập sai mật khẩu | Không tạo session |
+| F08 | Nhập sai mật khẩu trong đăng nhập chung | Không tạo phiên khách/nhân viên |
 | F09 | Đăng nhập demo → hồ sơ | Hiện tên và điện thoại |
 | F10 | Đăng ký trùng điện thoại | Không ghi đè tài khoản |
 | F11 | Reset mật khẩu demo → login bằng mật khẩu mới | Thành công trong RAM |
@@ -60,7 +60,7 @@
 | F17 | Checkout thiếu thông tin | Không lưu yêu cầu |
 | F18 | Lưu checkout mock → tab Yêu cầu | Màn thành công và một đơn demo trong lịch sử, không có đơn thật |
 | F19 | Chi tiết yêu cầu → mua lại | Giỏ tái tạo, Rx cần ảnh mới |
-| F20 | Hủy bản local / Đăng xuất | Không phát sinh backend, hồ sơ ẩn với guest |
+| F20 | Hủy bản local có xác nhận/lý do; đăng xuất | Không phát sinh backend; checkout của tài khoản trước không xuất hiện ở tài khoản sau |
 
 ## Chưa triển khai và không được giả thành hoàn chỉnh
 

@@ -1,0 +1,16 @@
+code|name|ingredient|strength|unit|kind|price|lot|expiry|quantity|status
+MP-SRM-001|Sữa rửa mặt dịu nhẹ mẫu|Chất làm sạch dịu nhẹ|150 ml|Chai|KHAC|89000|MP001-A|2028-11-30|30|DAT
+MP-KCN-002|Kem chống nắng mẫu|Thành phần chăm sóc da|50 ml|Tuýp|KHAC|159000|MP002-A|2028-08-31|20|DAT
+MP-DDA-003|Dung dịch dưỡng ẩm mẫu|Thành phần dưỡng ẩm|120 ml|Chai|KHAC|119000|MP003-A|2028-10-31|25|DAT
+MP-DGT-004|Dầu gội dịu nhẹ mẫu|Thành phần làm sạch tóc|250 ml|Chai|KHAC|95000|MP004-A|2028-12-31|18|DAT
+MP-SBT-005|Sữa tắm gia đình mẫu|Thành phần làm sạch da|300 ml|Chai|KHAC|109000|MP005-A|2029-02-28|24|DAT
+TP-BOT-006|Bột ngũ cốc mẫu|Ngũ cốc tổng hợp|400 g|Hộp|KHAC|68000|TP006-A|2028-06-30|36|DAT
+TP-TRA-007|Trà thảo mộc mẫu|Lá thảo mộc|20 túi|Hộp|KHAC|52000|TP007-A|2028-07-31|22|DAT
+TP-YEN-008|Yến mạch nguyên hạt mẫu|Yến mạch|500 g|Túi|KHAC|72000|TP008-A|2028-09-30|28|DAT
+TP-SUA-009|Sữa hạt đóng hộp mẫu|Hỗn hợp hạt|180 ml|Hộp|KHAC|17000|TP009-A|2028-04-30|50|DAT
+TP-BAN-010|Bánh ăn nhẹ ngũ cốc mẫu|Ngũ cốc|30 g|Gói|KHAC|14000|TP010-A|2028-03-31|60|DAT
+OTC-PAR-011|Paracetamol 500 mg mẫu|Paracetamol|500 mg|Hộp|OTC|24000|OTC011-A|2028-05-31|40|DAT
+OTC-ORS-012|Bột bù nước và điện giải mẫu|Muối bù điện giải|Gói 5 g|Hộp|OTC|33000|OTC012-A|2028-05-31|35|DAT
+OTC-NMS-013|Nước muối sinh lý 0.9% mẫu|Natri clorid|0.9%|Chai|OTC|15000|OTC013-A|2028-08-31|45|DAT
+RX-AMX-014|Amoxicillin 500 mg mẫu|Amoxicillin|500 mg|Hộp|RX|62000|RX014-A|2028-07-31|15|CHO_KIEM_TRA
+RX-CEF-015|Cefalexin 500 mg mẫu|Cefalexin|500 mg|Hộp|RX|78000|RX015-A|2028-09-30|12|CHO_KIEM_TRA

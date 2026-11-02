@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared storefront backdrop; keep text/buttons in their existing layouts. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/pharmasiu_storefront_banner" />
+</layer-list>

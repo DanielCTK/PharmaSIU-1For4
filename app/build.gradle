@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    // Package name of the migrated Java Views/XML source, not the installed app ID.
+    namespace 'com.pharmasiu.mobile'
+    compileSdk 36
+
+    defaultConfig {
+        // Preserve original installed identity: upgrade, don't create a second application.
+        applicationId 'com.pharmasiu.mobile'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+dependencies {
+    // Pinned official Material Components for Android Views/XML (Apache-2.0).
+    implementation 'com.google.android.material:material:1.14.0'
+    testImplementation 'junit:junit:4.13.2'
+}

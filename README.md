@@ -1,152 +1,107 @@
-# PharmaSIU Mobile
+> **CẤU TRÚC HIỆN HÀNH (30/10/2026):** [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md). Tài liệu lịch sử trong docs/ không thay thế bản mô tả này.
 
-Ứng dụng Android dành cho khách hàng nhà thuốc PharmaSIU, tập trung vào **tra cứu sản phẩm và gửi yêu cầu đặt trước – nhận tại quầy (Click & Collect)**. Giao diện xây dựng bằng **Kotlin + Jetpack Compose + Material 3**, phong cách Emerald/Lime. Mã nguồn tổ chức theo feature và layer để nhiều thành viên có thể cộng tác mà không phải sửa chung một màn hình.
+# PharmaSIU Mobile — Android Java & XML
 
-> **Trạng thái: ứng dụng trải nghiệm tương tác, dữ liệu mock (v0.2).** Có onboarding, đăng nhập/đăng ký demo, hồ sơ, sổ địa chỉ, danh mục 30 mặt hàng, tìm kiếm, yêu thích, giỏ, toa, checkout và lịch sử đơn hàng demo. **Chưa kết nối API nhà thuốc, chưa tạo đơn thật, chưa gửi ảnh toa, chưa xác nhận tồn, chưa thanh toán hoặc phê duyệt dược sĩ trên máy chủ.** Giá là dữ liệu ví dụ, không phải giá chào bán.
+**Ứng dụng gốc duy nhất**: package, namespace và application ID là `com.pharmasiu.mobile`. Dự án Android dùng **Java 17 + Android Views/XML**. Không có Kotlin, Jetpack Compose, hoặc các module chạy song song. Gradle dùng Groovy DSL; `settings.gradle` chỉ khai báo `:app`.
 
-## Một màn đăng nhập cho toàn bộ PharmaSIU
+PharmaSIU hiện là ứng dụng **RAM DEMO** dành cho Khách hàng, Nhân viên bán hàng và Quản trị viên. Các thao tác tra cứu, tạo yêu cầu, đơn hàng, giá, tồn, lô/hạn, FEFO, POS, kiểm kê và đối soát đều chỉ mô phỏng tại thiết bị. Chưa có cơ sở dữ liệu/backend vận hành, xác minh giá/tồn thật, dược sĩ xét duyệt Rx, upload toa, giữ hàng, thanh toán hoặc hóa đơn thật.
 
-- **Mở ứng dụng:** duy nhất một màn **Đăng nhập PharmaSIU** với ô **Email hoặc số điện thoại** + **Mật khẩu**. Không có màn chọn vai trò và không có màn đăng nhập Khách hàng tách biệt.
-- **Quản lý:** `quanly@pharmasiu.demo` / `2222` → Khu vận hành, vai trò Quản lý.
-- **Nhân viên:** `nhanvien@pharmasiu.demo` / `1111` → Khu vận hành, vai trò Nhân viên.
-- **Khách hàng:** `0900000000` / `demo1234` hoặc `demo@pharmasiu.example` / `demo1234` → Gian hàng. Có thể **Đăng ký** và **Quên mật khẩu demo** ngay trong màn chung mà không chuyển sang trang đăng nhập khác.
-- **Đăng xuất:** từ bất kỳ vai trò nào quay về đúng một màn Đăng nhập PharmaSIU. Tạo Activity mới cũng luôn yêu cầu đăng nhập lại. Nút Back không mở lại khu vực đã đăng xuất.
-- **Giới hạn:** tài khoản demo công khai, xác thực trong bộ nhớ; chưa có xác thực server hoặc SQL. Không sử dụng mật khẩu/dữ liệu thật.
-**Ảnh giao diện kiểm tra trên emulator:** [Đăng nhập chung](docs/screenshots/app-unified-login.png) · [Ba tài khoản demo](docs/screenshots/app-unified-demo-accounts.png) · [Đăng ký](docs/screenshots/app-unified-register.png) · [Quên mật khẩu](docs/screenshots/app-unified-reset.png) · [Sau đăng xuất](docs/screenshots/app-unified-after-logout.png).
+## Mở dự án trong Android Studio
 
-## Chạy trong Android Studio
+1. Mở **nguyên thư mục gốc** `C:\PharmaSIU\PharmaSIU-1For4` (có `settings.gradle`) qua **Android Studio → File → Open**.
+2. Dùng Android SDK API 36 và JDK 17+ (JBR Android Studio).
+3. Đợi Gradle Sync; chọn cấu hình duy nhất **app**; chọn thiết bị Android 8.0+ rồi nhấn **Run**.
+4. Ứng dụng mở màn đăng nhập chung. Không có màn chọn vai trò; vai trò xác định từ tài khoản DEMO.
 
-1. Cài Android Studio có Android SDK **API 36** và JDK **17+** (Android Studio bundled JBR được khuyến nghị).
-2. Clone repo `git clone https://github.com/DanielCTK/PharmaSIU-1For4.git`.
-3. Mở **thư mục gốc repo** (chứa `settings.gradle.kts`) trong Android Studio; chọn **Trust Project** nếu đồng ý, đợi **Gradle Sync**.
-4. Chọn cấu hình chạy **app** và emulator/thiết bị Android **8.0 / API 26 trở lên**.
-5. Nhấn **Run**. Ứng dụng **luôn mở màn Đăng nhập nội bộ trước**, không tự vào Trang chủ hoặc Onboarding. Dùng email hoặc số điện thoại cùng mật khẩu để vào đúng giao diện theo vai trò. Không cần API key, nhưng phải đăng nhập bằng thông tin demo để mở các khu vực.
+Chạy kiểm thử trên Windows:
 
-Chạy kiểm tra từ terminal:
-
-```bash
-./gradlew :app:assembleDebug
-./gradlew :app:testDebugUnitTest
+```powershell
+.\gradlew.bat :app:clean :app:assembleDebug :app:testDebugUnitTest --offline --no-daemon
 ```
 
-Trên Windows thay `./gradlew` bằng `gradlew.bat`. APK debug được tạo tại `app/build/outputs/apk/debug/` khi build thành công. **Không commit** `local.properties`, file ký ứng dụng hay thông tin khách hàng thật.
+APK: `app/build/outputs/apk/debug/app-debug.apk`. App ID vẫn là `com.pharmasiu.mobile`, nên đây là bản cập nhật cho app gốc, không phải ứng dụng Java thứ hai.
 
-### Chỉ muốn xem UI, không muốn bật Emulator?
+## Tài khoản mẫu
 
-Mở [`PharmaScreenPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/PharmaScreenPreviews.kt) hoặc [`ShopFlowPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/ShopFlowPreviews.kt), chọn **Split** / **Design** → **Build & Refresh**. Có **31 bản Compose Preview** cho màn hình thương mại, đăng nhập, tài khoản, lịch sử, địa chỉ, màn hình nhỏ và chữ lớn. Chọn **Focus Mode** để nhẹ máy hơn. Xem [hướng dẫn Compose Preview không cần emulator](docs/COMPOSE_PREVIEW.md).
+| Vai trò | Tài khoản | Mật khẩu |
+| --- | --- | --- |
+| Khách hàng | `0900000000` | `demo1234` |
+| Nhân viên bán hàng | `nhanvien@pharmasiu.demo` | `1111` |
+| Quản trị viên | `quanly@pharmasiu.demo` | `2222` |
 
-### Sản phẩm nổi bật — lưới so le hai cột
+Các tài khoản trên chỉ dùng thử giao diện; không nhập dữ liệu định danh/toa thuốc/mật khẩu thật.
 
-Trang chủ có **LazyVerticalStaggeredGrid** hai cột như luồng khám phá sản phẩm của ứng dụng thương mại điện tử: ảnh lớn với chiều cao so le, thẻ có tên/giá tham khảo và nút yêu thích; cuộn tiếp tục để xem nhiều sản phẩm. Nhấn card mở chi tiết; các chip **Dành cho bạn / Mỹ phẩm / Thực phẩm / Thiết bị / Chăm sóc** lọc ngay trong mục nổi bật. Không dựng số lượt bán, % giảm giá hay tồn kho giả. Hình sản phẩm là minh họa offline tự thiết kế, không phải ảnh bao bì thuốc thật.
+## Chức năng Java/XML
 
-Nếu muốn xem riêng phần này mà không khởi động emulator, mở [`FeaturedShowcasePreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/FeaturedShowcasePreviews.kt) để chọn preview **390dp** hoặc **320dp**. Các ảnh minh họa dựng trực tiếp bằng Compose; khi có URL ảnh sản phẩm thực được xác minh, `MedicineMedia` sẽ dùng Coil.
-### Thiết kế tràn ngang và tối ưu thao tác
+**Khách hàng:** onboarding, trang chủ và catalog 30 sản phẩm mẫu, tìm kiếm không dấu/lọc/sắp xếp, chi tiết mặt hàng, giỏ, chọn tệp toa cục bộ (ảnh/PDF), nhập thông tin yêu cầu và điểm nhận, lưu yêu cầu RAM, phiếu, lịch sử, chi tiết, hủy và đặt lại, hồ sơ, địa chỉ, mật khẩu và yêu thích. Mọi mục liên quan Rx phải giữ trạng thái **chờ dược sĩ/CHỜ TÍCH HỢP**.
 
-Các banner Emerald của Trang chủ, Danh mục và Tài khoản hiện **tràn hết bề ngang màn hình**, không bo góc/để lề như thẻ sản phẩm. Danh sách có stable keys, content types, state-save cho scroll khi chuyển tab; dùng Crossfade 130ms khi hệ thống cho phép animation, các tính toán cart/favorites/history được tối ưu bằng derivedStateOf. Mã tiếp tục dựa trên Jetpack Compose + Material 3 + Coil, không thêm thư viện chỉ để có thêm hiệu ứng. Xem [chi tiết và giới hạn kiểm tra hiệu năng](docs/UX_PERFORMANCE.md).
+**Nhân viên bán hàng:** xem/tìm kiếm sản phẩm, xem ảnh minh họa, mở/đóng ca, ghi nhận giỏ POS DEMO, chặn bán Rx và lô không hợp lệ, phương thức tiền mặt/khác **DEMO**, phiếu và lịch sử mô phỏng. Không chấp nhận đây là thu tiền thật.
 
-Ảnh chụp màn hình debug: [Trang chủ](docs/screenshots/home-full-bleed.png) · [Danh mục](docs/screenshots/catalog-full-bleed.png) · [Tài khoản](docs/screenshots/account-full-bleed.png).
-### Danh mục sản phẩm — bố cục Emerald nâng cấp
+**Quản trị viên:** danh mục (tên/giá/tạo mặt hàng demo), chọn/xem/đổi ảnh cục bộ, nhận lô và hạn dùng, cách ly/khôi phục, kiểm kê chênh lệch, đối soát sau khi đóng ca và báo cáo RAM; quyền kiểm soát được kiểm tra ở domain/store. Không thay thế phần mềm quản lý tồn/giấy phép chuyên môn thực tế.
 
-Trang **Danh mục** có banner giới thiệu nhiều loại hàng với hình minh họa vector tại vùng góc phải (không quảng cáo giả), thanh tìm kiếm Material3, chip nhóm hàng, thanh công cụ tóm tắt **số kết quả + sắp xếp**, và lưới sản phẩm hai cột với artwork riêng theo ngành hàng, nhãn loại và nút yêu thích. Toàn bộ màn hình dùng **một vùng cuộn**, tránh trang trên cố định chiếm quá nhiều diện tích. Đã kiểm tra trực tiếp trên emulator kích thước 1080×2400. [Ảnh chụp danh mục Emerald](docs/screenshots/catalog-emerald.png).
-
-Để xem riêng màn hình mới mà không cần chạy app, mở [`CatalogDesignPreviews.kt`](app/src/main/java/com/pharmasiu/mobile/ui/previews/CatalogDesignPreviews.kt): có bản 390dp, 320dp và chữ lớn 1,5×.
-### Mở nhanh trên máy đã cấu hình
-
-Máy Windows hiện tại đã có Android Studio, SDK API 36 và JDK kèm theo Studio. `local.properties` được cấu hình riêng tại `C:\PharmaSIU\PharmaSIU-1For4` và không đưa lên Git. Chỉ mở thư mục gốc bằng **File → Open**; Android Studio tự thực hiện **Gradle Sync**, không cần mở terminal. Khi sync xong, xem UI tại `ui/previews/PharmaScreenPreviews.kt` bằng **Split/Design** mà không cần emulator. **Lần mở đầu có thể phải tải Gradle và thư viện trên mạng; đã build APK debug và chạy JUnit thành công tại máy Windows này (việc xem trên thiết bị vẫn cần xác minh).**
-
-### Luồng đặt hàng demo thành công
-
-Người dùng thêm sản phẩm → giỏ hàng → chọn toa nếu có thuốc kê đơn → nhập thông tin liên hệ & điểm nhận mẫu → **Đặt hàng** → màn **Đặt hàng thành công!**. Đơn nhận mã `DEMO-xxxx`, xuất hiện trong tab **Đơn hàng**; [xem ảnh chụp thành công](docs/screenshots/order-success-demo.png). có thể xem chi tiết, hủy hoặc đặt lại. Giỏ được xóa sau khi hoàn tất. Không quay lại checkout trống khi bấm Back từ màn thành công.
-
-Đây là thao tác **lưu đơn hàng thành công trong RAM của ứng dụng để trải nghiệm**, không phải đơn đã gửi/được nhà thuốc xác nhận. Không có thanh toán, giữ hàng, duyệt toa hay API quản lý. Phần quy trình quản lý sẽ triển khai riêng khi tích hợp backend.
-### Vận hành nhà thuốc — gộp bán hàng và quản trị (demo)
-
-Từ màn **Đăng nhập PharmaSIU chung**, tài khoản Nhân viên hoặc Quản lý được đưa vào khu vận hành thống nhất gồm bốn tab Tổng quan, Bán hàng, Hàng hóa, Hóa đơn. Nhân viên: `nhanvien@pharmasiu.demo` / `1111`; quản lý: `quanly@pharmasiu.demo` / `2222`. Màn đăng nhập có ẩn/hiện mật khẩu, báo lỗi và mục chọn nhanh tài khoản demo. Vai trò do tài khoản xác định, không chọn thủ công. Đây là thông tin công khai để thử UI, chưa phải xác thực máy chủ.
-
-**Bán hàng:** mở ca → tìm/chọn sản phẩm không kê đơn → giỏ → tiền mặt hoặc phương thức khác demo → kiểm tra thanh toán → hoàn tất hóa đơn POS-DEMO → bán tiếp/lịch sử → đóng ca. Tồn giả lập giảm khi lập hóa đơn hợp lệ; thuốc kê đơn bị khóa vì chưa tích hợp dược sĩ duyệt.
-
-**Quản trị cơ bản:** cùng một giao diện; quản lý được điều chỉnh tồn mẫu, nhân viên chỉ xem danh mục. Không phát triển quản lý phức tạp. Tất cả các số liệu chỉ nằm trong RAM, không kết nối đến dữ liệu khách, kho/lô FEFO, SQL hay backend. **Quản lý → Hàng hóa:** dùng Thêm hàng (tên, nhóm, đơn vị, giá, tồn ban đầu, ảnh chọn từ điện thoại), Đổi ảnh, Nhập thêm (số lượng) trong phiên demo. Hàng mới xuất hiện ngay trong POS nội bộ, không đồng bộ ra gian hàng khách. SQL, lô/hạn và phiếu nhập thật để sau. Xem [luồng vận hành mới](docs/OPERATIONS_UNIFIED.md) và [đặc tả staff flow](docs/STAFF_WORKFLOWS.md). [Ảnh giao diện bán tại quầy](docs/screenshots/staff-counter-demo.png), [hóa đơn demo](docs/screenshots/staff-receipt-demo.png) và [trang quản trị](docs/screenshots/staff-admin-demo.png). Có 3 [Compose Preview nhân viên](app/src/main/java/com/pharmasiu/mobile/ui/previews/StaffPreviews.kt) không cần emulator. **Ảnh sản phẩm tại POS và Hàng hóa:** chạm thumbnail để xem lớn; trong catalog mock hiện chỉ có hình minh họa, ảnh thực tế cần imageUrl từ nguồn catalog.
-## Những luồng đã có trong bản demo
-
-| Màn hình | Nội dung |
-|---|---|
-| Home | Editorial hero, danh mục, sản phẩm minh họa, thông báo demo |
-| Catalog | Tìm kiếm theo tên, lọc theo nhóm, danh sách sản phẩm |
-| Product | Mô tả, quy cách, giá ví dụ hoặc yêu cầu duyệt Rx, cảnh báo tồn kho |
-| Cart | Thêm/bớt số lượng, tạm tính minh họa, nhận diện mặt hàng Rx |
-| Prescription | Chọn ảnh trong thiết bị bằng trình chọn tệp Android, **chưa upload** |
-| Checkout | Nhập thông tin liên hệ, chọn điểm nhận mẫu, nhấn **Đặt hàng** để hoàn tất demo |
-| Thành công | Màn **Đặt hàng thành công!**, mã `DEMO-xxxx`, xem đơn hoặc tiếp tục mua sắm; chỉ thành công ở trạng thái **lưu đơn demo trên máy** |
-| Onboarding | Ba màn giới thiệu, Bỏ qua/Tiếp tục, lưu cờ đã xem |
-| Auth | Đăng nhập, đăng ký, khôi phục mật khẩu demo trong phiên RAM |
-| Account | Hồ sơ cá nhân, cập nhật thông tin, đổi mật khẩu và sổ địa chỉ liên hệ |
-| Favorites | Lưu/bỏ yêu thích từ catalog/PDP, tab danh sách sản phẩm |
-| Categories | Thuốc, mỹ phẩm, thực phẩm, thực phẩm bổ sung, thiết bị, vật tư, chăm sóc |
-| Search & sort | Tìm không dấu, lọc theo nhóm, sắp tên và giá |
-| Demo orders | Lịch sử **Đơn hàng** với trạng thái **Đặt hàng thành công**, chi tiết, hủy đơn demo và đặt lại sản phẩm |
-
-**Quy tắc an toàn:** `REQUEST_RECEIVED` không phải `HELD`; toa gửi lên không phải `RX_APPROVED`; `HELD` không phải `READY_FOR_PICKUP`. Chính sách xuất lô/hạn FEFO, tính giá cuối cùng và phân quyền phải được thực thi bởi backend; mobile không tự tạo giả xác nhận.
-
-**Tài khoản demo:** `0900000000` / `demo1234`. Chỉ dùng mật khẩu mẫu, tuyệt đối không nhập mật khẩu cá nhân thực tế. Các thông tin tài khoản, yêu thích và yêu cầu mô phỏng tồn tại trong RAM rồi bị xóa khi tiến trình kết thúc; chỉ cờ đã xem onboarding được lưu. Xem [đặc tả luồng đầy đủ](docs/MOBILE_CUSTOMER_FLOWS.md).
-
-## Cấu trúc dự án
+## Cấu trúc mã nguồn
 
 ```text
 PharmaSIU-1For4/
 ├── app/
+│   ├── build.gradle
 │   └── src/
 │       ├── main/
 │       │   ├── AndroidManifest.xml
-│       │   └── java/com/pharmasiu/mobile/
-│       │       ├── MainActivity.kt
-│       │       ├── data/
-│       │       │   ├── model/                 # Các kiểu dữ liệu công khai
-│       │       │   └── repository/            # Demo catalog, sau này API
-│       │       ├── domain/                    # Cart rules, order state machine
-│       │       └── ui/
-│       │           ├── PharmaSIUApp.kt        # Điều hướng & demo state
-│       │           ├── theme/                 # Palette, type, shapes
-│       │           ├── components/            # Shared UI + Coil 3 image adapter
-│       │           ├── previews/              # 31 Compose Previews không cần Emulator
-│       │           └── features/
-│       │               ├── onboarding/
-│       │               ├── account/
-│       │               ├── community/          # Yêu thích, yêu cầu mẫu
-│       │               ├── home/
-│       │               ├── catalog/
-│       │               ├── product/
-│       │               ├── cart/
-│       │               ├── prescription/
-│       │               ├── checkout/
-│       │               └── orders/
-│       └── test/java/com/pharmasiu/mobile/domain/
-├── docs/
-│   ├── android-ui-brain/                      # Bản quy tắc native có thể mang theo repo
-│   ├── COMPOSE_PREVIEW.md
-│   ├── MOBILE_CUSTOMER_FLOWS.md
-│   ├── ARCHITECTURE.md
-│   ├── TEAM_GUIDE.md
-│   └── QA_REPORT.md
-├── gradle/libs.versions.toml                   # Phiên bản dependency tập trung
-├── .github/workflows/android.yml              # CI build & unit tests
-└── AGENTS.md                                   # Hướng dẫn coding agent / contributor
+│       │   ├── java/com/pharmasiu/mobile/
+│       │   │   ├── MainActivity.java
+│       │   │   ├── core/            # RAM state, role, Rx, POS, tài khoản, ca
+│       │   │   ├── data/            # Model / catalog repository Java
+│       │   │   ├── domain/          # Logic nghiệp vụ Java, FEFO, trạng thái
+│       │   │   ├── legacy/          # Các hợp đồng Java còn đối chiếu
+│       │   │   └── ui/              # Auth, khách hàng, POS, quản trị, Media
+│       │   └── res/
+│       │       ├── layout/          # Toàn bộ XML màn hình
+│       │       ├── drawable/        # UI assets/drawables XML
+│       │       └── values/          # Emerald/Lime palette, style, strings
+│       └── test/java/com/pharmasiu/mobile/  # JUnit Java
+├── build.gradle
+├── settings.gradle                 # include ':app'
+└── gradle/
 ```
 
-Đây là **một Gradle app module, code chia package theo feature/layer**. Tránh tạo nhiều module Gradle nhỏ khi chưa cần thiết. Khi tích hợp API thật, có thể tách `core:model`, `core:network`, `feature:catalog`, `feature:checkout` mà không đổi hợp đồng domain.
+Các màu sắc Emerald/Forest/Lime và quy chuẩn chính của thiết kế cũ đã được chuyển thành Android XML resources và Java Views/Canvas. Để xem bố cục không cần chạy app, mở các `app/src/main/res/layout/*.xml` trong **Layout Editor (Design/Split)** của Android Studio; Compose Preview không còn tồn tại.
 
-## Làm việc nhóm
+## Trạng thái chuyển đổi
 
-**Rà soát giao diện và thư viện:** xem [UI audit 28/10/2026](docs/UI_AUDIT_2026-10-28.md), bao gồm cả các trường hợp chưa được kiểm thử trên emulator.
+- **Đã gỡ** toàn bộ 50 tệp Kotlin ứng dụng và 16 tệp Kotlin test khỏi project, sau khi tạo backup ngoài repository và chuyển đổi domain/tests sang Java.
+- **Đã bỏ** các thư mục module thử nghiệm `app-java`, `java-only`; chỉ còn `:app`.
+- Đã đổi toàn bộ tên package Java về `com.pharmasiu.mobile`.
+- Build/debug và kiểm thử Java thực hiện trực tiếp trên `:app`.
+- **Chưa tuyên bố parity 1:1** cho từng animation/pixel/Compose Preview, mọi kích thước màn hình và toàn bộ E2E khi backend chưa tồn tại. Xem báo cáo nghiệm thu hiện hành trong `docs/`.
 
-Đọc [TEAM_GUIDE.md](docs/TEAM_GUIDE.md) trước khi phân chia đầu việc, [ARCHITECTURE.md](docs/ARCHITECTURE.md) trước khi thay state/API, và [AGENTS.md](AGENTS.md) khi dùng coding agent. Mỗi feature có package riêng; pull request phải nêu luồng kiểm thử, screenshot Android nếu sửa UI, và không thay đổi schema/domain ngầm.
+Không đưa vào Git `local.properties`, file build, signing keys, ảnh toa hoặc dữ liệu người thật.
 
-**Android UI Brain:** các router, registry, 9 layer và quy tắc quality gate nằm ở [docs/android-ui-brain](docs/android-ui-brain/README.md). Thư mục này là bản đồng hành nằm trong Git; bản extension gốc đồng bộ với UI UX Brain v4.1.
+## Cấu trúc mới và quy tắc làm nhóm (29/10/2026)
 
-## Công nghệ & giới hạn
+**Từ bản nâng cấp này, Java được chia theo feature thay vì dồn ở 6 class lớn.** Các lớp `AuthScreen`, `CustomerCatalogViews`, `CustomerOrderViews`, `CustomerAccountViews`, `StaffPosViews`, `StaffAdminViews`, `StaffMediaViews` là điểm vào ổn định, còn chi tiết ở các package dưới đây:
 
-- Kotlin, Android Gradle Plugin, Compose Compiler và Compose BOM khóa tại [version catalog](gradle/libs.versions.toml).
-- Material 3 / Compose cho UI; **Coil 3.3.0 + OkHttp đã tích hợp qua `MedicineMedia`** để tải ảnh HTTPS có fallback artwork nội bộ và cache khi có URL từ backend. Demo vẫn hoạt động hoàn toàn offline. **Lottie, Rive và Vico không được thêm** vì hiện chưa có asset tương tác/biểu đồ thực cần thiết.
-- Min SDK 26; compile SDK 36; định hướng tối ưu cho điện thoại, dùng semantic labels và màn hình có thể cuộn.
-- Để thành ứng dụng thật còn cần: API backend, authentication, quyền truy cập toa, quản lý attachment an toàn, luồng dược sĩ, availability/reservation TTL, đồng bộ giá, test device, chính sách bảo mật, release signing.
+| Khu vực | Package |
+|---|---|
+| Customer | `ui/customer/catalog`, `ui/customer/orders`, `ui/customer/account` |
+| Nhân viên POS | `ui/staff/pos` |
+| Quản trị | `ui/staff/admin` |
+| Ảnh hàng hóa | `ui/staff/media` |
+| Đăng nhập | `ui/auth` |
+| Trạng thái RAM | `core/state` |
+| UI dùng chung | `ui/design/PharmaUi` |
+| Điều hướng | `navigation/PharmaBottomBar` |
 
-Giấy phép sử dụng: chưa lựa chọn license mã nguồn công khai. Mặc định **không suy diễn rằng repository cho phép tái sử dụng thương mại**.
+**UI:** có Google Material Components for Android `1.14.0`, Material 3 theme, buttons/cards/textfields, bottom navigation có biểu tượng, tokens spacing/radius và trạng thái rõ ràng. Tất cả vẫn là **Java/XML**; không đưa Compose/Kotlin vào lại.
+
+**Điểm bắt đầu cho thành viên:** đọc `docs/JAVA_UI_ARCHITECTURE_2026-10-29.md` và `docs/JAVA_UI_REFACTOR_HANDOFF_2026-10-29.md`, chọn đúng một package và những XML liên quan, tránh đổi chữ ký façade; chạy `gradlew.bat :app:assembleDebug :app:testDebugUnitTest` trước khi gửi PR.
+
+Trạng thái tích hợp: 87 Java production, 29 Java JUnit tests, 59 resource XML, 0 Kotlin; 141/141 test PASS. UI chưa được xác nhận parity pixel trên mọi thiết bị; xem mục QA của tài liệu bàn giao.
+
+## Database mẫu dùng trực tiếp trong Navicat
+
+Mọi file liên quan SQL nằm riêng tại thư mục database/. File database/PharmaSIU_Demo.sqlite3 là SQLite thực sự đã khởi tạo, gồm 6 bảng, 93 dòng mẫu và 4 VIEW. Mở trực tiếp: Navicat → Connection → SQLite → Existing database file → C:\PharmaSIU\PharmaSIU-1For4\database\PharmaSIU_Demo.sqlite3. Hoặc dùng DB Browser for SQLite, DBeaver.
+
+Bộ SQL PostgreSQL ở database/postgresql/ gồm schema, dữ liệu mẫu, view và guard dùng khi cài PostgreSQL server. Toàn bộ hướng dẫn, cảnh báo và kiểm thử tại database/README.md. Chạy python database/tools/verify_database.py để kiểm chứng.
+
+Đây là database dữ liệu giả lập; ứng dụng Android hiện vẫn vận hành trên RAM demo, chưa tự kết nối DB/backend. Không lưu toa, mật khẩu, thu tiền hoặc thông tin khách thật.

@@ -1,0 +1,179 @@
+package com.pharmasiu.mobile.ui.customer.orders;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import com.pharmasiu.mobile.R;
+import com.pharmasiu.mobile.core.DemoState;
+import com.pharmasiu.mobile.core.UiHost;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import com.pharmasiu.mobile.ui.design.PharmaUi;
+import static com.pharmasiu.mobile.ui.customer.CustomerOrderViews.*;
+
+/** History, detail, read-only receipt and local cancel confirmation. */
+abstract class OrderHistoryScreens extends OrderCartScreens {
+    OrderHistoryScreens(Activity activity,UiHost host,int layout){super(activity,host,layout);}
+    protected void orders() {
+        headerActions("Lịch sử · trên thiết bị", "Khám phá", "catalog");
+        List<DemoState.Order> mine = state.customerOrders();
+        LinearLayout banner = card();
+        heading(banner, mine.isEmpty() ? "Chưa có yêu cầu" : mine.size() + " yêu cầu trong RAM");
+        line(banner, "Dữ liệu mô phỏng thuộc phiên khách hiện tại. Không có trạng thái đã gửi, giữ hàng, trả tiền hay duyệt toa.", 13, R.color.muted, false);
+        if (mine.isEmpty()) {
+            action(banner, "Khám phá sản phẩm", true, () -> host.navigate("catalog"));
+            return;
+        }
+        for (DemoState.Order order : mine) {
+            LinearLayout card = card();
+            line(card, "MÃ YÊU CẦU / " + order.reference, 16, R.color.emerald, true);
+            line(card, status(order), 13, isPending(order) ? R.color.ink : R.color.warning, true);
+            line(card, "Lưu lúc " + order.displayTime + " · " + units(order.lines) + " đơn vị",
+                12, R.color.muted, false);
+            line(card, "Điểm nhận dự kiến: " + order.pickup, 12, R.color.muted, false);
+            priceSummary(card, order.pricedSubtotalVnd, order.containsUnpriced);
+            action(card, "Xem chi tiết yêu cầu", false, () -> {
+                state.selectedOrderId = order.reference;
+                host.navigate("order-detail-v2");
+            });
+        }
+        disclosure();
+    }
+
+    protected void detail() {
+        headerActions("Chi tiết yêu cầu · bản RAM", "Lịch sử", "orders-v2");
+        DemoState.Order order = selectedCustomerOrder(state);
+        if (order == null) {
+            missingOrder();
+            return;
+        }
+        LinearLayout status = card();
+        line(status, "YÊU CẦU LƯU TRÊN THIẾT BỊ", 12, R.color.emerald, true);
+        heading(status, order.reference);
+        line(status, status(order), 15, isPending(order) ? R.color.emerald : R.color.warning, true);
+        line(status, "Thời điểm lưu tại máy: " + order.displayTime, 12, R.color.muted, false);
+        if (!isPending(order) && order.cancelReason != null) {
+            line(status, "Lý do hủy tại máy: " + order.cancelReason, 13, R.color.warning, false);
+        } else {
+            warning(status, "Bước gửi đến nhà thuốc: CHỜ TÍCH HỢP. Chưa duyệt toa, giữ hàng hoặc xác nhận thời gian nhận.");
+        }
+        LinearLayout goods = card();
+        heading(goods, "Sản phẩm trong yêu cầu");
+        showLines(goods, order.lines, order);
+        priceSummary(goods, order.pricedSubtotalVnd, order.containsUnpriced);
+        if (order.containsRx)
+            warning(goods, "Có thuốc Rx. Tệp toa chỉ từng được chọn trên máy; chưa tải lên, chưa phê duyệt. Đặt lại cần chọn toa mới.");
+
+        LinearLayout contact = card();
+        heading(contact, "Thông tin liên hệ khi tạo yêu cầu");
+        line(contact, "Người nhận: " + order.customerName, 14, R.color.ink, true);
+        line(contact, "Điện thoại liên hệ: " + order.contactPhone, 14, R.color.ink, false);
+        divider(contact);
+        line(contact, "Điểm nhận dự kiến: " + order.pickup, 14, R.color.ink, true);
+        line(contact, "Điểm nhận và thời gian chưa được nhà thuốc xác nhận.",
+            12, R.color.muted, false);
+
+        LinearLayout actions = card();
+        heading(actions, "Thao tác với bản lưu");
+        action(actions, "Mua lại sản phẩm này", true, () -> {
+            if (state.reorderRequest(order.reference)) {
+                host.message("Đã thêm hàng vào giỏ RAM; toa Rx cũ đã được xóa");
+                host.navigate("cart-v2");
+            } else host.message("Không thể đặt lại đơn hàng này.");
+        });
+        if (isPending(order)) {
+            action(actions, "Hủy đơn hàng này", false, () -> confirmCancellation(order));
+        }
+        disclosure();
+    }
+
+    protected void receipt() {
+        headerActions("Yêu cầu đã lưu · chỉ RAM", "Trang chủ", "home");
+        DemoState.Order order = selectedCustomerOrder(state);
+        if (order == null) {
+            missingOrder();
+            return;
+        }
+        LinearLayout receipt = card();
+        line(receipt, "ĐÃ GHI NHẬN ĐƠN HÀNG", 12, R.color.emerald, true);
+        heading(receipt, isPending(order) ? "Yêu cầu đã được ghi nhận trên thiết bị" : "Trạng thái yêu cầu");
+        line(receipt, order.reference, 24, R.color.emerald, true);
+        line(receipt, "Lưu lúc " + order.displayTime, 12, R.color.muted, false);
+        line(receipt, "Người nhận: " + order.customerName + " · " + order.contactPhone,
+            13, R.color.ink, false);
+        line(receipt, order.pickup + " · " + units(order.lines) + " đơn vị",
+            13, R.color.ink, false);
+        priceSummary(receipt, order.pricedSubtotalVnd, order.containsUnpriced);
+        warning(receipt, "Nhà thuốc CHƯA nhận yêu cầu. Không xác nhận toa, tồn, giá cuối cùng, thời gian nhận hay thanh toán.");
+        if (order.containsRx)
+            warning(receipt, "Tệp toa Rx chỉ được chọn trên máy. Chưa upload và chưa có dược sĩ duyệt.");
+        LinearLayout progress = card();
+        heading(progress, "Tiến trình xử lý");
+        line(progress, "01 / Đã lưu trên thiết bị", 14, R.color.emerald, true);
+        divider(progress);
+        line(progress, "02 / Gửi và tiếp nhận tại nhà thuốc  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        divider(progress);
+        line(progress, "03 / Kiểm tra toa, lô, tồn và lịch nhận  · CHỜ TÍCH HỢP", 13, R.color.muted, false);
+        action(progress, "Xem chi tiết yêu cầu", true, () -> host.navigate("order-detail-v2"));
+        action(progress, "Tiếp tục khám phá", false, () -> host.navigate("home"));
+    }
+
+    protected void confirmCancellation(DemoState.Order order) {
+        if (!isPending(order) || selectedCustomerOrder(state) == null
+                || !selectedCustomerOrder(state).reference.equals(order.reference)) {
+            host.message("Yêu cầu không còn đủ điều kiện hủy tại máy");
+            return;
+        }
+        LinearLayout wrapper = new LinearLayout(activity);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setPadding(dp(20), dp(8), dp(20), 0);
+        line(wrapper, "Chỉ hủy bản lưu trong ứng dụng, không gửi lệnh hủy đến nhà thuốc hoặc thay đổi tồn thật.",
+            13, R.color.muted, false);
+        EditText reason = input(wrapper, "Lý do hủy (3–160 ký tự)", InputType.TYPE_CLASS_TEXT |
+            InputType.TYPE_TEXT_FLAG_CAP_SENTENCES, "");
+        reason.setSingleLine(false);
+        reason.setMinLines(2);
+        reason.setFilters(new InputFilter[]{new InputFilter.LengthFilter(160)});
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+            .setTitle("Hủy yêu cầu này?")
+            .setView(wrapper)
+            .setNegativeButton("Giữ lại", (d, which) -> {})
+            .setPositiveButton("Xác nhận hủy", null)
+            .create();
+        dialog.setOnShowListener(unused -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String note = reason.getText().toString();
+            if (!canCancel(state, order, note)) {
+                reason.setError("Nhập lý do từ 3 đến 160 ký tự");
+                return;
+            }
+            if (state.cancelRequest(order.reference, note.trim())) {
+                dialog.dismiss();
+                host.message("Hủy yêu cầu trong dữ liệu thiết bị");
+                host.navigate("order-detail-v2");
+            } else {
+                host.message("Không thể hủy; kiểm tra phiên và trạng thái yêu cầu.");
+            }
+        }));
+        dialog.show();
+    }
+    protected void missingOrder() {
+        LinearLayout card = card();
+        heading(card, "Không tìm thấy yêu cầu trong phiên");
+        line(card, "Không tìm thấy yêu cầu trong tài khoản này hoặc dữ liệu thiết bị đã thay đổi.",
+            13, R.color.muted, false);
+        action(card, "Xem yêu cầu của tôi", true, () -> host.navigate("orders-v2"));
+    }
+}

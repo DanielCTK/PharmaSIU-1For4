@@ -20,3 +20,10 @@ secrets.properties
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Python and Temp files
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/cream" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingBottom="36dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:orientation="horizontal"
+            android:paddingHorizontal="20dp" android:paddingTop="16dp" android:paddingBottom="12dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="PharmaSIU"
+                android:textColor="@color/forest" android:textSize="24sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/catalog_v2_home_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:minWidth="42dp"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:background="@drawable/bg_cart_button"
+                app:drawableStartCompat="@drawable/ic_cart"
+                android:drawablePadding="6dp"
+                android:contentDescription="Mở giỏ hàng"
+                android:textColor="@color/emerald"
+                android:textSize="13sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+        <TextView android:id="@+id/catalog_v2_home_search"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/bg_search_bar"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:drawableStart="@drawable/ic_search"
+            android:drawableLeft="@drawable/ic_search"
+            android:drawablePadding="10dp"
+            android:text="Tìm thuốc, mỹ phẩm, thực phẩm chức năng…"
+            android:textColor="@color/muted"
+            android:textSize="14sp"/>
+        <FrameLayout android:layout_width="match_parent" android:layout_height="232dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/catalog_v2_hero">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingVertical="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="PHARMASIU  •  KHÁM PHÁ" android:textColor="@color/lime"
+                    android:letterSpacing="0.15" android:textSize="11sp" android:textStyle="bold"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" android:text="Chăm sóc mỗi ngày,\nan tâm mỗi bước."
+                    android:textColor="@color/white" android:textSize="25sp" android:textStyle="bold"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:maxLines="2"
+                    android:text="Mỹ phẩm, nhu yếu phẩm và chăm sóc gia đình trong một không gian."
+                    android:textColor="@color/mint" android:textSize="12sp"/>
+                <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="1"/>
+                <com.google.android.material.button.MaterialButton
+                    app:cornerRadius="22dp"
+                    android:id="@+id/catalog_v2_home_explore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:paddingHorizontal="20dp"
+                    android:backgroundTint="@color/lime"
+                    app:icon="@drawable/ic_arrow_forward"
+                    app:iconGravity="textEnd"
+                    app:iconTint="@color/forest"
+                    android:text="Khám phá ngay"
+                    android:textAllCaps="false"
+                    android:textColor="@color/forest"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+        <LinearLayout android:id="@+id/catalog_v2_home_shortcuts"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="22dp" android:gravity="center_vertical"
+            android:paddingHorizontal="18dp" android:orientation="horizontal">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Sản phẩm nổi bật" android:textColor="@color/forest"
+                    android:textSize="21sp" android:textStyle="bold"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Sản phẩm chính hãng bán chạy tại nhà thuốc" android:textColor="@color/muted"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+            <TextView android:id="@+id/catalog_v2_home_all" android:layout_width="wrap_content"
+                android:layout_height="48dp" android:gravity="center" android:paddingHorizontal="10dp"
+                android:text="Xem tất cả"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                android:drawablePadding="4dp"
+                android:textColor="@color/emerald"
+                android:textSize="13sp" android:textStyle="bold"/>
+        </LinearLayout>
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:fillViewport="false" android:scrollbars="none">
+            <LinearLayout android:id="@+id/catalog_v2_home_shelves"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:paddingHorizontal="16dp"
+                android:paddingVertical="10dp"/>
+        </HorizontalScrollView>
+        <LinearLayout android:id="@+id/catalog_v2_home_grid"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:paddingHorizontal="16dp"/>
+        <com.google.android.material.button.MaterialButton
+            app:cornerRadius="14dp"
+            android:id="@+id/catalog_v2_home_open_catalog"
+            android:layout_width="match_parent" android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp" android:layout_marginTop="16dp"
+            android:text="Xem toàn bộ danh mục"
+            app:icon="@drawable/ic_arrow_forward"
+            app:iconGravity="textEnd"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/emerald" android:textColor="@color/white"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp" android:layout_marginTop="16dp"
+            android:background="@drawable/catalog_v2_surface" android:padding="14dp"
+            android:text="PharmaSIU · Cam kết 100% thuốc &amp; dược phẩm chính hãng, xuất xứ minh bạch, hóa đơn đầy đủ."
+            android:textColor="@color/warning" android:textSize="12sp"/>
+    </LinearLayout>
+</ScrollView>

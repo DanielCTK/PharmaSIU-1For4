@@ -31,21 +31,21 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 - Không đóng ca khi giỏ còn hàng.
 - Không tạo SQL, SQLite, Room, DAO hoặc đồng bộ backend.
 - Email/mật khẩu demo công khai chỉ để thử UI, không phải xác thực bảo mật thật.
-- Hóa đơn, doanh số, tồn kho đều minh họa và được giữ trong RAM; không có giao dịch tiền thật hoặc FEFO theo lô.
+- Hóa đơn, doanh số, tồn kho đều minh họa và giữ trong RAM; lô/hạn/FEFO chỉ mô phỏng cục bộ, không có xuất kho thật hoặc giao dịch tiền thật.
 
 ## Kiểm tra quan trọng
 
 1. Hai vai trò đều mở chung một giao diện với 4 tab.
 2. Nhân viên không có nút sửa tồn; quản lý có nút điều chỉnh tồn mock.
 3. Mở ca → thêm một hàng OTC → thanh toán → phiếu bán → lịch sử; số tiền và tồn mẫu phải khớp.
-4. Mã PIN sai không truy cập được; Rx bị khóa; không cho bán vượt tồn hoặc thanh toán thiếu tiền.
+4. Email/mật khẩu demo sai không truy cập được; Rx bị khóa; không cho bán vượt tồn hoặc thanh toán thiếu tiền.
 5. Bấm Back trên giỏ/thanh toán quay đúng bước; chuyển tab không làm mất giỏ bán.
 6. Thoát về khu khách hàng không ảnh hưởng đơn của khách.
 
 ## Cấu trúc
 
 - OperationsHub.kt: shell và module Tổng quan/Hàng hóa/Hóa đơn.
-- StaffWorkspace.kt: một cổng đăng nhập demo theo vai trò.
+- UnifiedLoginScreen.kt: màn đăng nhập chung cho ba loại tài khoản; AppEntryState xác định khu vực vào.
 - CashierScreen.kt: quy trình bán hàng, thanh toán, hóa đơn.
 - StaffDemoStore.kt: trạng thái trong RAM dùng chung.
 - CounterRules.kt: quy tắc POS độc lập giao diện.
@@ -55,17 +55,17 @@ Phần quản trị giữ mức căn bản, không thêm các màn ERP, nhân s�
 
 ## Thêm mặt hàng, nhập tồn mẫu, thay ảnh (bổ sung 28/10/2026)
 
-- Đăng nhập vai trò **Quản lý** (PIN demo `2222`) → tab **Hàng hóa** → **Thêm hàng**: nhập tên, nhóm (Mỹ phẩm, Thực phẩm, Thực phẩm bổ sung, Chăm sóc, Thiết bị, Vật tư y tế), đơn vị, giá VNĐ và tồn đầu. Có thể chọn ảnh qua trình chọn hình của Android. Sau khi lưu, mặt hàng lập tức tìm được ở tab Bán hàng nội bộ.
+- Đăng nhập vai trò **Quản lý** (email `quanly@pharmasiu.demo`, mật khẩu demo `2222`) → tab **Hàng hóa** → **Thêm hàng**: nhập tên, nhóm (Mỹ phẩm, Thực phẩm, Thực phẩm bổ sung, Chăm sóc, Thiết bị, Vật tư y tế), đơn vị, giá VNĐ và tồn đầu. Có thể chọn ảnh qua trình chọn hình của Android. Sau khi lưu, mặt hàng lập tức tìm được ở tab Bán hàng nội bộ.
 - Với mặt hàng có sẵn, chọn **Đổi ảnh** để thay thumbnail; chạm thumbnail để xem lớn và có thể thay/bỏ ảnh. Ảnh được chọn chỉ là nội dung thiết bị dùng trong phiên app, không tải lên máy chủ.
 - Chọn **Nhập thêm** để nhập số lượng dương (1–999), cộng vào tồn demo; tổng tồn không được vượt 999. Nút +/- cũ vẫn giữ để thử các thay đổi nhỏ.
-- Nhân viên bán hàng chỉ xem hình/tồn, không thấy nút tạo hàng, thay ảnh hoặc cộng tồn; quản lý có đủ nút theo vai trò UI demo. Đây chưa phải xác thực/phân quyền backend thật.
-- Giữ an toàn: không tạo thuốc kê đơn bằng form nhanh; sản phẩm Rx vẫn bị khóa ở POS; không lưu phiếu mua hàng, nhà cung cấp, lô, hạn FEFO, hóa đơn nhập hoặc SQL. Danh mục khách hàng không bị thay đổi.
+- Nhân viên bán hàng chỉ xem hình/tồn, không được sửa danh mục, ảnh, lô hay tồn qua các command trong StaffDemoStore; chỉ quản lý demo được phép chỉnh. Đây chưa phải phân quyền backend thật.
+- Giữ an toàn: không tạo thuốc kê đơn bằng form nhanh; sản phẩm Rx vẫn bị khóa ở POS. Lô/hạn, cách ly, kiểm kê và đối soát chỉ lưu RAM demo; không có phiếu nhập/xuất thật, nhà cung cấp hay SQL. Danh mục khách hàng không bị thay đổi.
 - **Dữ liệu và ảnh mới mất khi tiến trình app bị khởi tạo lại.** Muốn lưu dài hạn, cần làm cùng hệ thống dữ liệu ở giai đoạn tiếp theo. Hình đã chọn từ điện thoại không phải hình xác minh bao bì/chứng nhận thuốc.
 ## Màn đăng nhập nội bộ (28/10/2026)
-- Có bố cục thương hiệu Emerald tràn ngang, trường Email và Mật khẩu, ẩn/hiện mật khẩu, xử lý Next/Done, thông báo lỗi và nút quay về Tài khoản.
+- Bố cục thương hiệu Emerald tràn ngang, trường Email hoặc số điện thoại và Mật khẩu, ẩn/hiện mật khẩu, xử lý Next/Done và thông báo lỗi; không còn cổng nhân viên riêng.
 - Chọn **Tài khoản dùng thử** để điền nhanh hai tài khoản demo. Không tạo vai trò bằng một chip thủ công; chỉ tài khoản đúng thông tin mới mở đúng giao diện Nhân viên/Quản lý.
 - Mật khẩu không được lưu sau khi vào khu vận hành. Không có backend, OTP, reset password hay phân quyền thật; cần thay bằng xác thực máy chủ khi triển khai chính thức.
 
-**Điều hướng đăng xuất mới:** Nhân viên/Quản lý nhấn biểu tượng Thoát để về ngay màn Đăng nhập nội bộ. Từ cổng này chọn Đăng nhập tài khoản khách hàng để vào gian hàng; khách đăng xuất cũng về cổng này. Không thể dùng nút Back để hiện lại nội dung đã đăng xuất. Khởi động Activity mới không tự đăng nhập.
+**Điều hướng đăng xuất hiện tại:** Nhân viên/Quản lý/Khách hàng nhấn Đăng xuất để trở về màn Đăng nhập PharmaSIU chung. Muốn vào vai trò khác phải đăng nhập bằng tài khoản khác. Không thể dùng nút Back để hiện lại nội dung đã đăng xuất. Khởi động Activity mới không tự đăng nhập.
 
 **Đăng nhập thống nhất:** Cả Nhân viên, Quản lý và Khách hàng dùng duy nhất UnifiedLoginScreen. Không có thêm nút dẫn đến màn login khác. Vai trò được xác định từ thông tin đăng nhập; khách hàng vào gian hàng, hai tài khoản nội bộ vào OperationsHub. Đăng ký và quên mật khẩu demo nằm trong cùng giao diện đăng nhập.

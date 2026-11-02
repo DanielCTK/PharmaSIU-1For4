@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:fillViewport="true"
+    android:clipToPadding="false">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/customer_account_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/customer_account_hero"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="27dp"
+            android:paddingBottom="29dp"
+            android:orientation="vertical" />
+        <LinearLayout
+            android:id="@+id/customer_account_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="30dp"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="ui_spacing_xs">4dp</dimen>
+    <dimen name="ui_spacing_sm">8dp</dimen>
+    <dimen name="ui_spacing_md">12dp</dimen>
+    <dimen name="ui_spacing_lg">16dp</dimen>
+    <dimen name="ui_spacing_xl">24dp</dimen>
+    <dimen name="ui_spacing_2xl">32dp</dimen>
+    <dimen name="ui_card_radius">20dp</dimen>
+    <dimen name="ui_chip_radius">100dp</dimen>
+    <dimen name="ui_button_radius">14dp</dimen>
+    <dimen name="ui_field_radius">14dp</dimen>
+    <dimen name="ui_min_tap_height">48dp</dimen>
+    <dimen name="ui_bottom_navigation_height">76dp</dimen>
+    <dimen name="ui_body_horizontal_margin">20dp</dimen>
+    <dimen name="ui_hero_title">28sp</dimen>
+    <dimen name="ui_section_title">20sp</dimen>
+    <dimen name="ui_body_text">14sp</dimen>
+    <dimen name="ui_caption_text">12sp</dimen>
+</resources>

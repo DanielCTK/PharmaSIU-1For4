@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Java Views + official Material 3: brand colors deliberately static for predictability. -->
+    <style name="Theme.PharmaSIUJava" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/emerald</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/lime</item>
+        <item name="colorOnSecondary">@color/forest</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorSurfaceVariant">@color/mint</item>
+        <item name="colorOnSurfaceVariant">@color/muted</item>
+        <item name="colorOutline">@color/line</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/forest</item>
+        <item name="android:navigationBarColor">@color/forest</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

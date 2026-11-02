@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/cream">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="23dp" android:paddingBottom="23dp">
+        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            android:id="@+id/customer_onboarding_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:layout_gravity="end"
+            android:text="Bỏ qua"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/mint"
+            android:textColor="@color/forest"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <TextView
+            android:id="@+id/customer_onboarding_index"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:textColor="@color/emerald"
+            android:textSize="13sp"
+            android:letterSpacing="0.1"
+            android:textStyle="bold"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <TextView
+            android:id="@+id/customer_onboarding_artwork"
+            android:layout_width="match_parent"
+            android:layout_height="246dp"
+            android:layout_marginTop="13dp"
+            android:background="@drawable/customer_account_hero"
+            android:gravity="center"
+            android:textColor="@color/lime"
+            android:textSize="102sp"
+            android:importantForAccessibility="no" />
+        <TextView
+            android:id="@+id/customer_onboarding_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:textColor="@color/forest"
+            android:textSize="30sp"
+            android:textStyle="bold"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <TextView
+            android:id="@+id/customer_onboarding_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:textColor="@color/muted"
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <TextView
+            android:id="@+id/customer_onboarding_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/emerald"
+            android:contentDescription="Tiến độ giới thiệu"
+            android:textSize="18sp"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            android:id="@+id/customer_onboarding_next"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="Tiếp tục"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/emerald"
+            android:textColor="@color/white"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="23dp" android:layout_marginEnd="23dp"
+            android:text="PharmaSIU · Đồng hành cùng sức khỏe gia đình bạn."
+            android:gravity="center"
+            android:textColor="@color/muted"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

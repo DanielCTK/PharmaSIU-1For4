@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Ứng dụng giữ nguyên toàn bộ phần Khách hàng. Cổng riêng ở **Tài khoản → Vào khu vận hành → Đăng nhập nội bộ** sử dụng dữ liệu RAM, không phải hệ thống phân quyền hoặc API thật.
+Ứng dụng dùng **một màn Đăng nhập PharmaSIU chung** khi khởi động; đăng nhập bằng email hoặc số điện thoại + mật khẩu demo sẽ đưa vào gian hàng khách hoặc OperationsHub theo tài khoản. Không còn cổng ở Tài khoản hoặc trang đăng nhập nội bộ riêng. Đây không phải xác thực máy chủ.
 
 Email và mật khẩu demo công khai để kiểm tra giao diện: **Nhân viên bán hàng `nhanvien@pharmasiu.demo` / `1111`**, **Quản lý `quanly@pharmasiu.demo` / `2222`**. Không dùng những mã này trong môi trường thực.
 
@@ -20,7 +20,7 @@ Email và mật khẩu demo công khai để kiểm tra giao diện: **Nhân vi�
 ### Giới hạn bắt buộc
 
 - **Không cho thu ngân tự bán thuốc kê đơn (Rx)** qua demo: chưa có xác thực toa hoặc dược sĩ duyệt.
-- **Không giả FEFO hoặc xuất theo lô** chỉ từ số tồn tổng. Tồn hiển thị đơn thuần là giá trị giả lập để thử luồng.
+- **FEFO chỉ là mô phỏng trong RAM** trên các lô mẫu có hạn dùng và tình trạng chất lượng; tồn seed chưa xác minh không được xem là dữ liệu kho thật. Chưa có xuất kho/chứng từ thực tế hoặc phân bổ lô bởi máy chủ.
 - Không in hóa đơn thật, xuất hóa đơn điện tử, thu tiền, kết nối ngân hàng/máy POS hoặc máy quét.
 - Đơn Click & Collect của khách **chưa đồng bộ vào bán tại quầy** cho đến khi hoàn thiện backend, kho và phân quyền.
 
@@ -29,18 +29,18 @@ Email và mật khẩu demo công khai để kiểm tra giao diện: **Nhân vi�
 | Màn hình | Chức năng |
 |---|---|
 | **Tổng quan** | Số mặt hàng có thể bán, số hóa đơn, tổng giá trị bán, số mặt hàng tồn mẫu thấp |
-| **Hàng hóa** | Xem danh mục, giá, tồn giả lập; tăng/giảm tồn mẫu để thử UI (trừ Rx) |
+| **Hàng hóa** | Xem danh mục, giá, tồn giả lập; quản lý có thể sửa tên/giá mẫu, tạo lô nhập có hạn, cách ly, kiểm kê chênh lệch (trừ Rx) |
 | **Bán hàng** | Xem các hóa đơn POS demo đã tạo trên thiết bị |
 
-Không mở rộng sang mua hàng, kiểm kê đầy đủ, quản lý nhân sự, báo cáo nâng cao, hoặc duyệt thuốc kê đơn trong giai đoạn này.
+Có mô phỏng cập nhật giá, nhập lô với hạn, kiểm tra/quarantine lô, ghi nhận số đếm chênh lệch, đối soát ca mẫu; không tự điều chỉnh số liệu có hiệu lực ngoài RAM. Chưa có mua hàng, quản lý nhân sự, kiểm kê được phê duyệt trên backend, báo cáo tài chính thực hoặc duyệt thuốc kê đơn.
 
 ## Cấu trúc source
 
 - **domain/CounterRules.kt**: chính sách bán hàng, số lượng, phương thức, tiền thối, vai trò demo; thuần Kotlin.
 - **ui/features/staff/StaffDemoStore.kt**: dữ liệu tồn mẫu, giỏ, ca bán, lịch sử hóa đơn trong RAM.
-- **ui/features/staff/StaffWorkspace.kt**: màn vào khu vực nhân viên và chọn vai trò.
+- **ui/features/staff/UnifiedLoginScreen.kt**: màn đăng nhập chung cho toàn bộ vai trò.
 - **ui/features/staff/CashierScreen.kt**: các bước POS tại quầy.
-- **ui/features/staff/AdminScreen.kt**: các trang quản trị căn bản.
+- **ui/features/staff/OperationsHub.kt**: trang tổng quan, Hàng hóa và Hóa đơn trong khu vận hành thống nhất.
 - **ui/previews/StaffPreviews.kt**: ba bản xem trước Android Studio 390×844.
 
 Không tạo SQL, SQLite/Room, bảng hay migration ở giai đoạn này.
@@ -53,4 +53,4 @@ Không tạo SQL, SQLite/Room, bảng hay migration ở giai đoạn này.
 - Hóa đơn demo hợp lệ tạo một lần, kho mẫu giảm số lượng, giỏ trống sau khi hoàn thành.
 - Quản trị và thu ngân xem cùng dữ liệu demo trong phiên.
 - Không được đóng ca nếu đang có giỏ bán chưa hoàn tất.
-- Quay về app khách hàng vẫn giữ nguyên các luồng người mua, không dùng chung số tồn giả lập với luồng khách.
+- Đăng xuất luôn quay về màn đăng nhập chung; dữ liệu tồn staff giả lập không dùng làm tồn khả dụng của khách.

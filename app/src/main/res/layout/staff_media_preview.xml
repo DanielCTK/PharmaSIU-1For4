@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="28dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="20dp" android:paddingEnd="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hình ảnh sản phẩm"
+                android:textColor="@color/emerald"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+            <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+                android:id="@+id/staff_media_preview_close_top"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:contentDescription="Đóng xem hình sản phẩm"
+                android:text="×"
+                android:textSize="24sp"
+                android:textColor="@color/forest"
+                android:backgroundTint="@color/mint" />
+        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/staff_media_preview_picture"
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:layout_marginTop="8dp"
+            android:importantForAccessibility="yes" />
+        <TextView
+            android:id="@+id/staff_media_preview_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:lineSpacingExtra="2dp"
+            android:text="Hình ảnh sản phẩm • PharmaSIU"
+            android:textColor="@color/muted"
+            android:textSize="13sp"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+        <TextView
+            android:id="@+id/staff_media_preview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="@color/ink"
+            android:textSize="22sp"
+            android:textStyle="bold"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+        <TextView
+            android:id="@+id/staff_media_preview_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/muted"
+            android:textSize="14sp"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9dp"
+            android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/staff_media_preview_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/muted"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/staff_media_preview_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/emerald"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@color/mint"
+            android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
+            android:padding="12dp"
+            android:lineSpacingExtra="2dp"
+            android:text="Ảnh hàng hóa chưa có trường lưu trữ trong cấu trúc CSDL hiện tại."
+            android:textColor="@color/forest"
+            android:textSize="12sp" />
+        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            android:id="@+id/staff_media_preview_replace"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="Chọn ảnh sản phẩm mẫu khác từ thiết bị"
+            android:text="Chọn ảnh khác từ thiết bị"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/emerald"
+            android:visibility="gone"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            android:id="@+id/staff_media_preview_remove"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Bỏ ảnh sản phẩm mẫu đã chọn"
+            android:text="Bỏ ảnh đã chọn"
+            android:textAllCaps="false"
+            android:textColor="@color/emerald"
+            android:backgroundTint="@color/mint"
+            android:visibility="gone"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            android:id="@+id/staff_media_preview_close_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Đóng hình ảnh sản phẩm"
+            android:text="Đóng"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/forest"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
+    </LinearLayout>
+</ScrollView>
