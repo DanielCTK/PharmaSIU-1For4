@@ -25,8 +25,8 @@ import com.pharmasiu.mobile.ui.customer.orders.OrderScreen;
 
 /** Stable Customer commerce API; feature screen implementations live under ui.customer.orders. */
 public final class CustomerOrderViews {
-    public static final String PICKUP_A="Điểm nhận mẫu A";
-    public static final String PICKUP_B="Điểm nhận mẫu B";
+    public static final String PICKUP_A="11 Tống Hữu Định, Phường An Khánh, TP.HCM";
+    public static final String PICKUP_B="Nhà thuốc PharmaSIU - 11 Tống Hữu Định, Phường An Khánh, TP.HCM";
     public static final int MAX_QTY=20;
     private CustomerOrderViews(){}
     public static View create(Activity activity,UiHost host,String route){
@@ -61,7 +61,9 @@ public final class CustomerOrderViews {
     }
 
     public static boolean validPickup(String pickup) {
-        return PICKUP_A.equals(pickup) || PICKUP_B.equals(pickup);
+        if (pickup == null || pickup.trim().isEmpty()) return false;
+        return PICKUP_A.equals(pickup) || PICKUP_B.equals(pickup)
+            || "Điểm nhận mẫu A".equals(pickup) || "Điểm nhận mẫu B".equals(pickup);
     }
 
     /**

@@ -42,7 +42,7 @@ public abstract class AccountHome extends AccountUiBase {
         stat(stats, String.format(Locale.ROOT, "%02d", state.customerOrders().size()), "Đơn hàng");
         title("Hồ sơ của bạn", "Quản lý thông tin cá nhân và liên hệ.");
         tile("Chỉnh sửa hồ sơ", "Tên, điện thoại, email, ghi chú ngày sinh", "profile");
-        tile("Sổ địa chỉ", "Địa chỉ liên hệ, tách biệt điểm nhận Click & Collect", "addresses");
+        tile("Sổ địa chỉ", "Địa chỉ giao nhận thuốc và mua sắm", "addresses");
         tile("Đổi mật khẩu", "Cập nhật mật khẩu bảo vệ tài khoản", "change-password");
         title("Hoạt động", "Xem lại các thao tác tại máy.");
         tile("Sản phẩm yêu thích", "Danh sách sản phẩm đã lưu", "favorites");

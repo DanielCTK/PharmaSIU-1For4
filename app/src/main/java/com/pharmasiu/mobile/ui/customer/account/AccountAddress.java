@@ -33,7 +33,7 @@ public abstract class AccountAddress extends AccountProfile {
         AccountOnboardingProgress progress,String route){super(a,h,p,progress,route);}
     protected void addresses() {
         hero("SỔ ĐỊA CHỈ", "Địa chỉ nhận hàng",
-            "Địa chỉ hồ sơ không phải địa điểm giữ hàng hay nơi nhận đã xác nhận.", true);
+            "Quản lý địa chỉ giao nhận thuốc và mua sắm của bạn tại PharmaSIU.", true);
         if (state.myAddresses().isEmpty()) {
             LinearLayout empty = card();
             text(empty, "Chưa có địa chỉ", 19, R.color.forest, true, 0);
@@ -71,7 +71,7 @@ public abstract class AccountAddress extends AccountProfile {
     protected void addressForm(DemoState.Address edit) {
         header.removeAllViews(); body.removeAllViews(); scroll.scrollTo(0, 0);
         hero("SỔ ĐỊA CHỈ", edit == null ? "Thêm địa chỉ" : "Sửa địa chỉ",
-            "Điểm nhận Click & Collect được chọn riêng khi tạo yêu cầu.", false);
+            "Thông tin địa chỉ nhận hàng.", false);
         LinearLayout form = card();
         EditText label = field(form, "Nhãn (Nhà / Công ty)", edit == null ? "Nhà" : edit.label,
             InputType.TYPE_CLASS_TEXT, 24);
@@ -79,7 +79,7 @@ public abstract class AccountAddress extends AccountProfile {
             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS, 70);
         EditText number = field(form, "Số điện thoại", edit == null ? profile.phone : edit.phone,
             InputType.TYPE_CLASS_PHONE, 11);
-        EditText detail = field(form, "Địa chỉ chi tiết (tối thiểu 8 ký tự)", edit == null ? "" : edit.detail,
+        EditText detail = field(form, "Địa chỉ chi tiết (tối thiểu 8 ký tự)", edit == null ? "11 Tống Hữu Định, Phường An Khánh, TP.HCM" : edit.detail,
             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES, 190);
         detail.setSingleLine(false); detail.setMinLines(3);
         detail.setLayoutParams(params(-1, dp(94), 7));

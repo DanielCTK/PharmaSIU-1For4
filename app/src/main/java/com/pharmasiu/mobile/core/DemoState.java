@@ -362,7 +362,7 @@ public final class DemoState {
     public boolean canSaveRequest(String name,String phone,String pickup) {
         if(!CUSTOMER.equals(role)||cart.isEmpty()||name==null||name.trim().length()<2||phone==null
            ||!phone.matches("0[0-9]{9,10}")||pickup==null||pickup.trim().isEmpty())return false;
-        if(repository==null && !(pickup.equals("Điểm nhận mẫu A")||pickup.equals("Điểm nhận mẫu B")))return false;
+        if(repository==null && !(pickup.equals("Điểm nhận mẫu A")||pickup.equals("Điểm nhận mẫu B")||pickup.equals(com.pharmasiu.mobile.ui.customer.CustomerOrderViews.PICKUP_A)||pickup.equals(com.pharmasiu.mobile.ui.customer.CustomerOrderViews.PICKUP_B)))return false;
         for(int qty:cart.values())if(qty<1||qty>20)return false;
         return !hasRx(cart)||localPrescriptionSelected();
     }

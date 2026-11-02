@@ -43,7 +43,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
             line(card, status(order), 13, isPending(order) ? R.color.ink : R.color.muted, true);
             line(card, "Đặt lúc " + order.displayTime + " · " + units(order.lines) + " đơn vị",
                 12, R.color.muted, false);
-            line(card, "Điểm nhận dự kiến: " + order.pickup, 12, R.color.muted, false);
+            line(card, "Địa chỉ nhận: " + order.pickup, 12, R.color.muted, false);
             priceSummary(card, order.pricedSubtotalVnd, order.containsUnpriced);
             action(card, "Xem chi tiết yêu cầu", false, () -> {
                 state.selectedOrderId = order.reference;
@@ -79,8 +79,8 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         line(contact, "Người nhận: " + order.customerName, 14, R.color.ink, true);
         line(contact, "Điện thoại liên hệ: " + order.contactPhone, 14, R.color.ink, false);
         divider(contact);
-        line(contact, "Điểm nhận dự kiến: " + order.pickup, 14, R.color.ink, true);
-        line(contact, "Điểm nhận và thời gian chưa được nhà thuốc xác nhận.",
+        line(contact, "Địa chỉ nhận: " + order.pickup, 14, R.color.ink, true);
+        line(contact, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và liên hệ theo địa chỉ trên.",
             12, R.color.muted, false);
 
         LinearLayout actions = card();
