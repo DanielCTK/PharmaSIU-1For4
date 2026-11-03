@@ -38,7 +38,7 @@ public final class AdminLots {
 
     public static View lots(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_lots);
+        Screen screen = new Screen(a, R.layout.staff_admin_lots, host);
         LinearLayout receiving = card(screen);
         title(receiving, "Nhập lô hàng mới");
         List<DemoState.Product> choices = new ArrayList<>();

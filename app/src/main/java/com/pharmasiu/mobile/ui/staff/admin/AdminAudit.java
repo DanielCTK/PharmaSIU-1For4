@@ -38,7 +38,7 @@ public final class AdminAudit {
 
     public static View audit(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_audit);
+        Screen screen = new Screen(a, R.layout.staff_admin_audit, host);
         LinearLayout inventory = card(screen);
         title(inventory, "Kiểm kê lệch kho");
         Spinner goods = picker(inventory, productLabels(s), a);

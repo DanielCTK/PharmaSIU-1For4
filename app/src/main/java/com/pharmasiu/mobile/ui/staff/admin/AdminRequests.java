@@ -19,7 +19,7 @@ public final class AdminRequests {
 
     public static View requests(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_requests);
+        Screen screen = new Screen(a, R.layout.staff_admin_requests, host);
         LinearLayout status = card(screen);
         title(status, "Quản lý đơn đặt hàng");
         line(status, "HỆ THỐNG DUYỆT ĐƠN PHARMASIU", 16, R.color.emerald, true);

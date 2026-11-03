@@ -38,7 +38,7 @@ public final class AdminDashboard {
 
     public static View dashboard(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_dashboard);
+        Screen screen = new Screen(a, R.layout.staff_admin_dashboard, host);
         LinearLayout metrics = card(screen);
         title(metrics, "Tổng quan hoạt động");
         int low = 0, rx = 0, blockedLots = 0;
@@ -76,6 +76,13 @@ public final class AdminDashboard {
         title(pending, "Tiếp nhận đơn hàng trực tuyến");
         line(pending, "SẴN SÀNG TIẾP NHẬN", 14, R.color.emerald, true);
         line(pending, "Hệ thống tiếp nhận và xử lý đơn đặt thuốc trực tuyến nhận tại nhà thuốc từ khách hàng.", 13, R.color.muted, false);
+
+        LinearLayout accountCard = card(screen);
+        title(accountCard, "Tài khoản Quản lý & Phiên làm việc");
+        line(accountCard, "Tài khoản: Quản trị viên hệ thống (0902222222)", 15, R.color.ink, true);
+        line(accountCard, "Phiên làm việc quản trị đang hoạt động an toàn theo tiêu chuẩn GPP.", 13, R.color.muted, false);
+        button(accountCard, "🚪 Đăng xuất tài khoản Quản lý", false, host::logout);
+
         return screen.root;
     }
 }

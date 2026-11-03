@@ -69,9 +69,7 @@ public final class CustomerBrowseScreen extends CatalogBase {
             !groups.contains(group));
         if (!filters.contains(nav.category)) nav.category = ALL;
         heroCount.setText(state.products.size() + " sản phẩm chính hãng   •   " + categories.size() + " danh mục");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(a, android.R.layout.simple_spinner_item, SORT_OPTIONS);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sort.setAdapter(adapter);
+        sort.setAdapter(com.pharmasiu.mobile.ui.design.PharmaUi.createSpinnerAdapter(a, SORT_OPTIONS));
         sort.setSelection(Math.max(0,SORT_OPTIONS.indexOf(nav.sort)));
         input.setText(nav.query);
         final Runnable[] render = new Runnable[1];

@@ -142,12 +142,17 @@ abstract class OrderCartScreens extends OrderUiBase {
 
         LinearLayout pickupCard = card();
         heading(pickupCard, "02 / Địa chỉ nhận hàng");
+        LinearLayout pickupFrame = new LinearLayout(activity);
+        pickupFrame.setOrientation(LinearLayout.VERTICAL);
+        pickupFrame.setBackground(activity.getDrawable(R.drawable.component_input_outline));
+        pickupFrame.setPadding(dp(4), dp(2), dp(4), dp(2));
         Spinner pickup = new Spinner(activity);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-            android.R.layout.simple_spinner_item, new String[]{PICKUP_A, PICKUP_B});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        pickup.setAdapter(adapter);
-        pickupCard.addView(pickup, new LinearLayout.LayoutParams(-1, dp(54)));
+        pickup.setAdapter(com.pharmasiu.mobile.ui.design.PharmaUi.createSpinnerAdapter(activity, new String[]{PICKUP_A, PICKUP_B}));
+        pickupFrame.addView(pickup, new LinearLayout.LayoutParams(-1, dp(48)));
+        LinearLayout.LayoutParams pLp = new LinearLayout.LayoutParams(-1, -2);
+        pLp.topMargin = dp(6);
+        pLp.bottomMargin = dp(8);
+        pickupCard.addView(pickupFrame, pLp);
         line(pickupCard, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và thông báo khi sẵn sàng nhận.", 13, R.color.muted, false);
 
         LinearLayout review = card();

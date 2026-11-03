@@ -26,11 +26,11 @@ public final class PharmaBottomBar {
         R.drawable.nav_orders, R.drawable.nav_account
     };
 
-    private static final String[] ADMIN = {"admin", "pos", "catalog-admin", "lots", "audit"};
-    private static final String[] ADMIN_LABELS = {"Tổng quan", "Quầy POS", "Sản phẩm", "Lô hàng", "Đối soát"};
+    private static final String[] ADMIN = {"admin", "pos", "catalog-admin", "lots", "logout"};
+    private static final String[] ADMIN_LABELS = {"Tổng quan", "Quầy POS", "Sản phẩm", "Lô hàng", "Đăng xuất"};
     private static final int[] ADMIN_ICONS = {
         R.drawable.nav_admin, R.drawable.nav_pos, R.drawable.nav_catalog,
-        R.drawable.nav_lots, R.drawable.nav_audit
+        R.drawable.nav_lots, R.drawable.nav_logout
     };
 
     private static final String[] CASHIER = {"pos", "requests", "logout"};
@@ -59,7 +59,6 @@ public final class PharmaBottomBar {
             if ("pos".equals(route)) return "pos";
             if (route.startsWith("catalog-admin")) return "catalog-admin";
             if (route.startsWith("lots")) return "lots";
-            if (route.startsWith("audit")) return "audit";
             return "admin";
         }
         return "";

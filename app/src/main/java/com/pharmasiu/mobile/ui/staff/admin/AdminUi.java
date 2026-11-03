@@ -49,6 +49,10 @@ public final class AdminUi {
         final android.widget.ScrollView scroll;
         final View scrollTop;
         Screen(Activity a, int layout) {
+            this(a, layout, null);
+        }
+
+        Screen(Activity a, int layout, UiHost host) {
             activity = a;
             root = a.getLayoutInflater().inflate(layout, null, false);
             body = root.findViewById(R.id.staff_admin_content);
@@ -60,6 +64,16 @@ public final class AdminUi {
                 scroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
                     scrollTop.setVisibility(scrollY > 280 ? View.VISIBLE : View.GONE);
                 });
+            }
+            if (host != null) {
+                View logoutBtn = root.findViewById(R.id.staff_admin_btn_logout);
+                if (logoutBtn != null) {
+                    logoutBtn.setOnClickListener(v -> host.logout());
+                }
+                View backBtn = root.findViewById(R.id.staff_admin_btn_back);
+                if (backBtn != null) {
+                    backBtn.setOnClickListener(v -> host.navigate("admin"));
+                }
             }
         }
     }
@@ -112,12 +126,19 @@ public final class AdminUi {
     }
 
     static Spinner picker(LinearLayout parent, String[] values, Activity activity) {
+        LinearLayout frame = new LinearLayout(activity);
+        frame.setOrientation(LinearLayout.VERTICAL);
+        frame.setBackground(activity.getDrawable(R.drawable.component_input_outline));
+        frame.setPadding(dp(activity, 4), dp(activity, 2), dp(activity, 4), dp(activity, 2));
+
         Spinner spinner = new Spinner(activity);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-            android.R.layout.simple_spinner_item, values);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        parent.addView(spinner, new LinearLayout.LayoutParams(-1, dp(activity, 54)));
+        spinner.setAdapter(PharmaUi.createSpinnerAdapter(activity, values));
+        frame.addView(spinner, new LinearLayout.LayoutParams(-1, dp(activity, 48)));
+
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
+        lp.topMargin = dp(activity, 6);
+        lp.bottomMargin = dp(activity, 8);
+        parent.addView(frame, lp);
         return spinner;
     }
 

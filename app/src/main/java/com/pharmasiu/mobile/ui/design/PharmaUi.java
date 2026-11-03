@@ -1,6 +1,8 @@
 package com.pharmasiu.mobile.ui.design;
 
+import android.app.Activity;
 import android.content.Context;
+import android.widget.ArrayAdapter;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -87,18 +89,69 @@ public final class PharmaUi {
         frame.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
         frame.setBoxCornerRadii(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12));
         frame.setHint(label);
-        frame.setBoxStrokeColor(color(context,R.color.emerald));
+        frame.setDefaultHintTextColor(ColorStateList.valueOf(color(context, R.color.forest)));
+        frame.setHintTextColor(ColorStateList.valueOf(color(context, R.color.emerald)));
+        frame.setBoxStrokeColor(color(context, R.color.emerald));
+        ColorStateList boxStroke = new ColorStateList(
+            new int[][]{
+                new int[]{android.R.attr.state_focused},
+                new int[]{}
+            },
+            new int[]{
+                color(context, R.color.emerald),
+                color(context, R.color.line)
+            }
+        );
+        frame.setBoxStrokeColorStateList(boxStroke);
         TextInputEditText text = new TextInputEditText(frame.getContext());
-        text.setTextSize(14);
+        text.setTextColor(color(context, R.color.ink));
+        text.setHintTextColor(color(context, R.color.muted));
+        text.setTextSize(15);
         text.setSingleLine(true);
         text.setInputType(inputType);
         text.setText(value == null ? "" : value);
-        text.setPadding(dp(context,12),dp(context,8),dp(context,12),dp(context,8));
+        text.setPadding(dp(context,14),dp(context,10),dp(context,14),dp(context,10));
         frame.addView(text,new LinearLayout.LayoutParams(-1,dp(context,54)));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin=dp(context,10);
         parent.addView(frame,lp);
         return text;
+    }
+
+    public static ArrayAdapter<String> createSpinnerAdapter(Activity activity, java.util.List<String> values) {
+        return createSpinnerAdapter(activity, values.toArray(new String[0]));
+    }
+
+    public static ArrayAdapter<String> createSpinnerAdapter(Activity activity, String[] values) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity,
+            android.R.layout.simple_spinner_item, values) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+                    tv.setTextColor(activity.getColor(R.color.ink));
+                    tv.setTextSize(14);
+                    tv.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+                }
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                if (view instanceof TextView) {
+                    TextView tv = (TextView) view;
+                    tv.setTextColor(activity.getColor(R.color.ink));
+                    tv.setTextSize(14);
+                    tv.setPadding(dp(activity, 14), dp(activity, 12), dp(activity, 14), dp(activity, 12));
+                }
+                view.setBackgroundColor(activity.getColor(R.color.white));
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
     public static TextView sectionTitle(LinearLayout parent,String value) {

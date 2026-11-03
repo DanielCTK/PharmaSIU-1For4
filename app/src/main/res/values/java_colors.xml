@@ -9,8 +9,8 @@
   <color name="white">#FFFFFFFF</color>
   <color name="paper">#FFFFFFFF</color>
   <color name="ink">#192A24</color>
-  <color name="muted">#617168</color>
-  <color name="line">#DCE5DC</color>
+  <color name="muted">#2E3F36</color>
+  <color name="line">#B8C7BC</color>
   <color name="warning">#073D30</color>
   <color name="warning_surface">#E6F3E6</color>
 </resources>

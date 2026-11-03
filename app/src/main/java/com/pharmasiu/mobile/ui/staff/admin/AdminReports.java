@@ -38,7 +38,7 @@ public final class AdminReports {
 
     public static View reports(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_reports);
+        Screen screen = new Screen(a, R.layout.staff_admin_reports, host);
         LinearLayout kpi = card(screen);
         title(kpi, "Báo cáo hoạt động ca trực");
         long gross = 0;

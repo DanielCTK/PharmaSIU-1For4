@@ -24,14 +24,36 @@
             android:background="@drawable/bg_hero"
             android:orientation="vertical"
             android:padding="22dp">
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="QUẢN TRỊ PHARMASIU"
-                android:textColor="@color/lime"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.09" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="QUẢN TRỊ PHARMASIU"
+                    android:textColor="@color/lime"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.09" />
+                <TextView
+                    android:id="@+id/staff_admin_btn_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/auth_field"
+                    android:backgroundTint="@color/forest"
+                    android:text="🚪 Đăng xuất"
+                    android:textColor="@color/lime"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

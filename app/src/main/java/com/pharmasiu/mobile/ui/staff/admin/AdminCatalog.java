@@ -39,7 +39,7 @@ public final class AdminCatalog {
 
     public static View catalog(Activity a, UiHost host) {
         DemoState s = host.state();
-        Screen screen = new Screen(a, R.layout.staff_admin_catalog);
+        Screen screen = new Screen(a, R.layout.staff_admin_catalog, host);
         LinearLayout editor = card(screen);
         title(editor, "Sửa mặt hàng đã có");
         Spinner select = picker(editor, productLabels(s), a);

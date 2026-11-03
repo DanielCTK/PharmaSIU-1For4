@@ -24,14 +24,52 @@
             android:background="@drawable/bg_hero"
             android:orientation="vertical"
             android:padding="22dp">
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="HÀNG HÓA NỘI BỘ"
-                android:textColor="@color/lime"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.09" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/staff_admin_btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:gravity="center"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:background="@drawable/auth_field"
+                    android:backgroundTint="@color/forest"
+                    android:text="‹ Tổng quan"
+                    android:textColor="@color/lime"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginEnd="10dp"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="HÀNG HÓA NỘI BỘ"
+                    android:textColor="@color/lime"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.09" />
+                <TextView
+                    android:id="@+id/staff_admin_btn_logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="34dp"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/auth_field"
+                    android:backgroundTint="@color/forest"
+                    android:text="🚪 Đăng xuất"
+                    android:textColor="@color/lime"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
