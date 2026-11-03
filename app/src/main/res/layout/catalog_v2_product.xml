@@ -24,10 +24,10 @@
             android:contentDescription="Lưu sản phẩm yêu thích"
             android:padding="8dp"/>
     </LinearLayout>
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp"
+    <ScrollView android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0dp"
         android:layout_weight="1" android:fillViewport="false">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:paddingBottom="26dp">
+            android:orientation="vertical" android:paddingBottom="100dp">
             <FrameLayout android:id="@+id/catalog_v2_product_media"
                 android:layout_width="match_parent" android:layout_height="280dp"
                 android:layout_marginHorizontal="16dp"

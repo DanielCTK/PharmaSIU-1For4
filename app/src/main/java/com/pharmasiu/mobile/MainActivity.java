@@ -12,6 +12,15 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.content.Context;
+import android.graphics.Rect;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.pharmasiu.mobile.core.DemoState;
 import com.pharmasiu.mobile.core.UiHost;
 import com.pharmasiu.mobile.navigation.PharmaBottomBar;
@@ -64,8 +73,24 @@ public final class MainActivity extends Activity implements UiHost {
             route="login";
         }
         setContentView(R.layout.activity_main);
+        View root = findViewById(R.id.main_root);
         content = findViewById(R.id.content_area);
         navigation = findViewById(R.id.navigation_bar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, windowInsets) -> {
+            Insets sysBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+            boolean isKeyboardOpen = ime.bottom > 0 || windowInsets.isVisible(WindowInsetsCompat.Type.ime());
+
+            if (navigation != null && !DemoState.NONE.equals(store.role)) {
+                navigation.setVisibility(isKeyboardOpen ? View.GONE : View.VISIBLE);
+            }
+
+            int bottomInset = isKeyboardOpen ? ime.bottom : sysBars.bottom;
+            v.setPadding(sysBars.left, sysBars.top, sysBars.right, bottomInset);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         render();
     }
     @Override public DemoState state() { return store; }
@@ -250,5 +275,24 @@ public final class MainActivity extends Activity implements UiHost {
         }else{
             moveTaskToBack(true);
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

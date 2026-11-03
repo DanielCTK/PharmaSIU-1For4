@@ -33,6 +33,35 @@ public final class AuthFormController extends AuthUiState {
         forgot.setOnClickListener(v -> setMode(AuthMode.RESET, true));
         back.setOnClickListener(v -> setMode(AuthMode.LOGIN, true));
         submit.setOnClickListener(v -> submit());
+
+        View tabCustomer = root.findViewById(R.id.auth_role_tab_customer);
+        View tabCashier = root.findViewById(R.id.auth_role_tab_cashier);
+        View tabManager = root.findViewById(R.id.auth_role_tab_manager);
+
+        if (tabCustomer != null) {
+            tabCustomer.setOnClickListener(v -> {
+                identifier.setText("0900000000");
+                password.setText("demo1234");
+                hideKeyboard();
+                host.message("Đã điền tài khoản Khách hàng (0900000000)");
+            });
+        }
+        if (tabCashier != null) {
+            tabCashier.setOnClickListener(v -> {
+                identifier.setText("0901111111");
+                password.setText("demo1234");
+                hideKeyboard();
+                host.message("Đã điền tài khoản Thu ngân (0901111111)");
+            });
+        }
+        if (tabManager != null) {
+            tabManager.setOnClickListener(v -> {
+                identifier.setText("0902222222");
+                password.setText("demo1234");
+                hideKeyboard();
+                host.message("Đã điền tài khoản Quản lý (0902222222)");
+            });
+        }
         // No hard-coded demo identities/passwords in the installed application.
         demoPanel.setVisibility(View.GONE);
         demoAccounts.setVisibility(View.GONE);

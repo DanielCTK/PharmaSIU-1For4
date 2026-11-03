@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="28dp">
+        android:paddingBottom="100dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="66dp"
@@ -35,7 +35,7 @@
                 android:text="HỆ THỐNG NHÀ THUỐC" android:textColor="@color/emerald"
                 android:textSize="10sp" android:textStyle="bold"/>
         </LinearLayout>
-        <FrameLayout android:layout_width="match_parent" android:layout_height="228dp"
+        <FrameLayout android:layout_width="match_parent" android:layout_height="150dp"
             android:background="@drawable/auth_hero">
             <View android:layout_width="240dp" android:layout_height="240dp"
                 android:layout_gravity="right|top" android:layout_marginTop="-42dp"
@@ -51,7 +51,7 @@
                     android:layout_weight="1"/>
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="Chào mừng&#10;trở lại." android:lineSpacingExtra="1dp"
-                    android:textColor="@color/white" android:textSize="34sp"
+                    android:textColor="@color/white" android:textSize="26sp"
                     android:textStyle="bold"/>
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -80,19 +80,25 @@
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:orientation="horizontal" android:gravity="center"
                     android:layout_marginTop="12dp">
-                    <TextView android:layout_width="0dp" android:layout_height="60dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Khách hàng"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="12sp"/>
-                    <TextView android:layout_width="0dp" android:layout_height="60dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Nhân viên"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="12sp"/>
-                    <TextView android:layout_width="0dp" android:layout_height="60dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Quản lý"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="12sp"/>
+                    <TextView android:id="@+id/auth_role_tab_customer" android:layout_width="0dp" android:layout_height="52dp"
+                        android:layout_weight="1" android:gravity="center" android:text="Khách hàng\n0900000000"
+                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
+                        android:background="@drawable/auth_field" android:layout_marginEnd="4dp"
+                        android:clickable="true" android:focusable="true"/>
+                    <TextView android:id="@+id/auth_role_tab_cashier" android:layout_width="0dp" android:layout_height="52dp"
+                        android:layout_weight="1" android:gravity="center" android:text="Nhân viên\n0901111111"
+                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
+                        android:background="@drawable/auth_field" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
+                        android:clickable="true" android:focusable="true"/>
+                    <TextView android:id="@+id/auth_role_tab_manager" android:layout_width="0dp" android:layout_height="52dp"
+                        android:layout_weight="1" android:gravity="center" android:text="Quản lý\n0902222222"
+                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
+                        android:background="@drawable/auth_field" android:layout_marginStart="4dp"
+                        android:clickable="true" android:focusable="true"/>
                 </LinearLayout>
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginTop="8dp" android:lineSpacingExtra="2dp"
-                    android:text="Vai trò được xác định từ tài khoản đã lưu trong cơ sở dữ liệu."
+                    android:text="Chạm vào vai trò ở trên để tự động điền tài khoản mẫu tiện lợi."
                     android:textColor="@color/muted" android:textSize="12sp"/>
             </LinearLayout>
             <LinearLayout android:id="@+id/auth_name_section" android:layout_width="match_parent"

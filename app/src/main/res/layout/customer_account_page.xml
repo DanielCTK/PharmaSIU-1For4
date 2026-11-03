@@ -17,7 +17,7 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:paddingTop="27dp"
-            android:paddingBottom="29dp"
+            android:paddingBottom="100dp"
             android:orientation="vertical" />
         <LinearLayout
             android:id="@+id/customer_account_content"
