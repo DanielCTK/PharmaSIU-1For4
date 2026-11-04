@@ -11,19 +11,19 @@
 
 | Package | Trách nhiệm |
 |---|---|
-| `com.pharmasiu.mobile.data.model` | Các model `Medicine`, `CartLine`, `MockRequest`, `MockProfile`, `MockAddress`, trạng thái |
-| `com.pharmasiu.mobile.data.repository` | Catalog demo gồm 30 mặt hàng mẫu và tra cứu theo ID |
-| `com.pharmasiu.mobile.domain` | `CounterRules`, `MockLotRules`, `OrderStateMachine`, `PrescriptionSelectionRules`, catalog search, giá, auth, quyền vai trò |
-| `com.pharmasiu.mobile.core.DemoState` | RAM state duy nhất cho 3 vai trò; mutations enforce tại store, không chỉ UI |
+| `com.pharmasiu.mobile.data.model` | Model Java dùng chung hiện hành (`Medicine`, `CartLine`) |
+| `com.pharmasiu.mobile.data.local` | SQLite local database, repository và các query account/catalog/order |
+| `com.pharmasiu.mobile.domain` | Luật Java thuần như `CartRules`, `CatalogSearchRules`, `CounterRules`, `OrderStateMachine` và trạng thái đơn |
+| `com.pharmasiu.mobile.core.DemoState` | Façade/UI-state adapter cho 3 vai trò; production mode nối tới `PharmaRepository` SQLite |
 | `com.pharmasiu.mobile.core.UiHost` | Giao tiếp navigation, message, chọn tệp và logout |
 | `com.pharmasiu.mobile.ui` | Màn đăng nhập, UI foundation, tuyến chuyển đổi UI |
 | `com.pharmasiu.mobile.ui.customer` | Home/Catalog/Product, Cart/Rx/Checkout/Orders, Account/Profile/Address/Onboarding |
 | `com.pharmasiu.mobile.ui.staff` | POS, lot/expiry/FEFO, inventory, shift reconciliation, media preview, admin |
-| `com.pharmasiu.mobile.legacy` | Các hợp đồng tương thích Java giúp xác minh nghiệp vụ khi chuyển từ kiến trúc cũ |
+| `src/test/.../legacy` | Hợp đồng tương thích chỉ dùng cho JVM test; không đóng gói vào APK |
 
 ## Đảm bảo trạng thái
 
-Dữ liệu về giỏ, người dùng, tồn/lô, yêu cầu, ca và phiếu bán tồn tại trong RAM; không dùng Room/DAO/SQLite/backend. Giữ cache onboarding flag trong `SharedPreferences` nhưng không giữ session đăng nhập qua process restart. Khi Activity đổi cấu hình, state RAM được giữ bằng retained non-configuration state; khi process restart vẫn về login.
+Dữ liệu production-demo của tài khoản, catalog, lô/tồn và đơn hàng đi qua `PharmaRepository` trên SQLite nội bộ sáu bảng. `DemoState` vẫn là façade/UI-state adapter và còn giữ một số state phiên trong RAM; `SharedPreferences` chỉ giữ cờ onboarding. Chưa có backend/server hoặc đồng bộ đa thiết bị. Khi Activity đổi cấu hình, session hiện tại được giữ bằng retained non-configuration state; khi process restart vẫn về login.
 
 Quyền được kiểm tra ở logic state: CUSTOMER không thể ghi staff data; CASHIER không thể chỉnh danh mục/ảnh/kiểm kê; ADMIN không được làm dược sĩ, không có trạng thái duyệt toa thực. Các bản ghi Rx chỉ là yêu cầu cục bộ và chưa upload.
 
@@ -45,9 +45,8 @@ com.pharmasiu.mobile/
   navigation/PharmaBottomBar.java
   core/DemoState.java
   core/state/{CustomerAccountStore,InventoryStore}.java
-  data/{model,repository}/
+  data/{model,local}/
   domain/
-  legacy/
   ui/AuthScreen.java                    # façade
   ui/auth/{AuthFormBase,AuthUiState,AuthFormController,AuthMode}.java
   ui/design/PharmaUi.java               # Material components/typography/tokens
@@ -65,4 +64,4 @@ Public façade giữ chữ ký `create(Activity, UiHost, String)` cho những lu
 
 Mã XML trải qua theme Material 3 `Theme.PharmaSIUJava`, token ở `ui_tokens.xml`, dùng MaterialButton/Card/TextField/BottomNavigationView qua `com.google.android.material:material:1.14.0`, không phải Compose. Các XML như `staff_pos_*`, `order_v2_*`, `catalog_v2_*` là màn hoạt động. Những layout thử nghiệm `customer_page`, `admin_page`, `pos_page`, `login_page` đã được dọn khỏi source active.
 
-**Tình trạng kiểm chứng:** 87 Java production, 29 Java JUnit, 59 XML, 0 Kotlin; Gradle build/debug + JUnit 141/141 PASS. Emulator API28 đã mở login, Customer Home/Account/Cart, Cashier POS và Admin Dashboard; phần lớn kịch bản kinh doanh sâu/E2E và accessibility trên thiết bị thật chưa xác nhận. Bản nghiệm thu chi tiết: `docs/JAVA_UI_REFACTOR_HANDOFF_2026-10-29.md`.
+**Tình trạng source hiện hành:** 72 file Java production, 39 file Java trong cây test, 72 resource XML, 0 Kotlin. Kết quả build/test phải lấy từ lần CI/local verification gần nhất thay vì giữ một con số PASS dễ lỗi thời trong tài liệu. Emulator/device QA và phần lớn kịch bản kinh doanh sâu/E2E, accessibility vẫn cần bằng chứng riêng. Bản nghiệm thu chi tiết: `docs/JAVA_UI_REFACTOR_HANDOFF_2026-10-29.md`.

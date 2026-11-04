@@ -4,7 +4,7 @@
 
 **Ứng dụng gốc duy nhất**: package, namespace và application ID là `com.pharmasiu.mobile`. Dự án Android dùng **Java 17 + Android Views/XML**. Không có Kotlin, Jetpack Compose, hoặc các module chạy song song. Gradle dùng Groovy DSL; `settings.gradle` chỉ khai báo `:app`.
 
-PharmaSIU hiện là ứng dụng **RAM DEMO** dành cho Khách hàng, Nhân viên bán hàng và Quản trị viên. Các thao tác tra cứu, tạo yêu cầu, đơn hàng, giá, tồn, lô/hạn, FEFO, POS, kiểm kê và đối soát đều chỉ mô phỏng tại thiết bị. Chưa có cơ sở dữ liệu/backend vận hành, xác minh giá/tồn thật, dược sĩ xét duyệt Rx, upload toa, giữ hàng, thanh toán hoặc hóa đơn thật.
+PharmaSIU hiện là ứng dụng **DEMO chạy cục bộ trên thiết bị** dành cho Khách hàng, Nhân viên bán hàng và Quản trị viên. Ứng dụng Android dùng SQLite nội bộ sáu bảng cho dữ liệu vận hành demo và vẫn giữ một số state giao diện tạm trong RAM. Chưa có backend/server vận hành, xác minh giá/tồn thật, dược sĩ xét duyệt Rx, upload toa, giữ hàng đa thiết bị, thanh toán hoặc hóa đơn thật.
 
 ## Mở dự án trong Android Studio
 
@@ -50,10 +50,9 @@ PharmaSIU-1For4/
 │       │   ├── AndroidManifest.xml
 │       │   ├── java/com/pharmasiu/mobile/
 │       │   │   ├── MainActivity.java
-│       │   │   ├── core/            # RAM state, role, Rx, POS, tài khoản, ca
-│       │   │   ├── data/            # Model / catalog repository Java
+│       │   │   ├── core/            # UI/session-state façade + state stores
+│       │   │   ├── data/            # Model + SQLite repository/query Java
 │       │   │   ├── domain/          # Logic nghiệp vụ Java, FEFO, trạng thái
-│       │   │   ├── legacy/          # Các hợp đồng Java còn đối chiếu
 │       │   │   └── ui/              # Auth, khách hàng, POS, quản trị, Media
 │       │   └── res/
 │       │       ├── layout/          # Toàn bộ XML màn hình
@@ -96,7 +95,7 @@ Không đưa vào Git `local.properties`, file build, signing keys, ảnh toa ho
 
 **Điểm bắt đầu cho thành viên:** đọc `docs/JAVA_UI_ARCHITECTURE_2026-10-29.md` và `docs/JAVA_UI_REFACTOR_HANDOFF_2026-10-29.md`, chọn đúng một package và những XML liên quan, tránh đổi chữ ký façade; chạy `gradlew.bat :app:assembleDebug :app:testDebugUnitTest` trước khi gửi PR.
 
-Trạng thái tích hợp: 87 Java production, 29 Java JUnit tests, 59 resource XML, 0 Kotlin; 141/141 test PASS. UI chưa được xác nhận parity pixel trên mọi thiết bị; xem mục QA của tài liệu bàn giao.
+Trạng thái source hiện hành: 72 file Java production, 39 file Java trong cây test, 72 resource XML và 0 Kotlin. Các con số này chỉ mô tả source đang track, không thay thế kết quả build/test; UI chưa được xác nhận parity pixel trên mọi thiết bị, xem mục QA của tài liệu bàn giao.
 
 ## Database mẫu dùng trực tiếp trong Navicat
 
@@ -104,4 +103,4 @@ Mọi file liên quan SQL nằm riêng tại thư mục database/. File database
 
 Bộ SQL PostgreSQL ở database/postgresql/ gồm schema, dữ liệu mẫu, view và guard dùng khi cài PostgreSQL server. Toàn bộ hướng dẫn, cảnh báo và kiểm thử tại database/README.md. Chạy python database/tools/verify_database.py để kiểm chứng.
 
-Đây là database dữ liệu giả lập; ứng dụng Android hiện vẫn vận hành trên RAM demo, chưa tự kết nối DB/backend. Không lưu toa, mật khẩu, thu tiền hoặc thông tin khách thật.
+Đây là database dữ liệu giả lập. Ứng dụng Android có **SQLite nội bộ riêng trên thiết bị** và không kết nối trực tiếp file Navicat/PostgreSQL mẫu ở thư mục `database/`; chưa có backend đồng bộ hay server production. Không lưu toa, mật khẩu rõ, bằng chứng thu tiền hoặc thông tin khách thật.

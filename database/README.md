@@ -79,7 +79,7 @@ Tổng cộng **93 bản ghi**. Tất cả mã đơn, mã lô, mã chứng từ 
 - `kiem_tra_lo` giữ biên bản/lượng thực đếm. Khi **chưa được quản trị viên duyệt**, không sửa tồn; khi có biên bản kiểm kê `CHENH_LECH` hợp lệ và phê duyệt, trigger DEMO mới điều chỉnh tồn theo `ton_sau_dieu_chinh`, đồng thời giữ lịch sử bất biến.
 - Không lưu mật khẩu rõ, hồ sơ thật, toa y tế hoặc bằng chứng thanh toán. Ví dụ `DEMO_DA_GHI_NHAN` không phải giao dịch ngân hàng/tiền mặt thật.
 
-**Giới hạn:** SQLite yêu cầu `PRAGMA foreign_keys=ON` trên TỪNG kết nối (Navicat có thể mặc định tắt); DB owner có quyền SQL tùy ý vẫn có thể thay đổi flag tài khoản/thanh toán hoặc hủy trigger. CSDL demo không thể xác minh giấy phép chuyên môn hoặc chứng từ thanh toán thật. Trigger kiểm tra điều kiện khi bạn sửa record trực tiếp, nhưng việc kiểm duyệt dược sĩ, auth và thanh toán thật vẫn cần backend, quy trình/phân quyền thực, ghi log và kiểm thử giao dịch. Ứng dụng Android hiện vẫn là **RAM DEMO**; file này chưa tự đồng bộ với ứng dụng.
+**Giới hạn:** SQLite yêu cầu `PRAGMA foreign_keys=ON` trên TỪNG kết nối (Navicat có thể mặc định tắt); DB owner có quyền SQL tùy ý vẫn có thể thay đổi flag tài khoản/thanh toán hoặc hủy trigger. CSDL demo không thể xác minh giấy phép chuyên môn hoặc chứng từ thanh toán thật. Trigger kiểm tra điều kiện khi bạn sửa record trực tiếp, nhưng việc kiểm duyệt dược sĩ, auth và thanh toán thật vẫn cần backend, quy trình/phân quyền thực, ghi log và kiểm thử giao dịch. Ứng dụng Android dùng SQLite nội bộ riêng trên thiết bị; file Navicat demo này **không phải** file database runtime và không tự đồng bộ hai chiều với ứng dụng.
 
 ## 5. PostgreSQL trong Navicat (nếu muốn host/port)
 
@@ -117,7 +117,7 @@ Không chạy lại seed trên một DB đã có dữ liệu nếu không muốn
 
 ## 7. Trạng thái tích hợp ứng dụng
 
-Việc tạo và kiểm thử CSDL **không đồng nghĩa** Android đã kết nối database. Để dùng khi vận hành thực, cần thiết kế backend/API (đặc biệt Rx, giữ tồn đồng thời, FEFO, quyền, giao nhận và thanh toán). Không truy cập trực tiếp server PostgreSQL bằng tài khoản quản trị từ APK.
+Ứng dụng Android đã dùng SQLite nội bộ trên thiết bị thông qua `data/local`, nhưng việc tạo và kiểm thử các file mẫu trong `database/` **không đồng nghĩa** app đang kết nối trực tiếp các file Navicat hoặc PostgreSQL. Để dùng khi vận hành thực, vẫn cần backend/API (đặc biệt Rx, giữ tồn đồng thời, FEFO, quyền, giao nhận và thanh toán). Không truy cập trực tiếp server PostgreSQL bằng tài khoản quản trị từ APK.
 
 ## 8. Kiểm toán độc lập và các giới hạn cần lưu ý
 

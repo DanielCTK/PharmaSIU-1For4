@@ -151,7 +151,7 @@ Kỳ vọng: **một APK \`:app\`, một package được cài \`com.pharmasiu.m
 
 Đây là **tài liệu cấu trúc chuẩn sau cleanup**. Nếu các file cũ có số lượng file hoặc package khác, dùng tài liệu này làm bảng định vị hiện hành; không suy ra rằng nghiệp vụ đã được kiểm nghiệm 100%.
 
-**Kết quả cleanup:** 69 file Java production, 39 file Java trong cây test (bao gồm lớp hỗ trợ fixture), 1 module Android và 1 applicationId. Các con số này là số lượng source, không đại diện số chức năng đã hoàn thành.
+**Kết quả source hiện hành (04/11/2026):** 72 file Java production, 39 file Java trong cây test (bao gồm lớp hỗ trợ fixture), 1 module Android và 1 applicationId. Các con số này là số lượng source, không đại diện số chức năng đã hoàn thành.
 
 ## 7. Biên bản nghiệm thu cấu trúc (30/10/2026)
 
