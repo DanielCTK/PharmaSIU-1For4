@@ -24,3 +24,5 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew :app:testDebugUnitTest :app:assembleDebug --no-daemon
+      - name: Verify demo database integrity
+        run: python3 database/tools/verify_database.py
