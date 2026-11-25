@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="72dp"
     android:layout_height="72dp"
-    android:background="@drawable/bg_panel"
+    android:background="@drawable/staff_product_photo"
+    android:clipToOutline="true"
     android:minWidth="72dp"
     android:minHeight="72dp"
     android:importantForAccessibility="yes">

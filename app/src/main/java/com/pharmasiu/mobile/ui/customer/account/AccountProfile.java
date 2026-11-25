@@ -43,8 +43,9 @@ public abstract class AccountProfile extends AccountHome {
         field.setInputType(type);
         field.setFilters(new InputFilter[] { new InputFilter.LengthFilter(limit) });
         field.setPadding(dp(12), dp(12), dp(12), dp(12));
-        field.setBackground(activity.getDrawable(R.drawable.bg_panel));
-        parent.addView(field, params(-1, dp(54), 7));
+        field.setBackground(activity.getDrawable(R.drawable.component_input_outline));
+        field.setMinHeight(dp(56));
+        parent.addView(field, params(-1, -2, 7));
         return field;
     }
 
@@ -58,69 +59,18 @@ public abstract class AccountProfile extends AccountHome {
     }
 
     protected void profile() {
-        hero("HỒ SƠ CÁ NHÂN", "Chỉnh sửa hồ sơ",
-            "Quản lý và cập nhật thông tin liên hệ của bạn.", true);
-        LinearLayout form = card();
-        EditText name = field(form, "Họ và tên", profile.displayName,
-            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS, 70);
-        EditText phone = field(form, "Số điện thoại đăng nhập", profile.phone,
-            InputType.TYPE_CLASS_PHONE, 11);
-        EditText email = field(form, "Email (không bắt buộc)", profile.email,
-            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, 100);
-        EditText birthday = field(form, "Ngày sinh", profile.birthday,
-            InputType.TYPE_CLASS_TEXT, 20);
-        text(form, "Số điện thoại được sử dụng để đăng nhập và xác thực đơn hàng của bạn.",
-            12, R.color.muted, false, 12);
-        action(form, "Lưu thay đổi", true, () -> {
-            String n = value(name), p = value(phone), e = value(email);
-            if (n.length() < 2 || !phoneValid(p) || !emailValid(e)) {
-                host.message("Tên tối thiểu 2 ký tự, SĐT gồm 10–11 số bắt đầu bằng 0 và email hợp lệ.");
-                return;
-            }
-            if (!p.equals(profile.phone) && state.customerAccounts.containsKey(p)) {
-                host.message("Số điện thoại này đã được sử dụng.");
-                return;
-            }
-            for (DemoState.CustomerProfile other : state.customerAccounts.values()) {
-                if (other != profile && !e.isEmpty() && e.equalsIgnoreCase(other.email)) {
-                    host.message("Email này đã được sử dụng.");
-                    return;
-                }
-            }
-            if (!state.updateCustomer(n, e, value(birthday))) {
-                host.message("Không thể lưu hồ sơ. Vui lòng kiểm tra lại thông tin.");
-                return;
-            }
-            if (!state.changeCustomerPhone(p)) {
-                host.message("Không thể đổi số điện thoại.");
-                return;
-            }
-            host.message("Đã cập nhật thông tin thành công");
-            host.navigate("account");
-        });
-        action(body, "Bỏ thay đổi", false, () -> {
-            boolean dirty = !profile.displayName.equals(value(name)) ||
-                !profile.phone.equals(value(phone)) || !profile.email.equals(value(email)) ||
-                !profile.birthday.equals(value(birthday));
-            if (!dirty) { host.navigate("account"); return; }
-            new AlertDialog.Builder(activity).setTitle("Bỏ thay đổi hồ sơ?")
-                .setMessage("Các nội dung chưa lưu sẽ bị bỏ.")
-                .setNegativeButton("Tiếp tục chỉnh sửa", null)
-                .setPositiveButton("Bỏ thay đổi", (d, which) -> host.navigate("account"))
-                .show();
-        });
-        disclaimer();
+        new CustomerProfilePage(this).show();
     }
 
     protected void password() {
         hero("BẢO MẬT", "Đổi mật khẩu",
-            "Sử dụng mật khẩu thử nghiệm; không nhập mật khẩu thật.", true);
+            "Chỉ dùng mật khẩu thử nghiệm.", true);
         LinearLayout form = card();
         int masked = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD;
         EditText before = field(form, "Mật khẩu hiện tại", "", masked, 80);
         EditText after = field(form, "Mật khẩu mới (tối thiểu 6 ký tự)", "", masked, 80);
         EditText repeat = field(form, "Nhập lại mật khẩu mới", "", masked, 80);
-        action(form, "Cập nhật mật khẩu trong phiên", true, () -> {
+        action(form, "Lưu mật khẩu mới", true, () -> {
             String oldPassword = before.getText().toString();
             String newPassword = after.getText().toString();
             if (!profile.password.equals(oldPassword)) {

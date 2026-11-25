@@ -13,11 +13,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
 import com.pharmasiu.mobile.core.UiHost;
 import com.pharmasiu.mobile.domain.JavaRules;
+import com.pharmasiu.mobile.ui.customer.catalog.CatalogCategories;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ abstract class PosProductFeatures extends PosBase {
         String query = fold(search.getText().toString().trim());
         List<DemoState.Product> matched = new ArrayList<>();
         for (DemoState.Product product : state.products) {
-            if (fold(product.name + " " + product.id + " " + product.category).contains(query)) {
+            if (fold(product.name + " " + product.id + " " + CatalogCategories.categoryOf(product)).contains(query)) {
                 matched.add(product);
             }
         }
@@ -54,32 +56,39 @@ abstract class PosProductFeatures extends PosBase {
             TextView meta = row.findViewById(R.id.staff_pos_product_meta);
             TextView status = row.findViewById(R.id.staff_pos_product_status);
             Button add = row.findViewById(R.id.staff_pos_product_add);
+            com.pharmasiu.mobile.ui.design.UiMotion.press(add);
+            FrameLayout artwork = row.findViewById(R.id.staff_pos_product_artwork);
+            com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.bindPicture(activity, artwork, product,
+                com.pharmasiu.mobile.ui.staff.StaffMediaViews.demoPhoto(state, product.id), "Ảnh sản phẩm");
             int aggregate = Math.max(0, state.stock.getOrDefault(product.id, 0));
             boolean dated = hasLot(product.id);
             int usable = effectiveAvailable(product.id);
             int inCart = state.posCart.getOrDefault(product.id, 0);
             title.setText(product.name);
-            meta.setText(product.category + " · " + product.unit + " · " + product.id +
-                "\nGiá bán: " + (product.priceVnd > 0 ? vnd(product.priceVnd) : "Chưa có giá"));
-            String blocked = product.requiresPrescription ? "Rx: CHỜ DƯỢC SĨ / KHÔNG ĐƯỢC BÁN" :
+            meta.setText("SKU " + product.id + " · " + CatalogCategories.categoryOf(product));
+            ((TextView) row.findViewById(R.id.staff_pos_product_price)).setText(
+                product.priceVnd > 0 ? vnd(product.priceVnd) + " / " + product.unit : "Chưa có giá");
+            ((TextView) row.findViewById(R.id.staff_pos_product_stock)).setText(
+                "Khả dụng " + usable + " · Tồn " + aggregate + (inCart > 0 ? " · Đã chọn " + inCart : ""));
+            String blocked = product.requiresPrescription ? "Rx · Chờ dược sĩ, không bán tại quầy" :
                 product.priceVnd <= 0 ? "Chưa cập nhật giá bán" :
-                dated ? "Tồn tổng " + aggregate + " · Lô khả dụng " + usable +
-                    " · Đang chọn trong giỏ " + inCart + "\n" + lotDescription(product.id) :
-                    "Tồn kho " + aggregate + " · Đang chọn trong giỏ " + inCart +
-                        "\nLô hàng khả dụng theo hạn dùng sớm nhất";
+                usable < 1 ? "Không có tồn/lô hợp lệ" :
+                dated ? nextLotLabel(product.id) : "Chưa có lô theo dõi hạn dùng";
             status.setText(blocked);
             row.setFocusable(true);
             row.setClickable(true);
             row.setContentDescription("Xem thông tin chi tiết " + product.name);
             row.setOnClickListener(v -> showProductDetails(product));
+            com.pharmasiu.mobile.ui.design.UiMotion.press(row);
             status.setTextColor(activity.getColor(product.requiresPrescription || usable == 0 || product.priceVnd <= 0
                 ? R.color.warning : R.color.emerald));
             boolean canAdd = JavaRules.canSellDemo(product, inCart + 1, usable, state.shiftOpen) &&
                 inCart < 30 && authorized();
             add.setEnabled(canAdd);
+            add.setContentDescription("Thêm " + product.name + " vào giỏ bán hàng");
             add.setAlpha(canAdd ? 1f : .5f);
-            add.setText(canAdd ? "+ Thêm vào giỏ" :
-                product.requiresPrescription ? "Rx · Cần Dược sĩ duyệt" : "Hết tồn khả dụng");
+            add.setText(canAdd ? "+ Thêm" : product.requiresPrescription ? "Rx · Khóa" :
+                product.priceVnd <= 0 ? "Chưa có giá" : inCart >= 30 ? "Đủ 30" : "Hết khả dụng");
             add.setOnClickListener(v -> {
                 if (!authorized() || !JavaRules.canSellDemo(product,
                     state.posCart.getOrDefault(product.id, 0) + 1,
@@ -94,30 +103,44 @@ abstract class PosProductFeatures extends PosBase {
             productRows.addView(row);
         }
 
-        searchSummary.setText(totalMatches + " mặt hàng phù hợp · hiển thị " + (totalMatches == 0 ? 0 : (start + 1)) + "–" + end + " (trang " + (productPage + 1) + "/" + totalPages + ")");
+        searchSummary.setText(totalMatches + " mặt hàng · " + (totalMatches == 0 ? 0 : (start + 1))
+            + "–" + end + " · Trang " + (productPage + 1) + "/" + totalPages);
         if (totalMatches == 0) productRows.addView(simpleText("Không tìm thấy sản phẩm phù hợp.", 14, R.color.muted));
 
         if (totalPages > 1) {
             com.pharmasiu.mobile.ui.design.PharmaUi.pagination(productRows, productPage, totalPages, totalMatches, "mặt hàng", newPage -> {
                 productPage = newPage;
                 renderProducts();
-                scroll.smoothScrollTo(0, search.getTop());
+                scrollTo(search);
             });
         }
     }
     protected void showProductDetails(DemoState.Product product) {
         if (!authorized()) return;
-        String details = product.subtitle + "\n\n" + product.description +
-            "\n\nMã: " + product.id + "\nNhóm: " + product.category +
+        String specification = CatalogCategories.detailOf(product);
+        String details = (specification.isEmpty() ? "" : specification + "\n\n") + product.description +
+            "\n\nMã: " + product.id + "\nNhóm: " + CatalogCategories.categoryOf(product) +
             "\nĐơn vị: " + product.unit +
             "\nGiá niêm yết: " + (product.priceVnd > 0 ? vnd(product.priceVnd) : "Chưa cập nhật giá") +
             "\nTồn kho khả dụng: " + effectiveAvailable(product.id) +
-            "\n" + (product.requiresPrescription ? "Rx: Cần đơn thuốc hợp lệ từ bác sĩ."
-                : "Thông tin chi tiết sản phẩm chính hãng.");
+            "\n" + (product.requiresPrescription ? "Rx: Chờ dược sĩ; không được bán tại quầy."
+                : "Thông tin từ danh mục demo trên thiết bị.");
         if (hasLot(product.id)) details += "\n" + lotDescription(product.id);
+        ScrollView content = new ScrollView(activity);
+        LinearLayout body = new LinearLayout(activity);
+        body.setOrientation(LinearLayout.VERTICAL);
+        int padding = Math.round(16 * activity.getResources().getDisplayMetrics().density);
+        body.setPadding(padding, padding, padding, padding);
+        content.addView(body, new ScrollView.LayoutParams(-1, -2));
+        FrameLayout photo = new FrameLayout(activity);
+        body.addView(photo, new LinearLayout.LayoutParams(-1, Math.round(
+            180 * activity.getResources().getDisplayMetrics().density)));
+        com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.bindPicture(activity, photo, product,
+            com.pharmasiu.mobile.ui.staff.StaffMediaViews.demoPhoto(state, product.id), "Ảnh sản phẩm");
+        body.addView(simpleText(details, 15, R.color.ink));
         new AlertDialog.Builder(activity)
             .setTitle(product.name)
-            .setMessage(details)
+            .setView(content)
             .setPositiveButton("Đóng", (dialog, which) -> { })
             .show();
     }
@@ -135,6 +158,19 @@ abstract class PosProductFeatures extends PosBase {
     protected boolean hasLot(String id) {
         for (DemoState.Lot lot : state.lots) if (id.equals(lot.productId)) return true;
         return false;
+    }
+
+    private String nextLotLabel(String productId) {
+        LocalDate today = LocalDate.now();
+        DemoState.Lot first = null;
+        for (DemoState.Lot lot : state.lots) {
+            if (!productId.equals(lot.productId) || lot.quarantined || lot.quantity < 1
+                || lot.expiresOn == null || !lot.expiresOn.isAfter(today)) continue;
+            if (first == null || lot.expiresOn.isBefore(first.expiresOn)
+                || (lot.expiresOn.equals(first.expiresOn) && lot.code.compareTo(first.code) < 0)) first = lot;
+        }
+        return first == null ? "Không có lô đủ điều kiện" : "Lô " + first.code + " · HSD "
+            + first.expiresOn.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     protected int effectiveAvailable(String id) {

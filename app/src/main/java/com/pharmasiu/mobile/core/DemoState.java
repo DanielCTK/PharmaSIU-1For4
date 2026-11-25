@@ -159,14 +159,16 @@ public final class DemoState {
                 ("OTC".equals(row.kind)?"Không kê đơn":
                 (row.code.startsWith("MP-")||row.code.startsWith("DA-")?"Mỹ phẩm":
                 (row.code.startsWith("TP-")||row.code.startsWith("TPCN-")||row.code.startsWith("SNACK-")||row.code.startsWith("DOUONG-")?"Thực phẩm":
-                (row.code.startsWith("VTYT-")?"ThiẾt bị":
+                (row.code.startsWith("VTYT-")?"Thiết bị":
                 (row.code.startsWith("CN-")||row.code.startsWith("TIEUDUNG-")?"Chăm sóc":"Sản phẩm khác")))));
             String detail=(row.ingredient.isEmpty()?"":row.ingredient+" ")+row.strength;
             String description=detail.trim().isEmpty()?
                 "Thông tin được lưu trong cơ sở dữ liệu thiết bị; xác minh tại quầy trước sử dụng.":
                 detail.trim();
+            String specification=row.strength.trim();
+            String subtitle=specification.isEmpty()?row.unit:specification;
             products.add(new Product(row.code,row.name,
-                row.unit+" · "+category,row.price,category,
+                subtitle+" · "+category,row.price,category,
                 "RX".equals(row.kind),row.unit,description));
             stock.put(row.code,0);
         }

@@ -1,139 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/cream" android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="58dp"
-        android:gravity="center_vertical" android:orientation="horizontal" android:paddingHorizontal="15dp">
-        <ImageView android:id="@+id/catalog_v2_product_back"
-            android:layout_width="40dp" android:layout_height="40dp"
-            android:background="@drawable/bg_favorite_circle"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/forest"
-            android:scaleType="centerInside"
-            android:contentDescription="Quay lại danh mục"
-            android:padding="8dp"
-            android:layout_marginEnd="12dp"
-            android:clickable="true"
-            android:focusable="true"/>
-        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1" android:text="Chi tiết sản phẩm"
-            android:textColor="@color/forest" android:textSize="20sp" android:textStyle="bold"/>
-        <TextView android:id="@+id/catalog_v2_product_favorite"
-            android:layout_width="40dp" android:layout_height="40dp" android:gravity="center"
-            android:background="@drawable/bg_favorite_circle"
-            android:contentDescription="Lưu sản phẩm yêu thích"
-            android:padding="8dp"/>
+    android:orientation="vertical" android:background="@color/white">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="64dp" android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingHorizontal="12dp" android:paddingVertical="8dp" android:background="@color/white">
+        <ImageView android:id="@+id/catalog_v2_product_back" android:layout_width="48dp" android:layout_height="48dp"
+            android:src="@drawable/ic_arrow_back" android:tint="@color/emerald" android:padding="12dp"
+            android:background="@drawable/catalog_detail_icon_button" android:scaleType="centerInside"
+            android:contentDescription="Quay lại" android:clickable="true" android:focusable="true"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginHorizontal="12dp" android:text="PharmaSIU" android:textSize="21sp"
+            android:textStyle="bold" android:textColor="@color/emerald" android:maxLines="1" android:ellipsize="end"/>
+        <ImageView android:id="@+id/catalog_v2_product_search" android:layout_width="48dp" android:layout_height="48dp"
+            android:src="@drawable/ic_search" android:tint="@color/emerald" android:padding="12dp"
+            android:background="@drawable/catalog_detail_icon_button" android:contentDescription="Tìm sản phẩm"
+            android:clickable="true" android:focusable="true"/>
+        <TextView android:id="@+id/catalog_v2_product_cart" android:layout_width="wrap_content" android:layout_height="48dp"
+            android:minWidth="48dp" android:layout_marginStart="6dp" android:gravity="center"
+            android:paddingHorizontal="12dp" android:drawablePadding="4dp" android:textSize="14sp"
+            android:textStyle="bold" android:textColor="@color/emerald"
+            android:background="@drawable/catalog_detail_icon_button" android:contentDescription="Mở giỏ hàng"
+            android:clickable="true" android:focusable="true"/>
     </LinearLayout>
-    <ScrollView android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="0dp"
-        android:layout_weight="1" android:fillViewport="false">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:paddingBottom="100dp">
+    <ScrollView android:id="@+id/catalog_v2_product_scroll"
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:fillViewport="false" android:clipToPadding="false">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
             <FrameLayout android:id="@+id/catalog_v2_product_media"
-                android:layout_width="match_parent" android:layout_height="280dp"
-                android:layout_marginHorizontal="16dp"
-                android:clipToOutline="true"
-                android:background="@drawable/catalog_v2_surface">
+                android:layout_width="match_parent" android:layout_height="288dp" android:background="@color/white">
                 <TextView android:id="@+id/catalog_v2_product_media_tag"
                     android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_gravity="top|start" android:layout_margin="16dp"
-                    android:background="@drawable/catalog_v2_chip"
-                    android:paddingHorizontal="12dp" android:paddingVertical="6dp"
-                    android:textColor="@color/emerald" android:textSize="10sp"
-                    android:textStyle="bold"/>
+                    android:paddingHorizontal="12dp" android:paddingVertical="7dp"
+                    android:background="@drawable/catalog_redesign_category_tag"
+                    android:textColor="@color/white" android:textSize="13sp" android:textStyle="bold"/>
+                <TextView android:id="@+id/catalog_v2_product_zoom"
+                    android:layout_width="wrap_content" android:layout_height="48dp" android:minWidth="48dp"
+                    android:layout_gravity="bottom|end" android:layout_margin="12dp"
+                    android:paddingHorizontal="14dp" android:gravity="center"
+                    android:drawableStart="@drawable/catalog_detail_expand" android:drawablePadding="7dp"
+                    android:background="@drawable/catalog_detail_media_action" android:text="Xem ảnh"
+                    android:textColor="@color/forest" android:textSize="13sp" android:textStyle="bold"
+                    android:contentDescription="Phóng to ảnh sản phẩm" android:clickable="true" android:focusable="true"/>
             </FrameLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:paddingHorizontal="22dp" android:paddingTop="19dp">
+                android:orientation="vertical" android:paddingHorizontal="20dp" android:paddingTop="16dp" android:paddingBottom="20dp">
                 <TextView android:id="@+id/catalog_v2_product_category"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:letterSpacing="0.12" android:textColor="@color/emerald"
-                    android:textSize="11sp" android:textStyle="bold"/>
-                <TextView android:id="@+id/catalog_v2_product_name"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp" android:textColor="@color/forest"
-                    android:textSize="25sp" android:textStyle="bold"/>
-                <TextView android:id="@+id/catalog_v2_product_subtitle"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp" android:textColor="@color/muted"
-                    android:textSize="13sp"/>
+                    android:textColor="@color/emerald" android:textSize="13sp" android:textStyle="bold"/>
                 <TextView android:id="@+id/catalog_v2_product_price"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="17dp" android:textColor="@color/emerald"
-                    android:textSize="22sp" android:textStyle="bold"/>
+                    android:layout_marginTop="6dp" android:textColor="@color/emerald" android:textSize="28sp" android:textStyle="bold"/>
                 <TextView android:id="@+id/catalog_v2_product_price_note"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp" android:textColor="@color/muted"
-                    android:textSize="12sp"/>
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp" android:background="@drawable/catalog_v2_surface"
-                    android:orientation="vertical" android:padding="16dp">
-                    <TextView
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:text="CÔNG DỤNG &amp; MÔ TẢ"
-                        android:textColor="@color/emerald" android:textSize="11sp" android:textStyle="bold"
-                        android:letterSpacing="0.08"/>
-                    <TextView android:id="@+id/catalog_v2_product_description"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:textColor="@color/ink" android:textSize="14sp"
-                        android:lineSpacingExtra="3dp"/>
-                    <View
-                        android:layout_width="match_parent" android:layout_height="1dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#15000000"/>
-                    <TextView
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:text="THÔNG TIN CHI TIẾT"
-                        android:textColor="@color/emerald" android:textSize="11sp" android:textStyle="bold"
-                        android:letterSpacing="0.08"/>
-                    <TextView android:id="@+id/catalog_v2_product_ingredients"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" android:textColor="@color/forest"
-                        android:textSize="13sp" android:lineSpacingExtra="2dp"/>
-                    <TextView android:id="@+id/catalog_v2_product_spec"
-                        android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" android:textColor="@color/muted"
-                        android:textSize="13sp"/>
-                </LinearLayout>
+                    android:layout_marginTop="3dp" android:textColor="@color/muted" android:textSize="13sp"/>
+                <TextView android:id="@+id/catalog_v2_product_name"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp" android:textColor="@color/ink" android:textSize="20sp"
+                    android:lineSpacingExtra="3dp" android:textStyle="bold" android:accessibilityHeading="true"/>
+                <TextView android:id="@+id/catalog_v2_product_subtitle"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp" android:textColor="@color/muted" android:textSize="14sp" android:lineSpacingExtra="2dp"/>
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="8dp" android:background="@color/cream"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Thông tin sản phẩm" android:textColor="@color/forest" android:textSize="18sp"
+                    android:textStyle="bold" android:accessibilityHeading="true"/>
+                <TextView android:id="@+id/catalog_v2_product_spec"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" android:textColor="@color/ink" android:textSize="15sp" android:lineSpacingExtra="3dp"/>
+                <TextView android:id="@+id/catalog_v2_product_sku"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:textColor="@color/muted" android:textSize="14sp"/>
+                <TextView android:id="@+id/catalog_v2_product_stock"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:textColor="@color/muted" android:textSize="14sp" android:lineSpacingExtra="2dp"/>
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="8dp" android:background="@color/cream"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Mô tả" android:textColor="@color/forest" android:textSize="18sp"
+                    android:textStyle="bold" android:accessibilityHeading="true"/>
+                <TextView android:id="@+id/catalog_v2_product_description"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" android:textColor="@color/ink" android:textSize="15sp" android:lineSpacingExtra="4dp"/>
+                <TextView android:id="@+id/catalog_v2_product_ingredients"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" android:textColor="@color/ink" android:textSize="15sp" android:lineSpacingExtra="4dp"/>
                 <TextView android:id="@+id/catalog_v2_product_food_caveat"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp" android:background="@drawable/catalog_v2_surface"
-                    android:padding="12dp"
-                    android:visibility="gone"
-                    android:textColor="@color/forest" android:textSize="12sp"/>
+                    android:layout_marginTop="14dp" android:textColor="@color/forest" android:textSize="14sp"
+                    android:lineSpacingExtra="3dp" android:visibility="gone"/>
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="8dp" android:background="@color/cream"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:padding="20dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Lưu ý sử dụng" android:textColor="@color/forest" android:textSize="18sp"
+                    android:textStyle="bold" android:accessibilityHeading="true"/>
                 <TextView android:id="@+id/catalog_v2_product_process"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp" android:background="@drawable/catalog_v2_surface"
-                    android:padding="14dp"
-                    android:textColor="@color/forest" android:textSize="12sp"/>
+                    android:layout_marginTop="10dp" android:textColor="@color/ink" android:textSize="15sp" android:lineSpacingExtra="4dp"/>
                 <com.google.android.material.button.MaterialButton
-                    app:cornerRadius="14dp"
-                    android:id="@+id/catalog_v2_product_back_bottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="16dp"
-                    android:backgroundTint="@color/mint"
-                    android:text="← Quay lại danh mục"
-                    android:textAllCaps="false"
-                    android:textColor="@color/forest"
-                    android:textStyle="bold"/>
+                    android:id="@+id/catalog_v2_product_back_bottom" style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp"
+                    android:layout_marginTop="14dp" android:text="Khám phá sản phẩm khác" android:textAllCaps="false"
+                    android:textSize="15sp" android:textColor="@color/emerald"
+                    app:icon="@drawable/ic_arrow_forward" app:iconTint="@color/emerald" app:iconGravity="textEnd"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:background="@color/white" android:orientation="vertical"
-        android:paddingHorizontal="20dp" android:paddingTop="12dp" android:paddingBottom="16dp">
-        <com.google.android.material.button.MaterialButton
-            app:cornerRadius="14dp"
-            android:id="@+id/catalog_v2_product_add"
-            android:layout_width="match_parent" android:layout_height="52dp"
-            android:backgroundTint="@color/emerald" android:text="Thêm vào giỏ hàng"
-            android:textAllCaps="false" android:textColor="@color/white"
-            android:textStyle="bold"/>
-        <TextView android:id="@+id/catalog_v2_product_cta_note"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="7dp" android:gravity="center"
-            android:text="Chưa xác nhận đặt trước hoặc giữ hàng."
-            android:textColor="@color/muted" android:textSize="11sp"/>
+        android:orientation="vertical" android:paddingHorizontal="16dp" android:paddingTop="10dp" android:paddingBottom="10dp"
+        android:background="@color/white">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <TextView android:id="@+id/catalog_v2_product_favorite" android:layout_width="56dp"
+                android:layout_height="56dp" android:padding="17dp" android:gravity="center"
+                android:layout_marginEnd="12dp" android:background="@drawable/catalog_detail_icon_button"
+                android:contentDescription="Lưu sản phẩm yêu thích" android:clickable="true" android:focusable="true"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_product_add"
+                android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:minHeight="56dp" android:paddingHorizontal="16dp" android:paddingVertical="12dp"
+                android:insetTop="0dp" android:insetBottom="0dp" android:text="Thêm vào giỏ"
+                android:textSize="16sp" android:maxLines="2" android:textAllCaps="false"
+                android:textColor="@color/white" android:textStyle="bold" app:backgroundTint="@color/emerald"
+                app:cornerRadius="16dp" app:icon="@drawable/ic_cart" app:iconTint="@color/white" app:iconPadding="8dp" app:iconGravity="textStart"/>
+        </LinearLayout>
+        <TextView android:id="@+id/catalog_v2_product_cta_note" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="7dp" android:gravity="center"
+            android:textColor="@color/muted" android:textSize="13sp" android:lineSpacingExtra="1dp"/>
     </LinearLayout>
 </LinearLayout>

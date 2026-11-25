@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:background="@drawable/catalog_redesign_sheet_background" android:clipToPadding="false"
+    android:fillViewport="false" android:paddingBottom="12dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingHorizontal="20dp" android:paddingBottom="20dp">
+        <View android:layout_width="40dp" android:layout_height="4dp" android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp" android:background="@drawable/catalog_redesign_sheet_handle"
+            android:importantForAccessibility="no"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical" android:orientation="horizontal" android:paddingVertical="8dp">
+            <TextView android:id="@+id/catalog_v2_quantity_title" android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="Thêm vào giỏ hàng" android:textColor="@color/forest"
+                android:textSize="23sp" android:textStyle="bold"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_quantity_close"
+                android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="Đóng chọn số lượng"
+                android:minWidth="0dp" android:minHeight="0dp" android:padding="0dp" android:insetTop="0dp" android:insetBottom="0dp"
+                android:text="×" android:textSize="28sp" android:textColor="@color/forest" android:backgroundTint="@color/mint"
+                app:cornerRadius="24dp"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:background="@drawable/catalog_redesign_mint_panel"
+            android:orientation="horizontal" android:gravity="center_vertical" android:padding="12dp">
+            <FrameLayout android:id="@+id/catalog_v2_quantity_media" android:layout_width="92dp" android:layout_height="100dp"
+                android:background="@drawable/catalog_redesign_card" android:clipToOutline="true"
+                android:importantForAccessibility="noHideDescendants"/>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:layout_marginStart="14dp" android:orientation="vertical">
+                <TextView android:id="@+id/catalog_v2_quantity_name" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/ink" android:textSize="18sp" android:textStyle="bold"/>
+                <TextView android:id="@+id/catalog_v2_quantity_unit" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp" android:textColor="@color/muted" android:textSize="14sp"/>
+                <TextView android:id="@+id/catalog_v2_quantity_price" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp" android:textColor="@color/emerald" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" android:text="Số lượng" android:textColor="@color/forest"
+            android:textSize="17sp" android:textStyle="bold"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_quantity_decrease"
+                android:layout_width="56dp" android:layout_height="56dp" android:minWidth="0dp" android:minHeight="0dp"
+                android:padding="0dp" android:insetTop="0dp" android:insetBottom="0dp"
+                android:text="−" android:textSize="26sp" android:backgroundTint="@color/mint"
+                android:textColor="@color/forest" app:cornerRadius="16dp"/>
+            <TextView android:id="@+id/catalog_v2_quantity_value" android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:minHeight="56dp" android:gravity="center" android:paddingHorizontal="8dp"
+                android:textColor="@color/ink" android:textSize="21sp" android:textStyle="bold"
+                android:accessibilityLiveRegion="polite"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_quantity_increase"
+                android:layout_width="56dp" android:layout_height="56dp" android:minWidth="0dp" android:minHeight="0dp"
+                android:padding="0dp" android:insetTop="0dp" android:insetBottom="0dp"
+                android:text="+" android:textSize="26sp" android:backgroundTint="@color/mint"
+                android:textColor="@color/forest" app:cornerRadius="16dp"/>
+        </LinearLayout>
+        <TextView android:id="@+id/catalog_v2_quantity_limit" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="9dp" android:textColor="@color/muted" android:textSize="14sp" android:lineSpacingExtra="2dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" android:gravity="center_vertical" android:orientation="horizontal">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:paddingEnd="8dp" android:text="Tạm tính" android:textColor="@color/muted" android:textSize="16sp"/>
+            <TextView android:id="@+id/catalog_v2_quantity_total" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:textColor="@color/forest" android:textSize="23sp" android:textStyle="bold" android:accessibilityLiveRegion="polite"/>
+        </LinearLayout>
+        <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_quantity_confirm"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp"
+            android:layout_marginTop="16dp" android:paddingHorizontal="14dp" android:paddingVertical="14dp"
+            android:insetTop="0dp" android:insetBottom="0dp" android:textAllCaps="false" android:textSize="16sp"
+            android:textStyle="bold" android:backgroundTint="@color/emerald" android:textColor="@color/white" app:cornerRadius="18dp"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp"
+            android:text="Giá trong danh mục; chưa xác nhận tồn kho hoặc giữ hàng."
+            android:textColor="@color/muted" android:textSize="13sp" android:lineSpacingExtra="2dp"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

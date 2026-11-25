@@ -11,7 +11,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="0dp"
         android:paddingTop="12dp"
-        android:paddingBottom="100dp">
+        android:paddingBottom="24dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,15 +26,15 @@
                 android:textColor="@color/emerald"
                 android:textSize="21sp"
                 android:textStyle="bold" />
-            <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+            <ImageButton
                 android:id="@+id/staff_media_preview_close_top"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="12dp"
                 android:contentDescription="Đóng xem hình sản phẩm"
-                android:text="×"
-                android:textSize="24sp"
-                android:textColor="@color/forest"
-                android:backgroundTint="@color/mint" />
+                android:src="@drawable/order_icon_close"
+                android:background="@drawable/staff_redesign_mint"
+                android:foreground="?android:attr/selectableItemBackground" />
         </LinearLayout>
         <FrameLayout
             android:id="@+id/staff_media_preview_picture"
@@ -98,13 +98,13 @@
             android:layout_marginStart="20dp" android:layout_marginEnd="20dp"
             android:padding="12dp"
             android:lineSpacingExtra="2dp"
-            android:text="Hình ảnh sản phẩm được đồng bộ tự động theo danh mục."
+            android:text="Đối chiếu nhãn sản phẩm khi kiểm tra hàng và lô."
             android:textColor="@color/forest"
             android:textSize="12sp" />
-        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+        <com.google.android.material.button.MaterialButton app:cornerRadius="16dp"
             android:id="@+id/staff_media_preview_replace"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content" android:minHeight="52dp" android:paddingVertical="12dp"
             android:layout_marginTop="12dp"
             android:contentDescription="Chọn ảnh sản phẩm khác từ thiết bị"
             android:text="Chọn ảnh khác từ thiết bị"
@@ -112,10 +112,10 @@
             android:textColor="@color/white"
             android:backgroundTint="@color/emerald"
             android:visibility="gone"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
-        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+        <com.google.android.material.button.MaterialButton app:cornerRadius="16dp"
             android:id="@+id/staff_media_preview_remove"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content" android:minHeight="52dp" android:paddingVertical="12dp"
             android:layout_marginTop="8dp"
             android:contentDescription="Bỏ ảnh sản phẩm đã chọn"
             android:text="Bỏ ảnh đã chọn"
@@ -123,10 +123,10 @@
             android:textColor="@color/emerald"
             android:backgroundTint="@color/mint"
             android:visibility="gone"  android:layout_marginStart="20dp" android:layout_marginEnd="20dp"/>
-        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+        <com.google.android.material.button.MaterialButton app:cornerRadius="16dp"
             android:id="@+id/staff_media_preview_close_bottom"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content" android:minHeight="52dp" android:paddingVertical="12dp"
             android:layout_marginTop="8dp"
             android:contentDescription="Đóng hình ảnh sản phẩm"
             android:text="Đóng"

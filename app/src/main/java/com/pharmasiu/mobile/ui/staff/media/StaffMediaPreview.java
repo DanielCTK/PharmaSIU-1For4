@@ -33,7 +33,9 @@ import java.util.WeakHashMap;
 
 import static com.pharmasiu.mobile.ui.staff.media.StaffPhotoStore.mayView;
 import static com.pharmasiu.mobile.ui.staff.media.StaffPhotoStore.mayEdit;
-import static com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.addPicture;
+import static com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.bindPicture;
+import com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.PictureSource;
+import com.pharmasiu.mobile.ui.customer.catalog.CatalogCategories;
 import static com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.dp;
 
 /** Admin preview/thumbnail UI, permission check at callback-time. */
@@ -54,16 +56,14 @@ public final class StaffMediaPreview {
 
         View root = activity.getLayoutInflater().inflate(R.layout.staff_media_preview, null, false);
         FrameLayout media = root.findViewById(R.id.staff_media_preview_picture);
-        boolean localImage = addPicture(activity, media, product, photoUri, "Ảnh sản phẩm");
+        PictureSource source = bindPicture(activity, media, product, photoUri, "Ảnh sản phẩm");
         TextView note = root.findViewById(R.id.staff_media_preview_note);
-        note.setText(localImage
-            ? "Ảnh đã chọn từ thiết bị cho sản phẩm này."
-            : photoUri == null
-                ? "Hình minh họa theo nhóm hàng · không phải ảnh chụp sản phẩm thật."
-                : "Không thể đọc ảnh hoặc định dạng không được hỗ trợ. Đang hiển thị hình minh họa, chưa xác minh sản phẩm.");
+        note.setText(source==PictureSource.LOCAL ? "Ảnh đã chọn trên thiết bị" :
+            source==PictureSource.BUNDLED ? (photoUri==null ? "Ảnh danh mục · " + product.id
+                : "Không đọc được ảnh đã chọn; đang dùng ảnh danh mục.") : "Chưa có ảnh cho mặt hàng này.");
         ((TextView) root.findViewById(R.id.staff_media_preview_title)).setText(product.name);
-        ((TextView) root.findViewById(R.id.staff_media_preview_subtitle)).setText(product.subtitle);
-        ((TextView) root.findViewById(R.id.staff_media_preview_category)).setText(product.category);
+        ((TextView) root.findViewById(R.id.staff_media_preview_subtitle)).setText(product.id + " · " + product.unit);
+        ((TextView) root.findViewById(R.id.staff_media_preview_category)).setText(CatalogCategories.categoryOf(product));
         ((TextView) root.findViewById(R.id.staff_media_preview_price)).setText(
             product.requiresPrescription ? "Rx · CẦN DƯỢC SĨ DUYỆT" :
                 product.priceVnd <= 0 ? "Chưa có giá xác minh" :
@@ -100,7 +100,7 @@ public final class StaffMediaPreview {
     }
 
     /**
-     * A 72dp tappable thumbnail with a category illustration if no safe local
+     * A tappable thumbnail with the exact bundled SKU photo if no safe local
      * photo is available; use onOpen to display createPreview in the host UI.
      */
     public static View createThumbnail(Activity activity, UiHost host,
@@ -111,9 +111,10 @@ public final class StaffMediaPreview {
         FrameLayout root = (FrameLayout) activity.getLayoutInflater().inflate(
             R.layout.staff_media_thumbnail, null, false);
         FrameLayout picture = root.findViewById(R.id.staff_media_thumbnail_picture);
-        addPicture(activity, picture, product, photoUri, "Hình sản phẩm");
-        root.setContentDescription("Xem hình sản phẩm " + product.name +
-            (photoUri == null ? ". Đây là hình minh họa." : ". Ảnh chọn từ máy hoặc hình minh họa dự phòng."));
+        root.setClipToOutline(true);
+        PictureSource source=bindPicture(activity,picture,product,photoUri,"Ảnh sản phẩm");
+        root.setContentDescription("Xem ảnh " + product.name + " · " + product.id
+            + (source==PictureSource.UNAVAILABLE ? ". Chưa có ảnh." : ". Ảnh sản phẩm."));
         if (onOpen != null) {
             root.setClickable(true);
             root.setFocusable(true);
@@ -122,7 +123,8 @@ public final class StaffMediaPreview {
                 else host.message("Không đủ quyền xem hình ảnh sản phẩm.");
             });
         } else {
-            root.setContentDescription("Hình minh họa sản phẩm " + product.name);
+            root.setContentDescription("Ảnh " + product.name + " · " + product.id
+                + (source==PictureSource.UNAVAILABLE ? ". Chưa có ảnh." : ""));
         }
         return root;
     }

@@ -3,16 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/cream">
+    android:background="@drawable/catalog_surface_gradient">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="23dp" android:paddingBottom="100dp">
-        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+        android:paddingTop="23dp" android:paddingBottom="28dp">
+        <com.google.android.material.button.MaterialButton app:cornerRadius="16dp"
             android:id="@+id/customer_onboarding_skip"
             android:layout_width="wrap_content"
-            android:layout_height="52dp"
+            android:layout_height="wrap_content"
+            android:minHeight="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
             android:layout_gravity="end"
             android:text="Bỏ qua"
             android:textAllCaps="false"
@@ -27,15 +30,17 @@
             android:textSize="13sp"
             android:letterSpacing="0.1"
             android:textStyle="bold"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
-        <TextView
+        <ImageView
             android:id="@+id/customer_onboarding_artwork"
             android:layout_width="match_parent"
-            android:layout_height="246dp"
+            android:layout_height="184dp"
+            android:layout_marginHorizontal="23dp"
+            android:clipToOutline="true"
+            android:padding="56dp"
+            android:scaleType="fitCenter"
+            android:tint="@color/lime"
             android:layout_marginTop="13dp"
-            android:background="@drawable/customer_account_hero"
-            android:gravity="center"
-            android:textColor="@color/lime"
-            android:textSize="102sp"
+            android:background="@drawable/ui_header_gradient_rounded"
             android:importantForAccessibility="no" />
         <TextView
             android:id="@+id/customer_onboarding_title"
@@ -61,10 +66,13 @@
             android:textColor="@color/emerald"
             android:contentDescription="Tiến độ giới thiệu"
             android:textSize="18sp"  android:layout_marginStart="23dp" android:layout_marginEnd="23dp"/>
-        <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
+        <com.google.android.material.button.MaterialButton app:cornerRadius="16dp"
             android:id="@+id/customer_onboarding_next"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
             android:layout_marginTop="16dp"
             android:text="Tiếp tục"
             android:textAllCaps="false"
@@ -75,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="23dp" android:layout_marginEnd="23dp"
-            android:text="PharmaSIU · Đồng hành cùng sức khỏe gia đình bạn."
+            android:text="Demo · Dữ liệu lưu trên thiết bị."
             android:gravity="center"
             android:textColor="@color/muted"
             android:textSize="12sp" />

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:paddingTop="14dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical">
+        <FrameLayout android:id="@+id/admin_lot_photo" android:layout_width="84dp" android:layout_height="100dp"
+            android:layout_marginEnd="12dp" android:background="@drawable/staff_product_photo"
+            android:clipToOutline="true" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical">
+            <TextView android:id="@+id/admin_lot_product_name" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:breakStrategy="high_quality"
+                android:hyphenationFrequency="none" android:textColor="@color/ink"
+                android:textSize="16sp" android:textStyle="bold" />
+            <TextView android:id="@+id/admin_lot_product_sku" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="4dp"
+                android:textColor="@color/muted" android:textSize="12sp" />
+            <TextView android:id="@+id/admin_lot_product_price" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="7dp"
+                android:textColor="@color/emerald" android:textSize="16sp" android:textStyle="bold" />
+            <TextView android:id="@+id/admin_lot_code" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="5dp"
+                android:textColor="@color/forest" android:textSize="14sp" android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+    <TextView android:id="@+id/admin_lot_expiry" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:drawableStart="@drawable/admin_lot_calendar" android:drawablePadding="6dp"
+        android:textColor="@color/forest" android:textSize="14sp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="6dp">
+        <TextView android:id="@+id/admin_lot_quantity" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginEnd="8dp" android:drawableStart="@drawable/admin_lot_box"
+            android:drawablePadding="6dp" android:textColor="@color/forest" android:textSize="14sp" android:textStyle="bold" />
+        <TextView android:id="@+id/admin_lot_status" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp" android:paddingVertical="4dp"
+            android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/admin_lot_actions" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" />
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginTop="12dp" android:background="@color/line" android:importantForAccessibility="no" />
+</LinearLayout>

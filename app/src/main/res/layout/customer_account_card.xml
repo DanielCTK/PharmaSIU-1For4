@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_panel"
-    android:padding="17dp"
-    android:elevation="1dp" />
+    android:background="@drawable/customer_account_surface_panel"
+    android:padding="16dp"
+    android:elevation="0dp" />

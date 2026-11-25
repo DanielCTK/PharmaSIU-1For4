@@ -8,10 +8,12 @@ PharmaSIU hiện là ứng dụng **DEMO chạy cục bộ trên thiết bị** 
 
 ## Mở dự án trong Android Studio
 
-1. Mở **nguyên thư mục gốc** `C:\PharmaSIU\PharmaSIU-1For4` (có `settings.gradle`) qua **Android Studio → File → Open**.
+1. Mở **nguyên thư mục gốc** `PharmaSIU-1For4` (có `settings.gradle`) qua **Android Studio → File → Open**.
 2. Dùng Android SDK API 36 và JDK 17+ (JBR Android Studio).
 3. Đợi Gradle Sync; chọn cấu hình duy nhất **app**; chọn thiết bị Android 8.0+ rồi nhấn **Run**.
 4. Ứng dụng mở màn đăng nhập chung. Không có màn chọn vai trò; vai trò xác định từ tài khoản DEMO.
+
+Cấu hình **app** được lưu cùng dự án trong `.run/app.run.xml`: bật **Always install with package manager**, không xóa storage trước khi cài. Nếu máy ảo vẫn hiện giao diện cũ và Run bị kẹt ở **Launching on devices** hoặc báo timeout, bản APK mới chưa được cài xong; điều này không có nghĩa mã nguồn bị mất. Dùng **Device Manager → Cold Boot** cho máy ảo rồi chạy lại **app**. Cold Boot giữ dữ liệu; không cần Wipe Data hay gỡ ứng dụng.
 
 Chạy kiểm thử trên Windows:
 
@@ -26,10 +28,18 @@ APK: `app/build/outputs/apk/debug/app-debug.apk`. App ID vẫn là `com.pharmasi
 | Vai trò | Tài khoản | Mật khẩu |
 | --- | --- | --- |
 | Khách hàng | `0900000000` | `demo1234` |
-| Nhân viên bán hàng | `nhanvien@pharmasiu.demo` | `1111` |
-| Quản trị viên | `quanly@pharmasiu.demo` | `2222` |
+| Nhân viên bán hàng | `0901111111` | `demo1234` |
+| Quản trị viên | `0902222222` | `demo1234` |
 
 Các tài khoản trên chỉ dùng thử giao diện; không nhập dữ liệu định danh/toa thuốc/mật khẩu thật.
+
+Có thể mở **Tài khoản dùng thử** ở màn đăng nhập để điền nhanh từng tài khoản. Giao diện nâng cấp và kết quả kiểm tra: [UI_REDESIGN_2026-11-18.md](docs/UI_REDESIGN_2026-11-18.md).
+
+Bản V2 với banner đổi ảnh mỗi 5 giây, bảng màu đậm hơn và bảng chọn số lượng: [UI_V2_2026-11-19.md](docs/UI_V2_2026-11-19.md).
+
+Bản V3 sửa banner tăng chiều cao, nhóm Thiết bị và bố cục icon cho các màn khách hàng: [UI_V3_2026-11-19.md](docs/UI_V3_2026-11-19.md).
+
+Khu quản lý dùng ảnh theo mã sản phẩm, có ảnh nhận diện lô và biểu mẫu thu gọn: [ADMIN_IMAGES_2026-11-19.md](docs/ADMIN_IMAGES_2026-11-19.md).
 
 ## Chức năng Java/XML
 

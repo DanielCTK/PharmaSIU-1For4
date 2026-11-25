@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <!-- Faithful XML color tokens migrated from the Kotlin PharmaPalette. -->
-  <color name="emerald">#064D3A</color>
-  <color name="forest">#073D30</color>
-  <color name="lime">#B9F48B</color>
-  <color name="mint">#E6F3E6</color>
-  <color name="cream">#F6F7F2</color>
+  <!-- Rich emerald/mint palette; white remains true white for on-primary text. -->
+  <color name="emerald">#065640</color>
+  <color name="forest">#043C30</color>
+  <color name="lime">#C3E88D</color>
+  <color name="mint">#CDE7D8</color>
+  <color name="cream">#E8F1EB</color>
   <color name="white">#FFFFFFFF</color>
-  <color name="paper">#FFFFFFFF</color>
-  <color name="ink">#192A24</color>
-  <color name="muted">#2E3F36</color>
-  <color name="line">#B8C7BC</color>
-  <color name="warning">#073D30</color>
-  <color name="warning_surface">#E6F3E6</color>
+  <color name="paper">#F2F8F4</color>
+  <color name="ink">#102D23</color>
+  <color name="muted">#3D5F4F</color>
+  <color name="line">#AFCBBB</color>
+  <color name="control_outline">#648C76</color>
+  <color name="warning">#754700</color>
+  <color name="warning_surface">#FFE8B8</color>
 </resources>

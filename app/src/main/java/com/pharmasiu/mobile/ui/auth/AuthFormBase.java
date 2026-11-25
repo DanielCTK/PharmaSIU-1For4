@@ -32,6 +32,8 @@ abstract class AuthFormBase {
     final Activity activity;
     final UiHost host;
     final View root;
+    final View glassForm;
+    final View heroEffects;
 
     final LinearLayout roles;
     final LinearLayout nameSection;
@@ -67,6 +69,8 @@ abstract class AuthFormBase {
         this.activity = activity;
         this.host = host;
         root = activity.getLayoutInflater().inflate(R.layout.auth_unified, null, false);
+        glassForm = require(R.id.auth_glass_form);
+        heroEffects = require(R.id.auth_glass_hero_effect);
         roles = require(R.id.auth_roles);
         nameSection = require(R.id.auth_name_section);
         confirmSection = require(R.id.auth_confirm_section);

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
+import com.pharmasiu.mobile.ui.design.UiMotion;
 
 import java.util.function.Consumer;
 
@@ -27,14 +28,14 @@ public final class PharmaBottomBar {
     };
 
     private static final String[] ADMIN = {"admin", "pos", "catalog-admin", "lots", "logout"};
-    private static final String[] ADMIN_LABELS = {"Tổng quan", "Quầy POS", "Sản phẩm", "Lô hàng", "Đăng xuất"};
+    private static final String[] ADMIN_LABELS = {"Tổng quan", "Bán hàng", "Hàng hóa", "Lô hàng", "Đăng xuất"};
     private static final int[] ADMIN_ICONS = {
         R.drawable.nav_admin, R.drawable.nav_pos, R.drawable.nav_catalog,
         R.drawable.nav_lots, R.drawable.nav_logout
     };
 
     private static final String[] CASHIER = {"pos", "requests", "logout"};
-    private static final String[] CASHIER_LABELS = {"Quầy bán", "Duyệt đơn", "Đăng xuất"};
+    private static final String[] CASHIER_LABELS = {"Bán hàng", "Yêu cầu", "Đăng xuất"};
     private static final int[] CASHIER_ICONS = {R.drawable.nav_pos, R.drawable.nav_orders, R.drawable.nav_logout};
 
     public static String activeTab(String role, String route) {
@@ -66,55 +67,90 @@ public final class PharmaBottomBar {
 
     public static void bind(Activity activity, LinearLayout container, String role,
                             String route, Consumer<String> onNavigate) {
-        container.removeAllViews();
         if (DemoState.NONE.equals(role)) {
+            container.removeAllViews();
             container.setVisibility(View.GONE);
             return;
         }
         container.setVisibility(View.VISIBLE);
+        String[] routes = routesForRole(role);
+        View current = container.getChildAt(0);
+        BottomNavigationView bar;
+        if (current instanceof BottomNavigationView && role.equals(current.getTag())) {
+            bar = (BottomNavigationView) current;
+        } else {
+            container.removeAllViews();
+            bar = create(activity, role, routes);
+            container.addView(bar, new LinearLayout.LayoutParams(-1, -1));
+        }
 
-        String[] routes = CUSTOMER;
+        int selected = tabIndex(routes, activeTab(role, route));
+        bar.setOnItemSelectedListener(null);
+        if (selected >= 0 && bar.getSelectedItemId() != 100 + selected) {
+            bar.setSelectedItemId(100 + selected);
+        }
+        bar.setOnItemSelectedListener(item -> {
+            int index = item.getItemId() - 100;
+            if (index < 0 || index >= routes.length) return false;
+            onNavigate.accept(routes[index]);
+            return !"logout".equals(routes[index]);
+        });
+    }
+
+    public static int transitionDirection(View container, String role, String previous, String next) {
+        String[] routes = routesForRole(role);
+        int from = tabIndex(routes, activeTab(role, previous));
+        int to = tabIndex(routes, activeTab(role, next));
+        return UiMotion.horizontalDirection(container, from, to);
+    }
+
+    private static String[] routesForRole(String role) {
+        if (DemoState.ADMIN.equals(role)) return ADMIN;
+        if (DemoState.CASHIER.equals(role)) return CASHIER;
+        return CUSTOMER;
+    }
+
+    private static int tabIndex(String[] routes, String route) {
+        for (int i = 0; i < routes.length; i++) {
+            if (routes[i].equals(route)) return i;
+        }
+        return -1;
+    }
+
+    private static BottomNavigationView create(Activity activity, String role, String[] routes) {
         String[] labels = CUSTOMER_LABELS;
         int[] icons = CUSTOMER_ICONS;
         if (DemoState.ADMIN.equals(role)) {
-            routes = ADMIN;
             labels = ADMIN_LABELS;
             icons = ADMIN_ICONS;
         } else if (DemoState.CASHIER.equals(role)) {
-            routes = CASHIER;
             labels = CASHIER_LABELS;
             icons = CASHIER_ICONS;
         }
         BottomNavigationView bar = new BottomNavigationView(activity);
-        bar.setBackgroundColor(activity.getColor(R.color.white));
-        bar.setElevation(dp(activity, 10));
+        bar.setTag(role);
+        bar.setBackgroundResource(R.drawable.nav_bar_surface);
+        bar.setElevation(0);
         bar.setItemHorizontalTranslationEnabled(false);
         bar.setLabelVisibilityMode(1); // All tabs labeled, including five-item nav.
-        bar.setItemIconSize(dp(activity, 22));
+        bar.setItemIconSize(dp(activity, 23));
+        bar.setItemTextAppearanceInactive(R.style.TextAppearance_Pharma_Navigation);
+        bar.setItemTextAppearanceActive(R.style.TextAppearance_Pharma_Navigation_Active);
+        bar.setItemPaddingTop(dp(activity,7));
+        bar.setItemPaddingBottom(dp(activity,7));
         ColorStateList itemColors = new ColorStateList(
             new int[][]{{android.R.attr.state_checked}, {}},
             new int[]{activity.getColor(R.color.emerald), activity.getColor(R.color.muted)});
         bar.setItemIconTintList(itemColors);
         bar.setItemTextColor(itemColors);
         bar.setItemActiveIndicatorEnabled(true);
-        bar.setItemActiveIndicatorColor(ColorStateList.valueOf(activity.getColor(R.color.mint)));
+        bar.setItemActiveIndicatorColor(ColorStateList.valueOf(activity.getColor(R.color.ui_navigation_selection)));
         Menu menu = bar.getMenu();
-        String selected = activeTab(role, route);
-        int selectedId = 0;
         for (int i = 0; i < routes.length; i++) {
             int itemId = 100 + i;
-            menu.add(Menu.NONE, itemId, i, labels[i]).setIcon(icons[i]);
-            if (routes[i].equals(selected)) selectedId = itemId;
+            menu.add(Menu.NONE, itemId, i, labels[i]).setIcon(icons[i]).setContentDescription(labels[i]);
         }
-        if (selectedId != 0) bar.setSelectedItemId(selectedId);
-        final String[] routeTargets = routes;
-        bar.setOnItemSelectedListener(item -> {
-            int index = item.getItemId() - 100;
-            if (index < 0 || index >= routeTargets.length) return false;
-            onNavigate.accept(routeTargets[index]);
-            return true;
-        });
-        container.addView(bar, new LinearLayout.LayoutParams(-1, -1));
+        return bar;
     }
 
     private static int dp(Activity activity, int value) {

@@ -28,122 +28,191 @@ import static com.pharmasiu.mobile.ui.customer.CustomerOrderViews.*;
 abstract class OrderHistoryScreens extends OrderCartScreens {
     OrderHistoryScreens(Activity activity,UiHost host,int layout){super(activity,host,layout);}
     protected void orders() {
-        headerActions("Lịch sử đơn hàng", "Tiếp tục mua sắm", "catalog");
+        headerActions("Yêu cầu của tôi", "Tiếp tục mua sắm", "catalog");
         List<DemoState.Order> mine = state.customerOrders();
-        LinearLayout banner = card();
-        heading(banner, mine.isEmpty() ? "Chưa có yêu cầu" : mine.size() + " đơn hàng");
-        line(banner, "Lịch sử các đơn đặt hàng nhận tại quầy thuốc của bạn.", 13, R.color.muted, false);
         if (mine.isEmpty()) {
-            action(banner, "Khám phá sản phẩm", true, () -> host.navigate("catalog"));
+            LinearLayout empty = card();
+            illustration(empty, R.drawable.order_empty_requests);
+            line(empty, "Chưa có yêu cầu", 21, R.color.forest, true).setGravity(android.view.Gravity.CENTER);
+            line(empty, "Yêu cầu bạn lưu sẽ xuất hiện ở đây.", 14, R.color.muted, false)
+                .setGravity(android.view.Gravity.CENTER);
+            iconAction(empty, "Khám phá sản phẩm", R.drawable.order_icon_arrow_right, true,
+                () -> host.navigate("catalog"));
+            disclosure();
             return;
         }
+        chip(body, mine.size() + " yêu cầu", R.drawable.order_icon_receipt, false);
+        disclosure();
         for (DemoState.Order order : mine) {
-            LinearLayout card = card();
-            line(card, "MÃ YÊU CẦU / " + order.reference, 16, R.color.emerald, true);
-            line(card, status(order), 13, isPending(order) ? R.color.ink : R.color.muted, true);
-            line(card, "Đặt lúc " + order.displayTime + " · " + units(order.lines) + " đơn vị",
-                12, R.color.muted, false);
-            line(card, "Địa chỉ nhận: " + order.pickup, 12, R.color.muted, false);
-            priceSummary(card, order.pricedSubtotalVnd, order.containsUnpriced);
-            action(card, "Xem chi tiết yêu cầu", false, () -> {
+            LinearLayout item = card();
+            chip(item, status(order), statusIcon(order), isPending(order));
+            line(item, order.reference, 18, R.color.forest, true);
+            iconLine(item, R.drawable.order_icon_clock, order.displayTime, R.color.muted);
+            productStrip(item, order);
+            LinearLayout total = new LinearLayout(activity);
+            boolean stacked = activity.getResources().getConfiguration().fontScale >= 1.3f
+                || activity.getResources().getConfiguration().screenWidthDp < 360;
+            total.setOrientation(stacked ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+            total.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            TextView count = new TextView(activity);
+            count.setText(units(order.lines) + " sản phẩm");
+            count.setTextSize(14);
+            count.setTextColor(activity.getColor(R.color.muted));
+            total.addView(count, stacked ? new LinearLayout.LayoutParams(-1, -2)
+                : new LinearLayout.LayoutParams(0, -2, 1));
+            TextView amount = new TextView(activity);
+            amount.setText(money(order.pricedSubtotalVnd));
+            amount.setTextSize(17);
+            amount.setTypeface(null, Typeface.BOLD);
+            amount.setTextColor(activity.getColor(R.color.emerald));
+            LinearLayout.LayoutParams amountParams = new LinearLayout.LayoutParams(-2, -2);
+            if (stacked) amountParams.topMargin = dp(6);
+            total.addView(amount, amountParams);
+            item.addView(total, new LinearLayout.LayoutParams(-1, -2));
+            if (order.containsUnpriced)
+                iconLine(item, R.drawable.order_icon_info, "Còn mặt hàng chờ báo giá", R.color.warning);
+            linkAction(item, "Xem chi tiết", R.drawable.order_icon_arrow_right, () -> {
                 state.selectedOrderId = order.reference;
                 host.navigate("order-detail-v2");
             });
         }
-        disclosure();
     }
 
     protected void detail() {
-        headerActions("Chi tiết yêu cầu", "Lịch sử", "orders-v2");
+        headerActions("Chi tiết yêu cầu", "Danh sách yêu cầu", "orders-v2");
         DemoState.Order order = selectedCustomerOrder(state);
-        if (order == null) {
-            missingOrder();
-            return;
-        }
-        LinearLayout status = card();
-        line(status, "ĐƠN HÀNG ĐÃ ĐƯỢC TIẾP NHẬN", 12, R.color.emerald, true);
-        heading(status, order.reference);
-        line(status, status(order), 15, isPending(order) ? R.color.emerald : R.color.forest, true);
-        line(status, "Thời gian đặt: " + order.displayTime, 12, R.color.muted, false);
-        if (!isPending(order) && order.cancelReason != null) {
-            line(status, "Lý do hủy: " + order.cancelReason, 13, R.color.muted, false);
-        } else {
-        }
+        if (order == null) { missingOrder(); return; }
+        LinearLayout summary = card(true);
+        chip(summary, status(order), statusIcon(order), isPending(order));
+        line(summary, order.reference, 23, R.color.forest, true);
+        iconLine(summary, R.drawable.order_icon_clock, order.displayTime, R.color.muted);
+        if (order.cancelReason != null && !isPending(order))
+            iconLine(summary, R.drawable.order_icon_close, order.cancelReason, R.color.muted);
+        disclosure();
         LinearLayout goods = card();
-        heading(goods, "Sản phẩm trong đơn hàng");
+        heading(goods, "Sản phẩm");
         showLines(goods, order.lines, order);
         priceSummary(goods, order.pricedSubtotalVnd, order.containsUnpriced);
-
-        LinearLayout contact = card();
-        heading(contact, "Thông tin nhận hàng");
-        line(contact, "Người nhận: " + order.customerName, 14, R.color.ink, true);
-        line(contact, "Điện thoại liên hệ: " + order.contactPhone, 14, R.color.ink, false);
-        divider(contact);
-        line(contact, "Địa chỉ nhận: " + order.pickup, 14, R.color.ink, true);
-        line(contact, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và liên hệ theo địa chỉ trên.",
-            12, R.color.muted, false);
-
-        boolean isApproved = "Sẵn sàng nhận".equals(order.status) || "Hoàn tất".equals(order.status);
-        boolean isDone = "Hoàn tất".equals(order.status);
+        if (order.containsRx)
+            iconLine(goods, R.drawable.order_icon_receipt, "Toa chưa được dược sĩ thẩm định.", R.color.warning);
 
         LinearLayout progress = card();
-        heading(progress, "Tiến trình đơn hàng");
-        line(progress, "01 / Đã tiếp nhận yêu cầu", 14, R.color.emerald, true);
-        divider(progress);
-        line(progress, isApproved ? "02 / Dược sĩ đã thẩm định & chuẩn bị thuốc sẵn sàng" : "02 / Dược sĩ đang thẩm định và chuẩn bị thuốc",
-            13, isApproved ? R.color.emerald : R.color.forest, isApproved);
-        divider(progress);
-        line(progress, isDone ? "03 / Đã nhận thuốc tại quầy thành công" : "03 / Sẵn sàng nhận tại " + order.pickup,
-            13, isDone ? R.color.emerald : isApproved ? R.color.forest : R.color.muted, isApproved);
-        action(progress, "🔄 Cập nhật trạng thái", false, () -> {
+        heading(progress, "Tiến trình");
+        if (cancelled(order)) {
+            timeline(progress, R.drawable.order_icon_check, "Đã lưu trên thiết bị", order.displayTime, true);
+            timeline(progress, R.drawable.order_icon_close, "Đã hủy tại máy", "Chưa gửi lệnh hủy đến nhà thuốc", false);
+        } else {
+            boolean prepared = "Sẵn sàng nhận".equals(order.status) || "Hoàn tất".equals(order.status);
+            boolean done = "Hoàn tất".equals(order.status);
+            timeline(progress, R.drawable.order_icon_check, "Đã lưu yêu cầu", order.displayTime, true);
+            timeline(progress, prepared ? R.drawable.order_icon_check : R.drawable.order_icon_clock,
+                prepared ? "Đã đánh dấu chuẩn bị (demo)" : "Chờ nhà thuốc xác nhận", null, prepared);
+            timeline(progress, done ? R.drawable.order_icon_check : R.drawable.order_icon_pin,
+                done ? "Hoàn tất (demo)" : "Chưa xác nhận nhận hàng", null, done);
+        }
+        linkAction(progress, "Làm mới", R.drawable.order_icon_refresh, () -> {
             state.customerOrders();
             host.navigate("order-detail-v2");
             host.message("Đã làm mới thông tin đơn hàng");
         });
 
+        LinearLayout contact = card();
+        heading(contact, "Điểm nhận & liên hệ");
+        iconLine(contact, R.drawable.order_icon_person, order.customerName, R.color.ink);
+        iconLine(contact, R.drawable.order_icon_phone, order.contactPhone, R.color.ink);
+        iconLine(contact, R.drawable.order_icon_pin, order.pickup, R.color.ink);
         LinearLayout actions = card();
-        heading(actions, "Thao tác đơn hàng");
-        action(actions, "Mua lại sản phẩm này", true, () -> {
+        iconAction(actions, "Thêm lại vào giỏ", R.drawable.order_icon_cart, true, () -> {
             if (state.reorderRequest(order.reference)) {
                 host.message("Đã thêm sản phẩm vào giỏ hàng thành công");
                 host.navigate("cart-v2");
             } else host.message("Không thể đặt lại đơn hàng này.");
         });
-        if (isPending(order)) {
-            action(actions, "Hủy đơn hàng này", false, () -> confirmCancellation(order));
-        }
-        action(actions, "← Quay lại danh sách đơn", false, () -> host.navigate("orders-v2"));
-        disclosure();
+        if (isPending(order))
+            iconAction(actions, "Hủy yêu cầu tại máy", R.drawable.order_icon_close, false, () -> confirmCancellation(order));
     }
 
     protected void receipt() {
-        headerActions("Xác nhận yêu cầu", "Trang chủ", "home");
+        headerActions("Đã lưu yêu cầu", "Trang chủ", "home");
         DemoState.Order order = selectedCustomerOrder(state);
-        if (order == null) {
-            missingOrder();
-            return;
-        }
-        LinearLayout receipt = card();
-        line(receipt, "ĐÃ GHI NHẬN ĐƠN HÀNG", 12, R.color.emerald, true);
-        heading(receipt, isPending(order) ? "Đơn hàng đã được ghi nhận thành công" : "Trạng thái yêu cầu");
+        if (order == null) { missingOrder(); return; }
+        LinearLayout receipt = card(true);
+        chip(receipt, status(order), statusIcon(order), isPending(order));
+        line(receipt, isPending(order) ? "Yêu cầu đã được lưu" : "Trạng thái yêu cầu", 21, R.color.forest, true);
         line(receipt, order.reference, 24, R.color.emerald, true);
-        line(receipt, "Đặt lúc " + order.displayTime, 12, R.color.muted, false);
-        line(receipt, "Người nhận: " + order.customerName + " · " + order.contactPhone,
-            13, R.color.ink, false);
-        line(receipt, order.pickup + " · " + units(order.lines) + " đơn vị",
-            13, R.color.ink, false);
+        iconLine(receipt, R.drawable.order_icon_clock, order.displayTime, R.color.muted);
+        productStrip(receipt, order);
         priceSummary(receipt, order.pricedSubtotalVnd, order.containsUnpriced);
-                LinearLayout progress = card();
-        heading(progress, "Tiến trình xử lý");
-        line(progress, "01 / Đã tiếp nhận yêu cầu", 14, R.color.emerald, true);
-        divider(progress);
-        line(progress, "02 / Dược sĩ thẩm định và chuẩn bị thuốc", 13, R.color.forest, false);
-        divider(progress);
-        line(progress, "03 / Sẵn sàng nhận tại nhà thuốc hoặc giao tận nơi", 13, R.color.muted, false);
-        action(progress, "Xem chi tiết yêu cầu", true, () -> host.navigate("order-detail-v2"));
-        action(progress, "Tiếp tục khám phá", false, () -> host.navigate("home"));
+        if (order.containsRx)
+            iconLine(receipt, R.drawable.order_icon_receipt, "Toa chưa gửi hoặc được thẩm định.", R.color.warning);
+        disclosure();
+        LinearLayout contact = card();
+        iconLine(contact, R.drawable.order_icon_person, order.customerName + " · " + order.contactPhone, R.color.ink);
+        iconLine(contact, R.drawable.order_icon_pin, order.pickup, R.color.ink);
+        iconAction(contact, "Xem chi tiết", R.drawable.order_icon_receipt, true, () -> host.navigate("order-detail-v2"));
+        iconAction(contact, "Tiếp tục khám phá", R.drawable.order_icon_arrow_right, false, () -> host.navigate("home"));
     }
 
+    private void productStrip(LinearLayout parent, DemoState.Order order) {
+        LinearLayout strip = new LinearLayout(activity);
+        strip.setOrientation(LinearLayout.HORIZONTAL);
+        strip.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        int shown = 0;
+        for (String id : order.lines.keySet()) {
+            if (shown == 3) break;
+            android.widget.FrameLayout image = photo(state.product(id), 52);
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dp(52), dp(52));
+            imageParams.setMarginEnd(dp(8));
+            strip.addView(image, imageParams);
+            shown++;
+        }
+        if (order.lines.size() > shown) {
+            TextView more = new TextView(activity);
+            more.setText("+" + (order.lines.size() - shown));
+            more.setTextSize(15);
+            more.setTypeface(null, Typeface.BOLD);
+            more.setTextColor(activity.getColor(R.color.emerald));
+            more.setGravity(android.view.Gravity.CENTER);
+            more.setBackgroundResource(R.drawable.order_photo_panel);
+            strip.addView(more, new LinearLayout.LayoutParams(dp(52), dp(52)));
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.topMargin = dp(8);
+        params.bottomMargin = dp(14);
+        parent.addView(strip, params);
+    }
+
+    private void timeline(LinearLayout parent, int icon, String title, String detail, boolean active) {
+        LinearLayout row = new LinearLayout(activity);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        android.widget.ImageView marker = new android.widget.ImageView(activity);
+        marker.setImageResource(icon);
+        marker.setColorFilter(activity.getColor(active ? R.color.emerald : R.color.muted));
+        marker.setPadding(dp(7), dp(7), dp(7), dp(7));
+        marker.setBackgroundResource(R.drawable.order_mint_panel);
+        marker.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(34), dp(34));
+        iconParams.setMarginEnd(dp(12));
+        row.addView(marker, iconParams);
+        LinearLayout copy = new LinearLayout(activity);
+        copy.setOrientation(LinearLayout.VERTICAL);
+        row.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
+        line(copy, title, 14, active ? R.color.emerald : R.color.muted, active);
+        if (detail != null) line(copy, detail, 13, R.color.muted, false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.bottomMargin = dp(8);
+        parent.addView(row, params);
+    }
+
+    private static boolean cancelled(DemoState.Order order) {
+        return order.status != null && order.status.toLowerCase(Locale.ROOT).contains("hủy");
+    }
+
+    private static int statusIcon(DemoState.Order order) {
+        return cancelled(order) ? R.drawable.order_icon_close
+            : isPending(order) ? R.drawable.order_icon_clock : R.drawable.order_icon_check;
+    }
     protected void confirmCancellation(DemoState.Order order) {
         if (!isPending(order) || selectedCustomerOrder(state) == null
                 || !selectedCustomerOrder(state).reference.equals(order.reference)) {
@@ -153,7 +222,7 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
         LinearLayout wrapper = new LinearLayout(activity);
         wrapper.setOrientation(LinearLayout.VERTICAL);
         wrapper.setPadding(dp(20), dp(8), dp(20), 0);
-        line(wrapper, "Chỉ hủy bản lưu trong ứng dụng, không gửi lệnh hủy đến nhà thuốc hoặc thay đổi tồn thật.",
+        line(wrapper, "Hủy bản lưu tại máy; chưa gửi lệnh hủy đến nhà thuốc.",
             13, R.color.muted, false);
         EditText reason = input(wrapper, "Lý do hủy (3–160 ký tự)", InputType.TYPE_CLASS_TEXT |
             InputType.TYPE_TEXT_FLAG_CAP_SENTENCES, "");
@@ -184,9 +253,10 @@ abstract class OrderHistoryScreens extends OrderCartScreens {
     }
     protected void missingOrder() {
         LinearLayout card = card();
-        heading(card, "Không tìm thấy yêu cầu trong phiên");
-        line(card, "Không tìm thấy yêu cầu trong tài khoản này hoặc dữ liệu thiết bị đã thay đổi.",
+        illustration(card, R.drawable.order_empty_requests);
+        heading(card, "Không tìm thấy yêu cầu");
+        line(card, "Yêu cầu không thuộc tài khoản này hoặc dữ liệu đã thay đổi.",
             13, R.color.muted, false);
-        action(card, "Xem yêu cầu của tôi", true, () -> host.navigate("orders-v2"));
+        iconAction(card, "Yêu cầu của tôi", R.drawable.order_icon_receipt, true, () -> host.navigate("orders-v2"));
     }
 }

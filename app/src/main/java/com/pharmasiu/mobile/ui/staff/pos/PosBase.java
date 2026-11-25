@@ -34,12 +34,12 @@ abstract class PosBase {
     protected final DemoState state;
     protected final View root;
     protected final ScrollView scroll;
-    protected final TextView shiftStatus, shiftBalance, searchSummary, totalLabel, changeLabel;
+    protected final TextView shiftStatus, shiftBalance, searchSummary, totalLabel, dockTotal, changeLabel;
     protected final TextView historySummary;
     protected final TextView paymentError, denied;
     protected final LinearLayout openingGroup, activeGroup, salesPanel, cashGroup;
     protected final LinearLayout productRows, cartRows, receiptRows, historyRows;
-    protected final View receiptPanel;
+    protected final View receiptPanel, cartDock;
     protected final EditText openingCash, search, tender;
     protected final Button openShift, closeShift, clearCart, saveSale, receiptDismiss;
     protected final Button cartJump, historyMore, receiptHistory;
@@ -62,6 +62,8 @@ abstract class PosBase {
         searchSummary = root.findViewById(R.id.staff_pos_search_summary);
         historySummary = root.findViewById(R.id.staff_pos_history_summary);
         totalLabel = root.findViewById(R.id.staff_pos_total);
+        dockTotal = root.findViewById(R.id.staff_pos_dock_total);
+        cartDock = root.findViewById(R.id.staff_pos_cart_dock);
         changeLabel = root.findViewById(R.id.staff_pos_change);
         paymentError = root.findViewById(R.id.staff_pos_payment_error);
         denied = root.findViewById(R.id.staff_pos_denied);

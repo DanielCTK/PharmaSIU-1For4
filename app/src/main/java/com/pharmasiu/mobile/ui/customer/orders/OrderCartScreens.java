@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,41 +23,92 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import com.pharmasiu.mobile.ui.design.PharmaUi;
+import com.pharmasiu.mobile.ui.design.UiMotion;
 import static com.pharmasiu.mobile.ui.customer.CustomerOrderViews.*;
 
 /** Cart, local Rx picker and checkout screens. */
 abstract class OrderCartScreens extends OrderUiBase {
     OrderCartScreens(Activity activity,UiHost host,int layout){super(activity,host,layout);}
     protected void cart() {
-        headerActions("Giỏ hàng của bạn", "Tiếp tục mua sắm", "catalog");
+        headerActions("Giỏ hàng", "Tiếp tục mua sắm", "catalog");
         if (state.cart.isEmpty()) {
             LinearLayout empty = card();
-            heading(empty, "Giỏ của bạn đang trống");
-            line(empty, "Hãy chọn những sản phẩm bạn cần để tiến hành đặt hàng Click & Collect.", 14, R.color.muted, false);
-            action(empty, "Khám phá sản phẩm", true, () -> host.navigate("catalog"));
+            illustration(empty, R.drawable.order_empty_cart);
+            line(empty, "Giỏ hàng đang trống", 21, R.color.forest, true).setGravity(Gravity.CENTER);
+            line(empty, "Chọn sản phẩm bạn cần, thêm vào giỏ.", 14, R.color.muted, false).setGravity(Gravity.CENTER);
+            iconAction(empty, "Khám phá sản phẩm", R.drawable.order_icon_arrow_right, true,
+                () -> host.navigate("catalog"));
+            disclosure();
             return;
         }
-        int units = 0;
-        for (int n : state.cart.values()) units += n;
-        LinearLayout summary = card();
-        heading(summary, "Giỏ hàng của bạn");
-        line(summary, units + " sản phẩm · số lượng mỗi mặt hàng tối đa " + MAX_QTY, 12, R.color.muted, false);
-        for (Map.Entry<String, Integer> line : new ArrayList<>(state.cart.entrySet())) {
-            DemoState.Product product = state.product(line.getKey());
+        chip(body, units(state.cart) + " sản phẩm", R.drawable.order_icon_cart, false);
+        if (state.hasRx(state.cart))
+            iconLine(body, R.drawable.order_icon_receipt, "Thuốc kê đơn cần đính kèm toa ở bước tiếp theo.", R.color.warning);
+        LinearLayout products = card();
+        products.setPadding(dp(14), 0, dp(14), 0);
+        for (Map.Entry<String, Integer> entry : new ArrayList<>(state.cart.entrySet())) {
+            DemoState.Product product = state.product(entry.getKey());
             if (product == null) continue;
-            LinearLayout row = card();
-            line(row, product.category + " · " + (product.requiresPrescription ? "THUỐC KÊ ĐƠN (CẦN TOA)" : "CHÍNH HÃNG"),
-                11, product.requiresPrescription ? R.color.forest : R.color.emerald, true);
-            heading(row, product.name);
-            line(row, product.subtitle + " · " + product.unit, 12, R.color.muted, false);
-            line(row, product.priceVnd > 0 ? money(product.priceVnd) + " / đơn vị · tham khảo"
-                : "Giá khi nhà thuốc báo giá", 14, R.color.emerald, true);
-            line(row, "Số lượng: " + line.getValue(), 14, R.color.ink, true);
-            action(row, "− Giảm / bỏ sản phẩm", false, () -> {
+            if (products.getChildCount() > 0) {
+                View separator = new View(activity);
+                separator.setBackgroundColor(activity.getColor(R.color.line));
+                products.addView(separator, new LinearLayout.LayoutParams(-1, dp(1)));
+            }
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.VERTICAL);
+            row.setPadding(0, dp(14), 0, dp(14));
+            products.addView(row, new LinearLayout.LayoutParams(-1, -2));
+            LinearLayout top = new LinearLayout(activity);
+            top.setOrientation(LinearLayout.HORIZONTAL);
+            top.setGravity(Gravity.CENTER_VERTICAL);
+            android.widget.FrameLayout picture = photo(product, 72);
+            LinearLayout.LayoutParams pictureParams = new LinearLayout.LayoutParams(dp(72), dp(72));
+            pictureParams.setMarginEnd(dp(12));
+            top.addView(picture, pictureParams);
+            LinearLayout info = new LinearLayout(activity);
+            info.setOrientation(LinearLayout.VERTICAL);
+            top.addView(info, new LinearLayout.LayoutParams(0, -2, 1));
+            line(info, product.name, 16, R.color.ink, true);
+            line(info, product.priceVnd > 0 ? money(product.priceVnd) + " / " + product.unit
+                : "Chờ báo giá · " + product.unit, 15, R.color.emerald, true);
+            top.setContentDescription("Xem sản phẩm " + product.name);
+            top.setClickable(true);
+            top.setFocusable(true);
+            top.setOnClickListener(v -> {
+                state.selectedProductId = product.id;
+                host.navigate("product");
+            });
+            UiMotion.press(top);
+            row.addView(top, new LinearLayout.LayoutParams(-1, -2));
+            LinearLayout controls = new LinearLayout(activity);
+            controls.setGravity(Gravity.CENTER_VERTICAL);
+            controls.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams controlParams = new LinearLayout.LayoutParams(-1, -2);
+            controlParams.topMargin = dp(8);
+            row.addView(controls, controlParams);
+            LinearLayout amount = new LinearLayout(activity);
+            amount.setOrientation(LinearLayout.VERTICAL);
+            controls.addView(amount, new LinearLayout.LayoutParams(0, -2, 1));
+            line(amount, "Thành tiền", 13, R.color.muted, false).setPadding(0, 0, dp(8), dp(3));
+            line(amount, product.priceVnd > 0 ? money(product.priceVnd * entry.getValue()) : "Chờ báo giá",
+                18, R.color.emerald, true).setPadding(0, 0, dp(8), 0);
+            Button decrease = iconAction(controls, "", R.drawable.order_icon_minus, false, () -> {
                 state.changeCartQty(product.id, state.cart.getOrDefault(product.id, 0) - 1);
                 host.navigate("cart-v2");
             });
-            Button increase = action(row, "+ Tăng số lượng", false, () -> {
+            quantityControl(decrease, "Giảm số lượng " + product.name
+                + (entry.getValue() == 1 ? "; bỏ khỏi giỏ" : ""));
+            TextView quantity = new TextView(activity);
+            quantity.setText(String.valueOf(entry.getValue()));
+            quantity.setTextSize(16);
+            quantity.setTextColor(activity.getColor(R.color.ink));
+            quantity.setGravity(Gravity.CENTER);
+            quantity.setTypeface(null, Typeface.BOLD);
+            quantity.setContentDescription("Số lượng " + product.name + ": " + entry.getValue());
+            quantity.setMinHeight(dp(48));
+            quantity.setPadding(0, dp(4), 0, dp(4));
+            controls.addView(quantity, new LinearLayout.LayoutParams(dp(40), -2));
+            Button increase = iconAction(controls, "", R.drawable.order_icon_plus, false, () -> {
                 if (state.cart.getOrDefault(product.id, 0) >= MAX_QTY)
                     host.message("Mỗi sản phẩm tối đa 20 đơn vị");
                 else {
@@ -64,23 +116,54 @@ abstract class OrderCartScreens extends OrderUiBase {
                     host.navigate("cart-v2");
                 }
             });
-            increase.setEnabled(line.getValue() < MAX_QTY);
-            line(row, "Sản phẩm chính hãng tại quầy PharmaSIU.", 12, R.color.muted, false);
+            quantityControl(increase, "Tăng số lượng " + product.name);
+            increase.setEnabled(entry.getValue() < MAX_QTY);
         }
-        LinearLayout pricing = card();
-        heading(pricing, "CHI PHÍ THAM KHẢO");
-        line(pricing, money(state.knownSubtotal(state.cart)), 24, R.color.emerald, true);
-        if (state.hasUnpriced(state.cart))
-            line(pricing, "Có sản phẩm chờ báo giá. Dược sĩ sẽ tư vấn chi tiết khi liên hệ.", 12, R.color.muted, false);
-        else line(pricing, "Giá niêm yết đã bao gồm VAT. Hỗ trợ giao tận nơi hoặc nhận tại quầy.",
-            13, R.color.muted, false);
-        action(pricing, "Tiếp tục đặt hàng", true, () -> {
+        LinearLayout pricing = root.findViewById(R.id.order_v2_footer);
+        if (pricing == null) pricing = card(true);
+        pricing.setVisibility(View.VISIBLE);
+        boolean horizontal = activity.getResources().getConfiguration().screenWidthDp >= 360
+            && activity.getResources().getConfiguration().fontScale < 1.3f;
+        LinearLayout footerRow = new LinearLayout(activity);
+        footerRow.setOrientation(horizontal ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+        footerRow.setGravity(Gravity.CENTER_VERTICAL);
+        pricing.addView(footerRow, new LinearLayout.LayoutParams(-1, -2));
+        LinearLayout total = new LinearLayout(activity);
+        total.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams totalParams = horizontal ? new LinearLayout.LayoutParams(0, -2, 1f)
+            : new LinearLayout.LayoutParams(-1, -2);
+        if (horizontal) totalParams.setMarginEnd(dp(14));
+        footerRow.addView(total, totalParams);
+        line(total, "Tạm tính · Tham khảo", 13, R.color.muted, false).setPadding(0, 0, 0, dp(3));
+        line(total, money(state.knownSubtotal(state.cart)), 23, R.color.emerald, true).setPadding(0, 0, 0, dp(3));
+        Button next = iconAction(footerRow, "Tiếp tục", R.drawable.order_icon_arrow_right, true, () -> {
             if (state.cart.isEmpty()) { host.message("Giỏ hàng trống"); return; }
             host.navigate(canAdvance(state) ? "checkout-v2" : "rx-v2");
         });
-        disclosure();
+        LinearLayout.LayoutParams nextParams = horizontal ? new LinearLayout.LayoutParams(0, -2, 1.1f)
+            : new LinearLayout.LayoutParams(-1, -2);
+        nextParams.topMargin = horizontal ? 0 : dp(8);
+        next.setLayoutParams(nextParams);
+        next.setContentDescription("Tiếp tục kiểm tra yêu cầu demo");
+        if (state.hasUnpriced(state.cart))
+            iconLine(pricing, R.drawable.order_icon_info, "Chưa gồm mặt hàng chờ báo giá", R.color.warning);
+        iconLine(pricing, R.drawable.order_icon_info, "Demo · Chưa gửi, giữ hàng hay thanh toán", R.color.muted);
     }
 
+    private void quantityControl(Button button, String description) {
+        button.setLayoutParams(new LinearLayout.LayoutParams(dp(48), dp(48)));
+        button.setMinWidth(0);
+        button.setMinimumWidth(0);
+        button.setMinHeight(dp(48));
+        button.setPadding(0, 0, 0, 0);
+        button.setContentDescription(description);
+        if (button instanceof com.google.android.material.button.MaterialButton) {
+            com.google.android.material.button.MaterialButton material = (com.google.android.material.button.MaterialButton) button;
+            material.setIconSize(dp(20));
+            material.setIconPadding(0);
+            material.setIconGravity(com.google.android.material.button.MaterialButton.ICON_GRAVITY_TEXT_START);
+        }
+    }
     protected void rx() {
         headerActions("Đính kèm đơn thuốc", "Quay lại giỏ", "cart-v2");
         LinearLayout preview = card();
@@ -101,15 +184,15 @@ abstract class OrderCartScreens extends OrderUiBase {
                 host.navigate("rx-v2");
             });
         }
-        warning(preview, "Đơn thuốc sẽ được gửi kèm đơn hàng. Dược sĩ PharmaSIU sẽ liên hệ thẩm định và hướng dẫn sử dụng trước khi giao nhận.");
+        warning(preview, "Tệp chỉ được chọn tại máy, chưa gửi đến nhà thuốc hoặc được dược sĩ thẩm định.");
 
         LinearLayout steps = card();
         heading(steps, "Quy trình xử lý đơn thuốc");
-        line(steps, "01 / Tiếp nhận đơn thuốc từ khách hàng", 13, R.color.muted, false);
+        line(steps, "01 / Chọn ảnh hoặc PDF trên thiết bị", 14, R.color.muted, false);
         divider(steps);
-        line(steps, "02 / Dược sĩ thẩm định và hướng dẫn sử dụng", 13, R.color.muted, false);
+        line(steps, "02 / Kiểm tra thông tin yêu cầu demo", 14, R.color.muted, false);
         divider(steps);
-        line(steps, "03 / Chuẩn bị thuốc và liên hệ giao nhận", 13, R.color.muted, false);
+        line(steps, "03 / Lưu yêu cầu cục bộ, chờ tích hợp nhà thuốc", 14, R.color.muted, false);
         Button continueButton = action(steps, "Tiếp tục đặt hàng", true, () -> {
             if (canAdvance(state)) host.navigate("checkout-v2");
             else host.message("Chưa chọn tệp toa phù hợp với giỏ Rx hiện tại");
@@ -147,13 +230,14 @@ abstract class OrderCartScreens extends OrderUiBase {
         pickupFrame.setBackground(activity.getDrawable(R.drawable.component_input_outline));
         pickupFrame.setPadding(dp(4), dp(2), dp(4), dp(2));
         Spinner pickup = new Spinner(activity);
+        pickup.setMinimumHeight(dp(52));
         pickup.setAdapter(com.pharmasiu.mobile.ui.design.PharmaUi.createSpinnerAdapter(activity, new String[]{PICKUP_A, PICKUP_B}));
-        pickupFrame.addView(pickup, new LinearLayout.LayoutParams(-1, dp(48)));
+        pickupFrame.addView(pickup, new LinearLayout.LayoutParams(-1, -2));
         LinearLayout.LayoutParams pLp = new LinearLayout.LayoutParams(-1, -2);
         pLp.topMargin = dp(6);
         pLp.bottomMargin = dp(8);
         pickupCard.addView(pickupFrame, pLp);
-        line(pickupCard, "Dược sĩ PharmaSIU sẽ chuẩn bị đơn hàng và thông báo khi sẵn sàng nhận.", 13, R.color.muted, false);
+        line(pickupCard, "Chọn điểm nhận cho yêu cầu demo; chưa có xác nhận từ nhà thuốc.", 14, R.color.muted, false);
 
         LinearLayout review = card();
         heading(review, "03 / Kiểm tra mặt hàng");
@@ -161,12 +245,13 @@ abstract class OrderCartScreens extends OrderUiBase {
         priceSummary(review, state.knownSubtotal(state.cart), state.hasUnpriced(state.cart));
         if (state.hasRx(state.cart)) {
             line(review, state.localPrescriptionSelected()
-                ? "Đã đính kèm đơn thuốc: " + safeName(state.chosenPrescriptionName)
+                ? "Tệp toa tại máy: " + safeName(state.chosenPrescriptionName)
                 : "Vui lòng đính kèm đơn thuốc cho thuốc kê đơn.", 13, R.color.forest, false);
+            iconLine(review, R.drawable.order_icon_receipt, "Toa chưa gửi hoặc được thẩm định.", R.color.warning);
         }
         line(review, "Đơn hàng nhận tại nhà thuốc PharmaSIU.", 13, R.color.muted, false);
         AtomicBoolean inFlight = new AtomicBoolean();
-        Button save = action(review, "Xác nhận đặt hàng", true, () -> {
+        Button save = action(review, "Lưu yêu cầu demo", true, () -> {
             if (!canAdvance(state)) {
                 host.message("Giỏ hoặc toa Rx không còn hợp lệ; hãy kiểm tra lại.");
                 host.navigate(state.cart.isEmpty() ? "cart-v2" : "rx-v2");
@@ -179,12 +264,12 @@ abstract class OrderCartScreens extends OrderUiBase {
                 host.message("Kiểm tra họ tên, số điện thoại, điểm nhận A/B và toa Rx.");
             } else {
                 host.message(state.isDatabaseBacked() ?
-                "Đặt hàng thành công! Vui lòng đến quầy thuốc nhận hàng." :
+                "Đã lưu yêu cầu demo trên thiết bị." :
                 "Yêu cầu kiểm thử chỉ lưu trong phiên");
                 host.navigate("receipt-v2");
             }
         });
-        save.setContentDescription("Xác nhận đặt hàng tại nhà thuốc PharmaSIU");
+        save.setContentDescription("Lưu yêu cầu demo trên thiết bị, chưa xác nhận thanh toán hoặc giữ hàng");
         disclosure();
     }
 }

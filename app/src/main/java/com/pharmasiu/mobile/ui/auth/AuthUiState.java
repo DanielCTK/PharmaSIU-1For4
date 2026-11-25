@@ -2,6 +2,10 @@ package com.pharmasiu.mobile.ui.auth;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -15,12 +19,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
 import com.pharmasiu.mobile.core.UiHost;
 import com.pharmasiu.mobile.ui.AuthScreen;
+import com.pharmasiu.mobile.ui.design.UiMotion;
 
 /** Error messages, keyboard, modes and form visual state. */
 abstract class AuthUiState extends AuthFormBase {
@@ -38,6 +44,7 @@ abstract class AuthUiState extends AuthFormBase {
 
     protected void setMode(AuthMode target, boolean clear) {
         mode = target;
+        hideKeyboard();
         suppressTextEvents = true;
         if (clear) {
             identifier.setText("");
@@ -50,23 +57,18 @@ abstract class AuthUiState extends AuthFormBase {
         setPasswordVisible(false);
         clearError();
         clearSuccess();
-        demoExpanded = false;
-        demoAccounts.setVisibility(View.GONE);
-        demoToggle.setText("Tài khoản dùng thử  ▾");
-        demoToggle.setContentDescription("Xem tài khoản demo");
-        if (android.os.Build.VERSION.SDK_INT >= 30) {
-            demoToggle.setStateDescription("Đang đóng");
-        }
+        setDemoExpanded(false);
 
         boolean login = mode == AuthMode.LOGIN;
+        heroEffects.setVisibility(login ? View.VISIBLE : View.INVISIBLE);
         roles.setVisibility(login ? View.VISIBLE : View.GONE);
         nameSection.setVisibility(mode == AuthMode.REGISTER ? View.VISIBLE : View.GONE);
         confirmSection.setVisibility(login ? View.GONE : View.VISIBLE);
         modeActions.setVisibility(login ? View.VISIBLE : View.GONE);
-        demoPanel.setVisibility(View.GONE);
+        demoPanel.setVisibility(login ? View.VISIBLE : View.GONE);
         back.setVisibility(login ? View.GONE : View.VISIBLE);
         identifierLabel.setText(login ? "Email hoặc số điện thoại" : "Số điện thoại");
-        identifier.setHint(login ? "Email / số điện thoại" : "Số điện thoại");
+        identifier.setHint(login ? "Nhập email hoặc số điện thoại" : "Nhập số điện thoại");
         identifier.setInputType(login ?
             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS :
             InputType.TYPE_CLASS_PHONE);
@@ -76,12 +78,15 @@ abstract class AuthUiState extends AuthFormBase {
         name.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_NAME)});
         password.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_PASSWORD)});
         passwordAgain.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_PASSWORD)});
-        password.setImeOptions(login ? EditorInfo.IME_ACTION_DONE : EditorInfo.IME_ACTION_NEXT);
+        password.setImeOptions((login ? EditorInfo.IME_ACTION_DONE : EditorInfo.IME_ACTION_NEXT)
+            | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        title.setTextSize(login ? 32 : 26);
+        if (android.os.Build.VERSION.SDK_INT >= 28) title.setAccessibilityHeading(true);
         switch (mode) {
             case REGISTER:
-                title.setText("Đăng ký tài khoản khách hàng");
-                subtitle.setText("Đăng ký tài khoản thành viên PharmaSIU.");
-                submit.setText("Tạo tài khoản khách hàng");
+                title.setText("Tạo tài khoản");
+                subtitle.setText("Dành cho khách hàng PharmaSIU.");
+                submit.setText("Tạo tài khoản");
                 disclosure.setText("Mật khẩu được lưu dạng băm trên thiết bị. Chưa đồng bộ máy chủ, chưa có xác minh OTP.");
                 break;
             case RESET:
@@ -91,19 +96,49 @@ abstract class AuthUiState extends AuthFormBase {
                 disclosure.setText("Tính năng này chưa khả dụng; không đổi mật khẩu qua số điện thoại chưa được xác minh.");
                 break;
             default:
-                title.setText("Đăng nhập PharmaSIU");
-                subtitle.setText("Dành cho khách hàng, nhân viên và quản lý.");
+                SpannableString greeting = new SpannableString("Chào mừng\ntrở lại");
+                int secondLine = greeting.toString().indexOf('\n') + 1;
+                greeting.setSpan(new ForegroundColorSpan(0xFFBDF7DC),
+                    secondLine, greeting.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                title.setText(greeting);
+                subtitle.setText("Đăng nhập để tiếp tục.");
                 submit.setText("Đăng nhập");
-                disclosure.setText("Hệ thống quản lý dược phẩm và nhà thuốc PharmaSIU.");
+                disclosure.setText("Bản dùng thử trên thiết bị · Chưa kết nối máy chủ.");
         }
         refreshSubmit();
+        root.post(() -> {
+            if (!root.isAttachedToWindow() || mode != target) return;
+            ((ScrollView) root).scrollTo(0, 0);
+            glassForm.animate().cancel();
+            glassForm.setTranslationY(0f);
+            UiMotion.enterPage(glassForm, 0, false);
+            if (login) AuthButtonShimmer.play(submit);
+        });
+    }
+
+    protected void setDemoExpanded(boolean expanded) {
+        demoExpanded = expanded;
+        demoAccounts.setVisibility(expanded ? View.VISIBLE : View.GONE);
+        demoToggle.setText(expanded ? "Tài khoản dùng thử  ▴" : "Tài khoản dùng thử  ▾");
+        demoToggle.setContentDescription(expanded ? "Thu gọn tài khoản demo" : "Xem tài khoản demo");
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            demoToggle.setStateDescription(expanded ? "Đang mở" : "Đang đóng");
+        }
+        if (expanded) demoAccounts.post(() -> {
+            if (!demoExpanded || !demoAccounts.isAttachedToWindow()) return;
+            demoAccounts.requestRectangleOnScreen(
+                new Rect(0, 0, demoAccounts.getWidth(), demoAccounts.getHeight()), false);
+            UiMotion.enterPage(demoAccounts, 0, false);
+        });
     }
 
     protected void refreshSubmit() {
         boolean filled = !identifier.getText().toString().trim().isEmpty() &&
             !password.getText().toString().trim().isEmpty();
+        boolean newlyEnabled = filled && !submit.isEnabled();
         submit.setEnabled(filled);
-        submit.setAlpha(filled ? 1f : .54f);
+        submit.setAlpha(filled ? 1f : .84f);
+        if (newlyEnabled && mode == AuthMode.LOGIN) AuthButtonShimmer.play(submit);
     }
 
     protected void clearError() {
@@ -129,6 +164,8 @@ abstract class AuthUiState extends AuthFormBase {
         else if (text.startsWith("Mật khẩu nhập lại")) passwordAgain.setError(text);
         else if (text.startsWith("Mật khẩu")) password.setError(text);
         else if (text.contains("họ tên")) name.setError(text);
+        error.post(() -> error.requestRectangleOnScreen(
+            new Rect(0, 0, error.getWidth(), error.getHeight()), false));
     }
 
     protected void showSuccess(String text) {
@@ -160,6 +197,8 @@ abstract class AuthUiState extends AuthFormBase {
         clearSuccess();
         hideKeyboard();
         refreshSubmit();
+        submit.post(() -> submit.requestRectangleOnScreen(
+            new Rect(0, 0, submit.getWidth(), submit.getHeight()), false));
         host.message("Đã điền thông tin tài khoản; bấm Đăng nhập để tiếp tục.");
     }
 

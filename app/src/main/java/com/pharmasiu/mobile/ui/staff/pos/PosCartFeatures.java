@@ -13,6 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
@@ -42,13 +43,20 @@ abstract class PosCartFeatures extends PosProductFeatures {
             }
             int qty = entry.getValue();
             View item = activity.getLayoutInflater().inflate(R.layout.staff_pos_cart_item, cartRows, false);
+            FrameLayout artwork = item.findViewById(R.id.staff_pos_cart_artwork);
+            com.pharmasiu.mobile.ui.staff.media.MediaImageDecoder.bindPicture(activity, artwork, product,
+                com.pharmasiu.mobile.ui.staff.StaffMediaViews.demoPhoto(state, product.id), "Ảnh sản phẩm");
             ((TextView) item.findViewById(R.id.staff_pos_cart_title)).setText(product.name);
             ((TextView) item.findViewById(R.id.staff_pos_cart_subtitle)).setText(
                 vnd(product.priceVnd) + " / " + product.unit + " · Tồn hợp lệ: " + effectiveAvailable(product.id));
-            ((TextView) item.findViewById(R.id.staff_pos_cart_quantity)).setText(String.valueOf(qty));
-            ((TextView) item.findViewById(R.id.staff_pos_cart_line_total)).setText(vnd(product.priceVnd * qty));
+            TextView quantity = item.findViewById(R.id.staff_pos_cart_quantity);
+            quantity.setText(String.valueOf(qty));
+            quantity.setContentDescription("Số lượng " + product.name + ": " + qty);
+            ((TextView) item.findViewById(R.id.staff_pos_cart_line_total)).setText("Thành tiền: " + vnd(product.priceVnd * qty));
             Button minus = item.findViewById(R.id.staff_pos_cart_decrease);
             Button plus = item.findViewById(R.id.staff_pos_cart_increase);
+            com.pharmasiu.mobile.ui.design.UiMotion.press(minus);
+            com.pharmasiu.mobile.ui.design.UiMotion.press(plus);
             minus.setContentDescription("Giảm một " + product.name);
             plus.setContentDescription("Tăng một " + product.name);
             minus.setOnClickListener(v -> {
@@ -73,11 +81,13 @@ abstract class PosCartFeatures extends PosProductFeatures {
             });
             cartRows.addView(item);
         }
-        totalLabel.setText("Tạm tính: " + vnd(state.posTotal()));
-        clearCart.setEnabled(!state.posCart.isEmpty());
-        cartJump.setEnabled(!state.posCart.isEmpty());
-        cartJump.setText("Xem giỏ và thanh toán (" +
-            state.posCart.values().stream().mapToInt(Integer::intValue).sum() + ")");
+        String subtotal = vnd(state.posTotal());
+        int itemCount = state.posCart.values().stream().mapToInt(Integer::intValue).sum();
+        totalLabel.setText("Tạm tính: " + subtotal);
+        dockTotal.setText(subtotal);
+        clearCart.setEnabled(itemCount > 0);
+        cartJump.setEnabled(itemCount > 0);
+        cartJump.setText("Xem giỏ (" + itemCount + ")");
         renderPayment();
     }
 
@@ -121,7 +131,7 @@ abstract class PosCartFeatures extends PosProductFeatures {
         displayedReceipt = result;
         tender.setText("");
         renderAll();
-        host.message("Đã thanh toán hóa đơn " + result.reference + " thành công.");
+        host.message("Đã lưu phiếu demo " + result.reference + ". Chưa xác minh thanh toán thật.");
         receiptPanel.post(() -> scroll.smoothScrollTo(0, receiptPanel.getTop()));
     }
 

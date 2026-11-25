@@ -37,15 +37,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.regex.Pattern;
 
 /** Catalog selection state and deterministic search, safe across screen recreation. */
 public final class CatalogSupport {
     private CatalogSupport(){}
+    private static final Locale VIETNAMESE = new Locale("vi", "VN");
+    private static final Pattern COMBINING_MARKS = Pattern.compile("\\p{M}+");
     // Compile-time constants keep pure-JVM catalog rule tests Android-independent.
-    static final int EMERALD = 0xFF064D3A;
-    static final int FOREST = 0xFF073D30;
-    static final int MUTED = 0xFF566B63;
-    static final int MINT = 0xFFE6F3E6;
+    static final int EMERALD = 0xFF065640;
+    static final int FOREST = 0xFF043C30;
+    static final int MUTED = 0xFF3D5F4F;
+    static final int MINT = 0xFFCDE7D8;
     static final int WARNING = 0xFF9A5318;
     static final String ALL = "Tất cả", RECOMMENDED = "Đề xuất";
     static final List<String> SORT_OPTIONS = Collections.unmodifiableList(Arrays.asList(
@@ -74,8 +77,8 @@ public final class CatalogSupport {
     /** Exact parity with Kotlin CatalogSearchRules, including lack of Vietnamese diacritics. */
     public static String normalize(String raw) {
         if (raw == null) return "";
-        return Normalizer.normalize(raw.toLowerCase(new Locale("vi", "VN")), Normalizer.Form.NFD)
-            .replaceAll("\\p{M}+", "").replace('đ','d').trim();
+        String decomposed = Normalizer.normalize(raw.toLowerCase(VIETNAMESE), Normalizer.Form.NFD);
+        return COMBINING_MARKS.matcher(decomposed).replaceAll("").replace('đ','d').trim();
     }
 
     public static List<DemoState.Product> filterProducts(List<DemoState.Product> products,
@@ -85,15 +88,16 @@ public final class CatalogSupport {
         String[] terms = normalized.isEmpty() ? new String[0] : normalized.split("\\s+");
         String selected = category == null ? ALL : category;
         for (DemoState.Product item : products) {
-            String searchable = normalize(item.name + " " + item.subtitle + " " + item.category);
+            if (!CatalogCategories.matches(item, selected)) continue;
+            if (terms.length == 0) {
+                result.add(item);
+                continue;
+            }
+            String searchable = normalize(item.name + " " + CatalogCategories.detailOf(item)
+                + " " + CatalogCategories.categoryOf(item));
             boolean matches = true;
             for (String word : terms) if (!searchable.contains(word)) { matches = false; break; }
-            boolean group = ALL.equals(selected) ||
-                ("Kê đơn".equals(selected) && item.requiresPrescription) ||
-                ("Thực phẩm".equals(selected) &&
-                    ("Thực phẩm".equals(item.category) || "Thực phẩm bổ sung".equals(item.category))) ||
-                selected.equals(item.category);
-            if (matches && group) result.add(item);
+            if (matches) result.add(item);
         }
         String order = sort == null ? RECOMMENDED : sort;
         if ("Tên A–Z".equals(order))

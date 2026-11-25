@@ -98,18 +98,27 @@ public final class AdminMedia {
     }
 
     static void showProductPhoto(Activity activity, UiHost host, DemoState.Product product) {
+        showProductPhoto(activity,host,product,"catalog-admin-v2");
+    }
+
+    static void showProductPhoto(Activity activity, UiHost host, DemoState.Product product, String returnRoute) {
         DemoState state = host.state();
         if (state.product(product.id) == null) return;
         Uri existingPhoto = StaffMediaViews.demoPhoto(state, product.id);
-        AlertDialog dialog = new AlertDialog.Builder(activity).create();
+        AlertDialog dialog = new PhotoDialog(activity);
         View content = StaffMediaViews.createPreview(activity, host, product, existingPhoto,
             () -> {
                 dialog.dismiss();
                 pickPhoto(activity, host, selected -> {
-                    String mime = activity.getContentResolver().getType(selected);
+                    String mime;
+                    try { mime = activity.getContentResolver().getType(selected); }
+                    catch (RuntimeException unavailableImage) {
+                        host.message("Không thể đọc ảnh đã chọn; vui lòng chọn lại ảnh");
+                        return;
+                    }
                     if (StaffMediaViews.changeDemoPhoto(state, product.id, selected, mime)) {
                         host.message("Đã cập nhật ảnh sản phẩm");
-                        host.navigate("catalog-admin-v2");
+                        host.navigate(returnRoute);
                     } else host.message("Không thể gắn ảnh cho sản phẩm");
                 });
             },
@@ -117,7 +126,7 @@ public final class AdminMedia {
                 if (StaffMediaViews.changeDemoPhoto(state, product.id, null, null)) {
                     dialog.dismiss();
                     host.message("Đã khôi phục ảnh mặc định");
-                    host.navigate("catalog-admin-v2");
+                    host.navigate(returnRoute);
                 }
             }, dialog::dismiss);
         dialog.setView(content);
@@ -127,4 +136,30 @@ public final class AdminMedia {
             dialog.getWindow().setLayout(-1, height);
         }
     }
+    /** Removes the preview window before its owning Activity is recreated/stopped. */
+    private static final class PhotoDialog extends AlertDialog
+            implements android.app.Application.ActivityLifecycleCallbacks {
+        private final Activity owner;
+        private boolean registered;
+        PhotoDialog(Activity activity) { super(activity); owner=activity; setOwnerActivity(activity); }
+        @Override protected void onStart() {
+            super.onStart();
+            if(!registered) { owner.getApplication().registerActivityLifecycleCallbacks(this); registered=true; }
+        }
+        private void unregister() {
+            if(registered) { owner.getApplication().unregisterActivityLifecycleCallbacks(this); registered=false; }
+        }
+        @Override public void dismiss() { unregister(); super.dismiss(); }
+        @Override public void cancel() { unregister(); super.cancel(); }
+        @Override protected void onStop() { unregister(); super.onStop(); }
+        @Override public void onActivityStopped(Activity activity) { if(activity==owner)dismiss(); }
+        @Override public void onActivityPreDestroyed(Activity activity) { if(activity==owner)dismiss(); }
+        @Override public void onActivityDestroyed(Activity activity) { if(activity==owner)dismiss(); }
+        @Override public void onActivityCreated(Activity activity, Bundle bundle) { }
+        @Override public void onActivityStarted(Activity activity) { }
+        @Override public void onActivityResumed(Activity activity) { }
+        @Override public void onActivityPaused(Activity activity) { }
+        @Override public void onActivitySaveInstanceState(Activity activity, Bundle bundle) { }
+    }
+
 }

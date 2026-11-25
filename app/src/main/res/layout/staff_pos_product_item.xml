@@ -1,52 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:background="@color/cream"
-    android:orientation="vertical"
-    android:padding="12dp">
-
-    <TextView
-        android:id="@+id/staff_pos_product_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@color/ink"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/staff_pos_product_meta"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/muted"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/staff_pos_product_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/emerald"
-        android:textSize="12sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="Chạm thẻ để xem chi tiết thông tin và tồn kho"
-        android:textColor="@color/muted"
-        android:textSize="11sp" />
-
-    <com.google.android.material.button.MaterialButton app:cornerRadius="0dp"
-        android:id="@+id/staff_pos_product_add"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/mint"
-        android:text="+ Thêm vào giỏ"
-        android:textAllCaps="false"
-        android:textColor="@color/forest" />
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:paddingTop="12dp" android:background="@drawable/staff_product_row">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical">
+        <FrameLayout android:id="@+id/staff_pos_product_artwork"
+            android:layout_width="74dp" android:layout_height="84dp" android:layout_marginEnd="12dp"
+            android:background="@drawable/staff_product_photo" android:clipToOutline="true"
+            android:importantForAccessibility="noHideDescendants" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical">
+            <TextView android:id="@+id/staff_pos_product_title"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:breakStrategy="high_quality" android:hyphenationFrequency="none"
+                android:textColor="@color/ink" android:textSize="16sp" android:textStyle="bold" />
+            <TextView android:id="@+id/staff_pos_product_meta"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" android:textColor="@color/muted" android:textSize="12sp" />
+            <TextView android:id="@+id/staff_pos_product_price"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:textColor="@color/emerald" android:textSize="17sp" android:textStyle="bold" />
+            <TextView android:id="@+id/staff_pos_product_stock"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:textColor="@color/muted" android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/staff_pos_product_status"
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginEnd="10dp" android:lineSpacingExtra="2dp"
+            android:textColor="@color/emerald" android:textSize="13sp" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/staff_pos_product_add"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:minWidth="88dp" android:minHeight="48dp" app:cornerRadius="8dp"
+            android:backgroundTint="@color/ui_navigation_selection" android:text="+ Thêm" android:textAllCaps="false"
+            android:paddingHorizontal="12dp" android:paddingVertical="8dp"
+            android:textColor="@color/emerald" android:textSize="14sp" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginTop="8dp" android:background="@color/ui_surface_divider" android:importantForAccessibility="no" />
 </LinearLayout>

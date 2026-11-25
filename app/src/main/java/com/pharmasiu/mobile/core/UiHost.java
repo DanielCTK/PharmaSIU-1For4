@@ -6,6 +6,9 @@ public interface UiHost {
     void message(String message);
     void logout();
     void choosePrescriptionFile();
+    default void chooseCustomerAvatar() {
+        message("Chức năng chọn ảnh đại diện chưa sẵn sàng trên màn hình này.");
+    }
     default void chooseStaffProductPhoto(String productId) {
         message("Chức năng chọn ảnh chỉ hỗ trợ trên màn hình quản trị.");
     }

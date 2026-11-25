@@ -1,242 +1,587 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/auth_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream"
+    android:background="@drawable/auth_glass_background"
     android:fillViewport="true"
     android:clipToPadding="false"
+    android:descendantFocusability="beforeDescendants"
     android:importantForAutofill="no">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="100dp">
-        <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:paddingBottom="24dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="66dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp">
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="PharmaSIU" android:textColor="@color/emerald"
-                    android:textSize="23sp" android:textStyle="bold"/>
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="CHĂM SÓC · MUA SẮM · VẬN HÀNH"
-                    android:textColor="@color/muted" android:textSize="9sp"
-                    android:letterSpacing="0.07" android:textStyle="bold"/>
-            </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:background="@drawable/auth_mint_panel" android:paddingStart="10dp"
-                android:paddingEnd="10dp" android:paddingTop="8dp" android:paddingBottom="8dp"
-                android:text="HỆ THỐNG NHÀ THUỐC" android:textColor="@color/emerald"
-                android:textSize="10sp" android:textStyle="bold"/>
-        </LinearLayout>
-        <FrameLayout android:layout_width="match_parent" android:layout_height="150dp"
-            android:background="@drawable/auth_hero">
-            <View android:layout_width="240dp" android:layout_height="240dp"
-                android:layout_gravity="right|top" android:layout_marginTop="-42dp"
-                android:layout_marginEnd="-60dp" android:background="@drawable/auth_orbit" android:visibility="gone"
-                android:importantForAccessibility="no"/>
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                android:orientation="vertical" android:paddingStart="23dp"
-                android:paddingEnd="23dp" android:paddingTop="23dp" android:paddingBottom="24dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="✦  PHARMASIU  /  WELCOME" android:textColor="@color/lime"
-                    android:textSize="11sp" android:letterSpacing="0.06" android:textStyle="bold"/>
-                <Space android:layout_width="match_parent" android:layout_height="0dp"
-                    android:layout_weight="1"/>
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Chào mừng&#10;trở lại." android:lineSpacingExtra="1dp"
-                    android:textColor="@color/white" android:textSize="26sp"
-                    android:textStyle="bold"/>
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Một tài khoản. Đúng không gian dành cho bạn."
-                    android:textColor="@color/mint" android:textSize="13sp"/>
+            android:layout_height="wrap_content"
+            android:minHeight="320dp"
+            android:background="#075A4D">
+            <FrameLayout
+                android:id="@+id/auth_glass_hero_stage"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:importantForAccessibility="no">
+                <ImageView
+                    android:id="@+id/auth_glass_hero_art"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/auth_glass_hero"
+                    android:importantForAccessibility="no" />
+                <com.pharmasiu.mobile.ui.auth.AuthHeroEffectsView
+                    android:id="@+id/auth_glass_hero_effect"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:importantForAccessibility="no" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/auth_glass_hero_scrim"
+                    android:importantForAccessibility="no" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/auth_glass_hero_blend"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="320dp"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="7dp"
+                    android:background="@drawable/auth_glass_brand_surface">
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/auth_redesign_brand"
+                        android:id="@+id/auth_brand_logo" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="PharmaSIU"
+                        android:textColor="@color/forest"
+                        android:textSize="23sp"
+                        android:textStyle="bold"
+                        android:id="@+id/auth_brand_name" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="26dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="26dp"
+                    android:paddingBottom="60dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/auth_mode_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:lineSpacingExtra="1dp"
+                            android:text="Chào mừng&#10;trở lại"
+                            android:textColor="@color/white"
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            android:shadowColor="#50001F19"
+                            android:shadowRadius="8"
+                            android:shadowDy="1"
+                            android:includeFontPadding="false" />
+                        <TextView
+                            android:id="@+id/auth_mode_subtitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Đăng nhập để tiếp tục."
+                            android:textColor="#D5FFF1"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="0.4"
+                        android:importantForAccessibility="no" />
+                </LinearLayout>
             </LinearLayout>
         </FrameLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:paddingStart="20dp"
-            android:paddingEnd="20dp" android:paddingTop="22dp">
-            <TextView android:id="@+id/auth_mode_title" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:text="Đăng nhập PharmaSIU"
-                android:textColor="@color/ink" android:textSize="22sp" android:textStyle="bold"/>
-            <TextView android:id="@+id/auth_mode_subtitle" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="7dp"
-                android:text="Dành cho khách hàng, nhân viên và quản lý."
-                android:textColor="@color/muted" android:textSize="14sp"/>
-            <LinearLayout android:id="@+id/auth_roles" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="18dp"
-                android:orientation="vertical" android:padding="15dp"
-                android:background="@drawable/auth_mint_panel">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="MỘT ĐĂNG NHẬP  /  BA VAI TRÒ" android:letterSpacing="0.06"
-                    android:textColor="@color/forest" android:textSize="11sp"
-                    android:textStyle="bold"/>
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:gravity="center"
-                    android:layout_marginTop="12dp">
-                    <TextView android:id="@+id/auth_role_tab_customer" android:layout_width="0dp" android:layout_height="52dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Khách hàng\n0900000000"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
-                        android:background="@drawable/auth_field" android:layout_marginEnd="4dp"
-                        android:clickable="true" android:focusable="true"/>
-                    <TextView android:id="@+id/auth_role_tab_cashier" android:layout_width="0dp" android:layout_height="52dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Nhân viên\n0901111111"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
-                        android:background="@drawable/auth_field" android:layout_marginStart="2dp" android:layout_marginEnd="2dp"
-                        android:clickable="true" android:focusable="true"/>
-                    <TextView android:id="@+id/auth_role_tab_manager" android:layout_width="0dp" android:layout_height="52dp"
-                        android:layout_weight="1" android:gravity="center" android:text="Quản lý\n0902222222"
-                        android:textColor="@color/forest" android:textStyle="bold" android:textSize="11sp"
-                        android:background="@drawable/auth_field" android:layout_marginStart="4dp"
-                        android:clickable="true" android:focusable="true"/>
-                </LinearLayout>
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp" android:lineSpacingExtra="2dp"
-                    android:text="Chạm vào vai trò ở trên để tự động điền tài khoản mẫu tiện lợi."
-                    android:textColor="@color/muted" android:textSize="12sp"/>
+        <LinearLayout
+            android:id="@+id/auth_glass_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="-32dp"
+            android:orientation="vertical"
+            android:background="@drawable/auth_glass_form_surface"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="20dp"
+            android:elevation="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+            <LinearLayout
+                android:id="@+id/auth_name_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/auth_name"
+                    android:text="Họ và tên"
+                    android:textColor="@color/forest"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/auth_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/auth_glass_field"
+                    android:fontFamily="sans-serif"
+                    android:drawableStart="@drawable/auth_redesign_user"
+                    android:drawablePadding="10dp"
+                    android:hint="Nhập họ và tên"
+                    android:imeOptions="actionNext|flagNoExtractUi"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLength="70"
+                    android:minHeight="56dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/ink"
+                    android:textColorHint="@color/muted"
+                    android:textSize="16sp" />
             </LinearLayout>
-            <LinearLayout android:id="@+id/auth_name_section" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="17dp"
-                android:orientation="vertical" android:visibility="gone">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:labelFor="@id/auth_name" android:text="Họ và tên"
-                    android:textColor="@color/forest" android:textStyle="bold" android:textSize="13sp"/>
-                <EditText android:id="@+id/auth_name" android:layout_width="match_parent"
-                    android:layout_height="56dp" android:layout_marginTop="7dp"
-                    android:paddingStart="14dp" android:paddingEnd="14dp"
-                    android:background="@drawable/auth_field" android:hint="Nguyễn Văn An"
-                    android:inputType="textPersonName|textCapWords" android:maxLength="70"
-                    android:singleLine="true" android:imeOptions="actionNext"
-                    android:textColor="@color/ink" android:textColorHint="@color/muted"
-                    android:textSize="15sp"/>
-            </LinearLayout>
-            <TextView android:id="@+id/auth_identifier_label"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="18dp" android:labelFor="@id/auth_identifier"
-                android:text="Email hoặc số điện thoại" android:textColor="@color/forest"
-                android:textSize="13sp" android:textStyle="bold"/>
-            <EditText android:id="@+id/auth_identifier" android:layout_width="match_parent"
-                android:layout_height="56dp" android:layout_marginTop="7dp"
-                android:paddingStart="14dp" android:paddingEnd="14dp"
-                android:background="@drawable/auth_field" android:hint="Email / 0900000000"
-                android:inputType="textEmailAddress" android:maxLength="120"
-                android:singleLine="true" android:imeOptions="actionNext"
-                android:textColor="@color/ink" android:textColorHint="@color/muted"
-                android:textSize="15sp"/>
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="15dp" android:labelFor="@id/auth_password"
-                android:text="Mật khẩu" android:textColor="@color/forest"
-                android:textSize="13sp" android:textStyle="bold"/>
-            <FrameLayout android:layout_width="match_parent" android:layout_height="56dp"
-                android:layout_marginTop="7dp">
-                <EditText android:id="@+id/auth_password" android:layout_width="match_parent"
-                    android:layout_height="match_parent" android:background="@drawable/auth_field"
-                    android:paddingStart="14dp" android:paddingEnd="90dp"
-                    android:inputType="textPassword" android:maxLength="64"
-                    android:imeOptions="actionDone" android:singleLine="true"
-                    android:textColor="@color/ink" android:textColorHint="@color/muted"
-                    android:textSize="15sp"/>
-                <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_toggle_password" android:layout_width="80dp"
-                    android:layout_height="52dp" android:layout_gravity="end|center_vertical"
-                    android:text="Hiện" android:textAllCaps="false" android:textSize="13sp"
+            <TextView
+                android:id="@+id/auth_identifier_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:labelFor="@id/auth_identifier"
+                android:text="Email hoặc số điện thoại"
+                android:textColor="@color/forest"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/auth_identifier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/auth_glass_field"
+                android:fontFamily="sans-serif"
+                android:drawableStart="@drawable/auth_redesign_user"
+                android:drawablePadding="10dp"
+                android:hint="Nhập email hoặc số điện thoại"
+                android:imeOptions="actionNext|flagNoExtractUi"
+                android:inputType="textEmailAddress"
+                android:maxLength="120"
+                android:minHeight="56dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="16dp"
+                android:singleLine="true"
+                android:textColor="@color/ink"
+                android:textColorHint="@color/muted"
+                android:textSize="16sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:labelFor="@id/auth_password"
+                android:text="Mật khẩu"
+                android:textColor="@color/forest"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="56dp">
+                <EditText
+                    android:id="@+id/auth_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/auth_glass_field"
+                    android:fontFamily="sans-serif"
+                    android:drawableStart="@drawable/auth_redesign_lock"
+                    android:drawablePadding="10dp"
+                    android:hint="Nhập mật khẩu"
+                    android:imeOptions="actionDone|flagNoExtractUi"
+                    android:inputType="textPassword"
+                    android:maxLength="64"
+                    android:minHeight="56dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="82dp"
+                    android:paddingBottom="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/ink"
+                    android:textColorHint="@color/muted"
+                    android:textSize="16sp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/auth_toggle_password"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="72dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="2dp"
                     android:contentDescription="Hiện mật khẩu"
-                    android:textColor="@color/emerald" android:backgroundTint="@color/mint"/>
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="0dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Hiện"
+                    android:textAllCaps="false"
+                    android:textColor="@color/emerald"
+                    android:textSize="14sp"
+                    app:cornerRadius="28dp"
+                    android:minHeight="56dp" />
             </FrameLayout>
-            <LinearLayout android:id="@+id/auth_confirm_section" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="15dp"
-                android:orientation="vertical" android:visibility="gone">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:labelFor="@id/auth_password_confirm" android:text="Nhập lại mật khẩu"
-                    android:textColor="@color/forest" android:textSize="13sp" android:textStyle="bold"/>
-                <EditText android:id="@+id/auth_password_confirm" android:layout_width="match_parent"
-                    android:layout_height="56dp" android:layout_marginTop="7dp"
-                    android:background="@drawable/auth_field" android:paddingStart="14dp"
-                    android:paddingEnd="14dp" android:inputType="textPassword" android:maxLength="64"
-                    android:singleLine="true" android:imeOptions="actionDone"
-                    android:textColor="@color/ink" android:textColorHint="@color/muted"
-                    android:textSize="15sp"/>
+            <LinearLayout
+                android:id="@+id/auth_confirm_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/auth_password_confirm"
+                    android:text="Nhập lại mật khẩu"
+                    android:textColor="@color/forest"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+                <EditText
+                    android:id="@+id/auth_password_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/auth_glass_field"
+                    android:fontFamily="sans-serif"
+                    android:drawableStart="@drawable/auth_redesign_lock"
+                    android:drawablePadding="10dp"
+                    android:hint="Nhập lại mật khẩu"
+                    android:imeOptions="actionDone|flagNoExtractUi"
+                    android:inputType="textPassword"
+                    android:maxLength="64"
+                    android:minHeight="56dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/ink"
+                    android:textColorHint="@color/muted"
+                    android:textSize="16sp" />
             </LinearLayout>
-            <TextView android:id="@+id/auth_success" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="14dp"
-                android:padding="13dp" android:background="@drawable/auth_mint_panel"
-                android:textColor="@color/emerald" android:textSize="13sp"
-                android:accessibilityLiveRegion="polite" android:visibility="gone"/>
-            <TextView android:id="@+id/auth_error" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="14dp"
-                android:padding="13dp" android:background="@drawable/auth_warning_panel"
-                android:textColor="@color/warning" android:textSize="13sp"
-                android:accessibilityLiveRegion="assertive" android:visibility="gone"/>
-            <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_submit" android:layout_width="match_parent"
-                android:layout_height="56dp" android:layout_marginTop="17dp"
-                android:text="Đăng nhập" android:textSize="15sp" android:textStyle="bold"
-                android:textAllCaps="false" android:textColor="@color/white"
-                android:backgroundTint="@color/emerald"/>
-            <LinearLayout android:id="@+id/auth_mode_actions" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-                <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_register" android:layout_width="0dp"
-                    android:layout_weight="1" android:layout_height="52dp"
-                    android:text="Tạo tài khoản" android:textAllCaps="false"
-                    android:textSize="13sp" android:textColor="@color/emerald"
-                    android:backgroundTint="@color/cream"/>
-                <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_forgot" android:layout_width="0dp"
-                    android:layout_weight="1" android:layout_height="52dp"
-                    android:text="Quên mật khẩu?" android:textAllCaps="false"
-                    android:textSize="13sp" android:textColor="@color/emerald"
-                    android:backgroundTint="@color/cream"/>
+            <TextView
+                android:id="@+id/auth_success"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:accessibilityLiveRegion="polite"
+                android:background="@drawable/auth_redesign_hero_panel"
+                android:lineSpacingExtra="2dp"
+                android:padding="14dp"
+                android:textColor="@color/emerald"
+                android:textSize="14sp"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/auth_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:accessibilityLiveRegion="assertive"
+                android:background="@drawable/auth_redesign_warning"
+                android:lineSpacingExtra="2dp"
+                android:padding="14dp"
+                android:textColor="@color/warning"
+                android:textSize="14sp"
+                android:visibility="gone" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/auth_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/auth_glass_submit_surface"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:letterSpacing="0"
+                android:minHeight="58dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:text="Đăng nhập"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@null"
+                android:elevation="3dp"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconTint="#FFFFFF"
+                app:iconPadding="8dp"
+                app:iconSize="20dp" />
+            <LinearLayout
+                android:id="@+id/auth_mode_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/auth_register"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:letterSpacing="0"
+                    android:minHeight="52dp"
+                    android:minWidth="0dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Tạo tài khoản"
+                    android:textAllCaps="false"
+                    android:textColor="@color/emerald"
+                    android:textSize="14sp"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/auth_redesign_user"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/emerald"
+                    app:iconPadding="4dp"
+                    app:iconSize="20dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/auth_forgot"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:letterSpacing="0"
+                    android:minHeight="52dp"
+                    android:minWidth="0dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Quên mật khẩu?"
+                    android:textAllCaps="false"
+                    android:textColor="@color/emerald"
+                    android:textSize="14sp"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/auth_redesign_lock"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/emerald"
+                    app:iconPadding="4dp"
+                    app:iconSize="20dp" />
             </LinearLayout>
-            <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_back" android:layout_width="match_parent"
-                android:layout_height="52dp" android:layout_marginTop="5dp"
-                android:text="← Trở lại đăng nhập" android:textAllCaps="false"
-                android:textColor="@color/emerald" android:backgroundTint="@color/cream"
-                android:visibility="gone"/>
-            <LinearLayout android:id="@+id/auth_demo_panel"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="13dp" android:orientation="vertical"
-                android:background="@drawable/auth_card">
-                <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_demo_toggle"
-                    android:layout_width="match_parent" android:layout_height="56dp"
-                    android:text="Thông tin tài khoản" android:textAllCaps="false"
-                    android:contentDescription="Thông tin tài khoản"
-                    android:textColor="@color/emerald" android:textStyle="bold"
-                    android:backgroundTint="@color/white"/>
-                <LinearLayout android:id="@+id/auth_demo_accounts"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:padding="10dp"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/auth_back"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="52dp"
+                android:text="Trở lại đăng nhập"
+                android:textAllCaps="false"
+                android:textColor="@color/emerald"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:cornerRadius="24dp" />
+            <LinearLayout
+                android:id="@+id/auth_demo_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/auth_glass_demo_surface"
+                android:orientation="vertical">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/auth_demo_toggle"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Xem tài khoản demo"
+                    android:gravity="start|center_vertical"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:letterSpacing="0"
+                    android:minHeight="52dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Tài khoản dùng thử  ▾"
+                    android:textAllCaps="false"
+                    android:textColor="@color/forest"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="20dp"
+                    app:icon="@drawable/auth_redesign_user"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/forest"
+                    app:iconPadding="4dp"
+                    app:iconSize="20dp" />
+                <LinearLayout
+                    android:id="@+id/auth_demo_accounts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="14dp"
                     android:visibility="gone">
-                    <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_demo_customer"
-                        android:layout_width="match_parent" android:layout_height="56dp"
-                        android:text="Khách hàng · 0900000000"
-                        android:textAllCaps="false" android:textColor="@color/forest"
-                        android:backgroundTint="@color/mint"/>
-                    <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_demo_cashier"
-                        android:layout_width="match_parent" android:layout_height="56dp"
-                        android:layout_marginTop="6dp" android:text="Nhân viên quầy (Thu ngân)"
-                        android:textAllCaps="false" android:textColor="@color/forest"
-                        android:backgroundTint="@color/mint"/>
-                    <com.google.android.material.button.MaterialButton app:cornerRadius="12dp" android:id="@+id/auth_demo_manager"
-                        android:layout_width="match_parent" android:layout_height="56dp"
-                        android:layout_marginTop="6dp" android:text="Quản trị viên (Admin)"
-                        android:textAllCaps="false" android:textColor="@color/forest"
-                        android:backgroundTint="@color/mint"/>
-                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp" android:padding="5dp"
-                        android:text="Tài khoản hệ thống"
+                    <LinearLayout
+                        android:id="@+id/auth_roles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <FrameLayout
+                            android:id="@+id/auth_role_tab_customer"
+                            android:importantForAccessibility="no"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/auth_demo_customer"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#EFFFFFFA"
+                                android:contentDescription="Điền tài khoản khách hàng dùng thử"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:letterSpacing="0"
+                                android:minHeight="52dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:text="Khách hàng"
+                                android:textAllCaps="false"
+                                android:textColor="@color/forest"
+                                android:textSize="13sp"
+                                app:cornerRadius="20dp"
+                                app:strokeColor="#6B9D8F" />
+                        </FrameLayout>
+                        <FrameLayout
+                            android:id="@+id/auth_role_tab_cashier"
+                            android:importantForAccessibility="no"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/auth_demo_cashier"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#EFFFFFFA"
+                                android:contentDescription="Điền tài khoản nhân viên dùng thử"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:letterSpacing="0"
+                                android:minHeight="52dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:text="Nhân viên"
+                                android:textAllCaps="false"
+                                android:textColor="@color/forest"
+                                android:textSize="13sp"
+                                app:cornerRadius="20dp"
+                                app:strokeColor="#6B9D8F" />
+                        </FrameLayout>
+                        <FrameLayout
+                            android:id="@+id/auth_role_tab_manager"
+                            android:importantForAccessibility="no"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/auth_demo_manager"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="#EFFFFFFA"
+                                android:contentDescription="Điền tài khoản quản lý dùng thử"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:letterSpacing="0"
+                                android:minHeight="52dp"
+                                android:minWidth="0dp"
+                                android:paddingStart="4dp"
+                                android:paddingEnd="4dp"
+                                android:text="Quản lý"
+                                android:textAllCaps="false"
+                                android:textColor="@color/forest"
+                                android:textSize="13sp"
+                                app:cornerRadius="20dp"
+                                app:strokeColor="#6B9D8F" />
+                        </FrameLayout>
+                    </LinearLayout>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:lineSpacingExtra="2dp"
-                        android:textColor="@color/muted" android:textSize="12sp"/>
+                        android:text="Điền tài khoản mẫu, rồi bấm Đăng nhập. Chỉ dùng để thử giao diện."
+                        android:textColor="@color/muted"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
-            <TextView android:id="@+id/auth_disclaimer"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="18dp" android:lineSpacingExtra="3dp"
-                android:text="Bảo mật thông tin: Hệ thống nhà thuốc PharmaSIU cam kết bảo mật tuyệt đối thông tin tài khoản và dữ liệu người dùng theo quy định y tế."
-                android:textColor="@color/muted" android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/auth_disclaimer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:lineSpacingExtra="2dp"
+                android:text="Bản dùng thử trên thiết bị · Chưa kết nối máy chủ."
+                android:textColor="@color/muted"
+                android:textSize="12sp"
+                android:gravity="center" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

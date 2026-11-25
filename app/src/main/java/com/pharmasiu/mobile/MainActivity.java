@@ -1,6 +1,7 @@
 package com.pharmasiu.mobile;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,17 +26,21 @@ import com.pharmasiu.mobile.core.DemoState;
 import com.pharmasiu.mobile.core.UiHost;
 import com.pharmasiu.mobile.navigation.PharmaBottomBar;
 import com.pharmasiu.mobile.ui.AuthScreen;
+import com.pharmasiu.mobile.ui.design.UiMotion;
 import com.pharmasiu.mobile.ui.staff.StaffPosViews;
 import com.pharmasiu.mobile.ui.staff.StaffAdminViews;
 import com.pharmasiu.mobile.ui.customer.CustomerAccountViews;
 import com.pharmasiu.mobile.ui.customer.CustomerOrderViews;
 import com.pharmasiu.mobile.ui.customer.CustomerCatalogViews;
+import com.pharmasiu.mobile.ui.customer.account.CustomerAvatarStore;
 
 /** Main application entry point, implemented entirely in Android Java Views/XML. */
 public final class MainActivity extends Activity implements UiHost {
     private static final int CHOOSE_LOCAL_PRESCRIPTION = 1020;
     private static final int CHOOSE_STAFF_PHOTO = 1021;
+    private static final int CHOOSE_CUSTOMER_AVATAR = 1022;
     private String pendingStaffPhotoProductId;
+    private long pendingAvatarAccountId = -1L;
     private DemoState store;
     private FrameLayout content;
     private LinearLayout navigation;
@@ -48,16 +53,18 @@ public final class MainActivity extends Activity implements UiHost {
         final String route;
         final java.util.ArrayDeque<String> history;
         final String pendingPhoto;
+        final long pendingAvatarAccountId;
         RetainedSession(DemoState store, String route, java.util.ArrayDeque<String> history,
-                        String pendingPhoto) {
+                        String pendingPhoto, long pendingAvatarAccountId) {
             this.store=store;
             this.route=route;
             this.history=new java.util.ArrayDeque<>(history);
             this.pendingPhoto=pendingPhoto;
+            this.pendingAvatarAccountId=pendingAvatarAccountId;
         }
     }
     @Override public Object onRetainNonConfigurationInstance() {
-        return new RetainedSession(store,route,routeHistory,pendingStaffPhotoProductId);
+        return new RetainedSession(store,route,routeHistory,pendingStaffPhotoProductId,pendingAvatarAccountId);
     }
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +75,7 @@ public final class MainActivity extends Activity implements UiHost {
             route=last.route;
             routeHistory.addAll(last.history);
             pendingStaffPhotoProductId=last.pendingPhoto;
+            pendingAvatarAccountId=last.pendingAvatarAccountId;
         }else{
             store=new DemoState(getApplicationContext());
             route="login";
@@ -82,8 +90,8 @@ public final class MainActivity extends Activity implements UiHost {
             Insets ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
             boolean isKeyboardOpen = ime.bottom > 0 || windowInsets.isVisible(WindowInsetsCompat.Type.ime());
 
-            if (navigation != null && !DemoState.NONE.equals(store.role)) {
-                navigation.setVisibility(isKeyboardOpen ? View.GONE : View.VISIBLE);
+            if (navigation != null) {
+                navigation.setVisibility(showsBottomNavigation() && !isKeyboardOpen ? View.VISIBLE : View.GONE);
             }
 
             int bottomInset = isKeyboardOpen ? ime.bottom : sysBars.bottom;
@@ -99,6 +107,7 @@ public final class MainActivity extends Activity implements UiHost {
     }
     @Override public void logout() {
         store.logout();
+        pendingAvatarAccountId=-1L;
         routeHistory.clear();
         route="login";
         render();
@@ -145,7 +154,7 @@ public final class MainActivity extends Activity implements UiHost {
             if(routeHistory.size()>=24)routeHistory.removeFirst();
             routeHistory.addLast(previous);
         }
-        render();
+        render(previous, false);
     }
     @Override public void choosePrescriptionFile() {
         if(!DemoState.CUSTOMER.equals(store.role)){message("Không đủ quyền");return;}
@@ -167,8 +176,31 @@ public final class MainActivity extends Activity implements UiHost {
         picker.putExtra(Intent.EXTRA_MIME_TYPES,new String[]{"image/jpeg","image/png","image/webp"});
         startActivityForResult(picker,CHOOSE_STAFF_PHOTO);
     }
+    @Override public void chooseCustomerAvatar() {
+        long accountId=store.authenticatedAccountId();
+        if (!DemoState.CUSTOMER.equals(store.role) || accountId <= 0) return;
+        Intent picker=new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        picker.addCategory(Intent.CATEGORY_OPENABLE);
+        picker.setType("image/*");
+        pendingAvatarAccountId=accountId;
+        try {
+            startActivityForResult(picker,CHOOSE_CUSTOMER_AVATAR);
+        } catch (ActivityNotFoundException unavailable) {
+            pendingAvatarAccountId=-1L;
+            message("Thiết bị chưa có trình chọn ảnh.");
+        }
+    }
     @Override protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode==CHOOSE_CUSTOMER_AVATAR) {
+            long accountId=pendingAvatarAccountId;
+            pendingAvatarAccountId=-1L;
+            if (resultCode==RESULT_OK && accountId > 0 && accountId==store.authenticatedAccountId()
+                && DemoState.CUSTOMER.equals(store.role) && data!=null && data.getData()!=null) {
+                CustomerAvatarStore.saveSelected(this,this,data.getData());
+            }
+            return;
+        }
         if(requestCode==CHOOSE_STAFF_PHOTO) {
             String productId=pendingStaffPhotoProductId;
             pendingStaffPhotoProductId=null;
@@ -213,9 +245,14 @@ public final class MainActivity extends Activity implements UiHost {
         }
     }
     private void render() {
+        render(null, false);
+    }
+
+    private void render(String previous, boolean returning) {
         if(content==null)return;
+        View outgoing = content.getChildAt(0);
+        if (outgoing != null) outgoing.animate().cancel();
         content.removeAllViews();
-        navigation.removeAllViews();
         View screen;
         if(DemoState.NONE.equals(store.role)) {
             if(!"register".equals(route)&&!"reset".equals(route))route="login";
@@ -250,10 +287,35 @@ public final class MainActivity extends Activity implements UiHost {
         } else {
             route="login";screen=AuthScreen.create(this,this,route);
         }
+        findViewById(R.id.main_root).setBackgroundResource(
+            DemoState.NONE.equals(store.role) ? R.drawable.auth_glass_background : R.color.ui_workspace_canvas);
         content.addView(screen,new FrameLayout.LayoutParams(-1,-1));
+        if (previous != null && !route.equals(previous) && !DemoState.NONE.equals(store.role)) {
+            int direction = PharmaBottomBar.transitionDirection(content, store.role, previous, route);
+            UiMotion.enterPage(screen, direction, returning);
+        }
         PharmaBottomBar.bind(this, navigation, store.role, route, target -> {
-            if("logout".equals(target)) logout(); else navigate(target);
+            if("logout".equals(target)) {
+                new android.app.AlertDialog.Builder(this)
+                    .setTitle("Đăng xuất tài khoản?")
+                    .setMessage("Bạn sẽ quay về màn hình đăng nhập.")
+                    .setNegativeButton("Ở lại",null)
+                    .setPositiveButton("Đăng xuất",(dialog,which)->logout())
+                    .show();
+            } else {
+                navigate(target);
+                // Switching a main tab starts a fresh path instead of stacking every tab visit.
+                routeHistory.clear();
+            }
         });
+        if (!showsBottomNavigation()) navigation.setVisibility(View.GONE);
+    }
+
+    private boolean showsBottomNavigation() {
+        if (DemoState.NONE.equals(store.role)) return false;
+        if (!DemoState.CUSTOMER.equals(store.role)) return true;
+        return !"product".equals(route) && !"product-v2".equals(route)
+            && !"edit-profile".equals(route) && !"profile".equals(route);
     }
     @Override public void onBackPressed() {
         if(DemoState.NONE.equals(store.role)){
@@ -261,17 +323,18 @@ public final class MainActivity extends Activity implements UiHost {
             else super.onBackPressed();
             return;
         }
+        String previous = route;
         if(!routeHistory.isEmpty()){
             route=routeHistory.removeLast();
-            render();
+            render(previous, true);
             return;
         }
         if(DemoState.CUSTOMER.equals(store.role) && !"home".equals(route)){
-            route="home";render();
+            route="home";render(previous, true);
         }else if(DemoState.ADMIN.equals(store.role) && !"admin".equals(route)){
-            route="admin";render();
+            route="admin";render(previous, true);
         }else if(DemoState.CASHIER.equals(store.role) && !"pos".equals(route)){
-            route="pos";render();
+            route="pos";render(previous, true);
         }else{
             moveTaskToBack(true);
         }

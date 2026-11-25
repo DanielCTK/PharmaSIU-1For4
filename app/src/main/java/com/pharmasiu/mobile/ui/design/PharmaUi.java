@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,19 +38,19 @@ public final class PharmaUi {
     public static LinearLayout surface(LinearLayout parent, boolean highlight) {
         Context context = parent.getContext();
         MaterialCardView card = new MaterialCardView(context);
-        card.setRadius(dp(context, 14));
-        card.setCardBackgroundColor(color(context, highlight ? R.color.mint : R.color.white));
-        card.setStrokeColor(color(context, highlight ? R.color.lime : R.color.line));
+        card.setRadius(dp(context, 20));
+        card.setCardBackgroundColor(color(context, highlight ? R.color.mint : R.color.paper));
+        card.setStrokeColor(color(context, R.color.line));
         card.setStrokeWidth(dp(context, 1));
-        card.setCardElevation(dp(context, 2));
+        card.setCardElevation(0);
         card.setUseCompatPadding(false);
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(-1, -2);
-        cardParams.bottomMargin = dp(context, 8);
+        cardParams.bottomMargin = dp(context, 12);
         parent.addView(card, cardParams);
 
         LinearLayout content = new LinearLayout(context);
         content.setOrientation(LinearLayout.VERTICAL);
-        content.setPadding(dp(context, 18),dp(context,18),dp(context,18),dp(context,18));
+        content.setPadding(dp(context,16),dp(context,16),dp(context,16),dp(context,16));
         card.addView(content,new ViewGroup.LayoutParams(-1,-2));
         return content;
     }
@@ -60,23 +61,29 @@ public final class PharmaUi {
         MaterialButton button = new MaterialButton(context);
         button.setText(label);
         button.setAllCaps(false);
-        button.setTextSize(14);
+        button.setTextSize(16);
+        button.setMaxLines(2);
+        button.setPadding(dp(context,16),dp(context,12),dp(context,16),dp(context,12));
         button.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
         button.setCornerRadius(dp(context, 14));
         button.setMinHeight(dp(context, 52));
         button.setInsetTop(0);
         button.setInsetBottom(0);
-        button.setBackgroundTintList(ColorStateList.valueOf(
-            color(context,primary ? R.color.emerald : R.color.mint)));
-        button.setTextColor(color(context,primary ? R.color.white : R.color.forest));
+        button.setBackgroundTintList(new ColorStateList(
+            new int[][]{new int[]{-android.R.attr.state_enabled},new int[]{}},
+            new int[]{color(context,R.color.line),color(context,primary?R.color.emerald:R.color.mint)}));
+        button.setTextColor(new ColorStateList(
+            new int[][]{new int[]{-android.R.attr.state_enabled},new int[]{}},
+            new int[]{color(context,R.color.muted),color(context,primary?R.color.white:R.color.forest)}));
+        button.setRippleColor(ColorStateList.valueOf(color(context,R.color.mint)));
         button.setStrokeColor(ColorStateList.valueOf(
-            color(context, primary ? R.color.emerald : R.color.line)));
+            color(context, primary ? R.color.emerald : R.color.control_outline)));
         button.setStrokeWidth(dp(context, primary ? 0 : 1));
         button.setContentDescription(label);
         button.setOnClickListener(v -> {
             if (action != null && button.isEnabled()) action.run();
         });
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, dp(context, 52));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
         lp.topMargin = dp(context, 8);
         parent.addView(button,lp);
         return button;
@@ -87,6 +94,7 @@ public final class PharmaUi {
         TextInputLayout frame = new TextInputLayout(
             context,null,com.google.android.material.R.attr.textInputOutlinedStyle);
         frame.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
+        frame.setBoxBackgroundColor(color(context,R.color.paper));
         frame.setBoxCornerRadii(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12));
         frame.setHint(label);
         frame.setDefaultHintTextColor(ColorStateList.valueOf(color(context, R.color.forest)));
@@ -99,19 +107,20 @@ public final class PharmaUi {
             },
             new int[]{
                 color(context, R.color.emerald),
-                color(context, R.color.line)
+                color(context, R.color.control_outline)
             }
         );
         frame.setBoxStrokeColorStateList(boxStroke);
         TextInputEditText text = new TextInputEditText(frame.getContext());
         text.setTextColor(color(context, R.color.ink));
         text.setHintTextColor(color(context, R.color.muted));
-        text.setTextSize(15);
+        text.setTextSize(16);
         text.setSingleLine(true);
         text.setInputType(inputType);
         text.setText(value == null ? "" : value);
-        text.setPadding(dp(context,14),dp(context,10),dp(context,14),dp(context,10));
-        frame.addView(text,new LinearLayout.LayoutParams(-1,dp(context,54)));
+        text.setPadding(dp(context,14),dp(context,16),dp(context,14),dp(context,16));
+        text.setMinHeight(dp(context,56));
+        frame.addView(text,new LinearLayout.LayoutParams(-1,-2));
         LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin=dp(context,10);
         parent.addView(frame,lp);
@@ -131,7 +140,9 @@ public final class PharmaUi {
                 if (view instanceof TextView) {
                     TextView tv = (TextView) view;
                     tv.setTextColor(activity.getColor(R.color.ink));
-                    tv.setTextSize(14);
+                    tv.setTextSize(15);
+                    tv.setMinHeight(dp(activity,48));
+                    tv.setGravity(Gravity.CENTER_VERTICAL);
                     tv.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
                 }
                 return view;
@@ -143,10 +154,10 @@ public final class PharmaUi {
                 if (view instanceof TextView) {
                     TextView tv = (TextView) view;
                     tv.setTextColor(activity.getColor(R.color.ink));
-                    tv.setTextSize(14);
+                    tv.setTextSize(15);
                     tv.setPadding(dp(activity, 14), dp(activity, 12), dp(activity, 14), dp(activity, 12));
                 }
-                view.setBackgroundColor(activity.getColor(R.color.white));
+                view.setBackgroundColor(activity.getColor(R.color.paper));
                 return view;
             }
         };
@@ -158,7 +169,8 @@ public final class PharmaUi {
         Context context=parent.getContext();
         TextView t=new TextView(context);
         t.setText(value);
-        t.setTextSize(19);
+        t.setTextSize(20);
+        androidx.core.view.ViewCompat.setAccessibilityHeading(t,true);
         t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
         t.setTextColor(color(context,R.color.forest));
         t.setLetterSpacing(-0.015f);
@@ -171,7 +183,7 @@ public final class PharmaUi {
         Context context=parent.getContext();
         TextView view=new TextView(context);
         view.setText(text);
-        view.setTextSize(sp);
+        view.setTextSize(Math.max(13,sp));
         view.setTextColor(color(context,colorId));
         view.setLineSpacing(dp(context,3),1f);
         view.setPadding(0,dp(context,3),0,dp(context,3));
@@ -184,14 +196,13 @@ public final class PharmaUi {
         Context context=parent.getContext();
         TextView caption = new TextView(context);
         caption.setText(text);
-        caption.setTextColor(color(context,R.color.forest));
-        caption.setTextSize(12);
+        caption.setTextColor(color(context,R.color.warning));
+        caption.setTextSize(13);
         caption.setLineSpacing(dp(context,3),1f);
         caption.setPadding(dp(context,14),dp(context,12),dp(context,14),dp(context,12));
         GradientDrawable panel = new GradientDrawable();
-        panel.setColor(color(context,R.color.mint));
-        panel.setCornerRadius(dp(context, 10));
-        panel.setStroke(dp(context,1),color(context,R.color.line));
+        panel.setColor(color(context,R.color.warning_surface));
+        panel.setCornerRadius(dp(context, 14));
         caption.setBackground(panel);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1,-2);
         lp.topMargin = dp(context,12);
@@ -205,7 +216,7 @@ public final class PharmaUi {
         box.setGravity(Gravity.CENTER);
         TextView headline=sectionTitle(box,title);
         headline.setGravity(Gravity.CENTER);
-        TextView explanation=label(box,detail,13,R.color.muted,false);
+        TextView explanation=label(box,detail,15,R.color.muted,false);
         explanation.setGravity(Gravity.CENTER);
         return box;
     }
@@ -224,12 +235,14 @@ public final class PharmaUi {
         bar.setPadding(0, dp(context, 12), 0, dp(context, 8));
 
         MaterialButton prev = new MaterialButton(context);
-        prev.setText("◀ Trước");
+        prev.setText("Trước");
+        prev.setMaxLines(2);
+        prev.setPadding(dp(context,8),dp(context,10),dp(context,8),dp(context,10));
         prev.setAllCaps(false);
         prev.setTextSize(13);
         prev.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         prev.setCornerRadius(dp(context, 10));
-        prev.setMinHeight(dp(context, 42));
+        prev.setMinHeight(dp(context, 48));
         prev.setInsetTop(0);
         prev.setInsetBottom(0);
         prev.setEnabled(currentPage > 0);
@@ -244,19 +257,21 @@ public final class PharmaUi {
             ? "Trang " + (currentPage + 1) + " / " + totalPages + "\n(" + totalItems + " " + itemNoun + ")"
             : "Trang " + (currentPage + 1) + " / " + totalPages;
         indicator.setText(label);
-        indicator.setTextSize(12);
+        indicator.setTextSize(13);
         indicator.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         indicator.setTextColor(color(context, R.color.forest));
         indicator.setGravity(Gravity.CENTER);
         indicator.setLineSpacing(dp(context, 2), 1f);
 
         MaterialButton next = new MaterialButton(context);
-        next.setText("Sau ▶");
+        next.setText("Sau");
+        next.setMaxLines(2);
+        next.setPadding(dp(context,8),dp(context,10),dp(context,8),dp(context,10));
         next.setAllCaps(false);
         next.setTextSize(13);
         next.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
         next.setCornerRadius(dp(context, 10));
-        next.setMinHeight(dp(context, 42));
+        next.setMinHeight(dp(context, 48));
         next.setInsetTop(0);
         next.setInsetBottom(0);
         next.setEnabled(currentPage < totalPages - 1);
@@ -266,7 +281,7 @@ public final class PharmaUi {
             if (currentPage < totalPages - 1 && callback != null) callback.onPage(currentPage + 1);
         });
 
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, dp(context, 42), 1f);
+        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(0, -2, 1f);
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(0, -2, 1.4f);
 
         bar.addView(prev, btnParams);
@@ -275,5 +290,17 @@ public final class PharmaUi {
 
         parent.addView(bar, new LinearLayout.LayoutParams(-1, -2));
         return bar;
+    }
+
+    /** Adds visible touch feedback without replacing a screen's rounded background. */
+    public static void pressable(View view) {
+        TypedValue ripple=new TypedValue();
+        if(view.getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,ripple,true)
+            &&ripple.resourceId!=0){
+            view.setForeground(view.getContext().getDrawable(ripple.resourceId));
+        }
+        view.setClickable(true);
+        view.setFocusable(true);
+        view.setMinimumHeight(dp(view.getContext(),48));
     }
 }

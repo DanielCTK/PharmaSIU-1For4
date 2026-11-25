@@ -17,6 +17,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.view.Gravity;
 
 import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
@@ -39,8 +43,33 @@ public final class AdminLots {
     public static View lots(Activity a, UiHost host) {
         DemoState s = host.state();
         Screen screen = new Screen(a, R.layout.staff_admin_lots, host);
-        LinearLayout receiving = card(screen);
+        screen.context(s.lots.size() + " lô hàng · Số lượng và hạn dùng");
+        LinearLayout existing = productSection(screen);
+        title(existing, "Danh sách lô");
+        LinearLayout receiving = productSection(screen);
+        View receivingPanel = (View) receiving.getParent();
+        receivingPanel.setVisibility(View.GONE);
+        Button receivingToggle = screen.root.findViewById(R.id.admin_lot_form_toggle);
+        com.pharmasiu.mobile.ui.design.UiMotion.press(receivingToggle);
+        Runnable collapseReceiving = () -> {
+            receivingPanel.setVisibility(View.GONE);
+            receivingToggle.setText("Nhập lô mới");
+            receivingToggle.requestRectangleOnScreen(new android.graphics.Rect(
+                0, 0, receivingToggle.getWidth(), receivingToggle.getHeight()), false);
+        };
+        receivingToggle.setOnClickListener(v -> {
+            if (!s.canAdmin()) { host.message("Không đủ quyền Quản lý"); return; }
+            boolean expanded = receivingPanel.getVisibility() == View.VISIBLE;
+            if (expanded) collapseReceiving.run();
+            else {
+                receivingPanel.setVisibility(View.VISIBLE);
+                receivingToggle.setText("Thu gọn nhập lô");
+                receiving.post(() -> receiving.requestRectangleOnScreen(new android.graphics.Rect(
+                    0, 0, receiving.getWidth(), receiving.getHeight()), false));
+            }
+        });
         title(receiving, "Nhập lô hàng mới");
+        button(receiving, "Thu gọn nhập lô", false, collapseReceiving);
         List<DemoState.Product> choices = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         for (DemoState.Product p : s.products) {
@@ -49,13 +78,31 @@ public final class AdminLots {
                 labels.add(p.name);
             }
         }
+        LinearLayout selectedProduct = new LinearLayout(a);
+        selectedProduct.setOrientation(LinearLayout.HORIZONTAL);
+        selectedProduct.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams previewParams = new LinearLayout.LayoutParams(-1, -2);
+        previewParams.setMargins(0, dp(a, 12), 0, dp(a, 10));
+        receiving.addView(selectedProduct, previewParams);
         Spinner product = picker(receiving, labels.toArray(new String[0]), a);
+        product.setContentDescription("Chọn sản phẩm nhập lô");
+        product.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                renderSelectedProduct(a, host, s, selectedProduct,
+                    position >= 0 && position < choices.size() ? choices.get(position) : null);
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {
+                renderSelectedProduct(a, host, s, selectedProduct, null);
+            }
+        });
+        renderSelectedProduct(a, host, s, selectedProduct, choices.isEmpty() ? null : choices.get(0));
         EditText code = input(receiving, "Mã số lô hàng", InputType.TYPE_CLASS_TEXT, "");
         EditText qty = input(receiving, "Số lượng (1 đến 999)", InputType.TYPE_CLASS_NUMBER, "");
         EditText expiry = input(receiving, "Hạn dùng YYYY-MM-DD", InputType.TYPE_CLASS_DATETIME, "");
         android.widget.CheckBox quarantine = new android.widget.CheckBox(a);
-        quarantine.setText("Đưa lô mới vào diện cách ly kiểm định");
-        receiving.addView(quarantine, new LinearLayout.LayoutParams(-1, dp(a, 54)));
+        quarantine.setText("Cách ly lô mới");
+        quarantine.setMinHeight(dp(a, 48));
+        receiving.addView(quarantine, new LinearLayout.LayoutParams(-1, -2));
         button(receiving, "Ghi nhận nhập lô hàng", true, () -> {
             if (!s.canAdmin()) { host.message("Không đủ quyền Quản lý"); return; }
             int index = product.getSelectedItemPosition();
@@ -75,11 +122,11 @@ public final class AdminLots {
                 host.navigate("lots-v2");
             }
         });
-        warning(receiving, "Quy định: Tổng tồn tối đa 999 đơn vị/mặt hàng; các lô cách ly hoặc quá hạn sẽ không được phép xuất bán.");
+        warning(receiving, "Tối đa 999 đơn vị/mặt hàng. Lô mới cần hạn dùng trong tương lai.");
 
-        LinearLayout existing = card(screen);
-        title(existing, "Danh sách lô và hạn");
-        EditText lotSearch = input(existing, "Tìm mã lô hoặc tên sản phẩm...", InputType.TYPE_CLASS_TEXT, "");
+        View searchControl = a.getLayoutInflater().inflate(R.layout.admin_lot_list_controls, existing, false);
+        existing.addView(searchControl);
+        EditText lotSearch = searchControl.findViewById(R.id.admin_lot_search);
         TextView lotSummary = line(existing, "", 12, R.color.muted, false);
         LinearLayout lotItemsContainer = new LinearLayout(a);
         lotItemsContainer.setOrientation(LinearLayout.VERTICAL);
@@ -119,33 +166,54 @@ public final class AdminLots {
                     for (int i = start; i < end; i++) {
                         DemoState.Lot lot = matched.get(i);
                         DemoState.Product p = s.product(lot.productId);
-                        String status = lot.quarantined ? "CÁCH LY" :
-                            lot.expiresOn == null ? "CHƯA XÁC MINH HẠN" :
-                            !lot.expiresOn.isAfter(LocalDate.now()) ? "HẾT HẠN" :
-                            lot.quantity < 1 ? "HẾT SỐ LƯỢNG" : "ĐỦ ĐIỀU KIỆN XUẤT BÁN (HSD HỢP LỆ)";
-                        line(lotItemsContainer, lot.code + " · " + (p == null ? lot.productId : p.name), 15, R.color.ink, true);
-                        line(lotItemsContainer, "Hạn " + lot.expiresOn + " · " + lot.quantity + " đơn vị · " + status,
-                            12, lot.quarantined || lot.expiresOn == null ||
-                                !lot.expiresOn.isAfter(LocalDate.now())
-                                ? R.color.warning : R.color.muted, false);
+                        LinearLayout lotRow = (LinearLayout) a.getLayoutInflater().inflate(
+                            R.layout.admin_lot_item, lotItemsContainer, false);
+                        ((TextView) lotRow.findViewById(R.id.admin_lot_product_name))
+                            .setText(p == null ? "Sản phẩm không còn trong danh mục" : p.name);
+                        ((TextView) lotRow.findViewById(R.id.admin_lot_product_sku)).setText("SKU " + lot.productId);
+                        ((TextView) lotRow.findViewById(R.id.admin_lot_product_price)).setText(p == null ? ""
+                            : p.priceVnd > 0 ? vnd(p.priceVnd) + " / " + p.unit : "Chưa có giá bán");
+                        ((TextView) lotRow.findViewById(R.id.admin_lot_code)).setText("Lô " + lot.code);
+                        bindThumbnail(a, host, s, lotRow.findViewById(R.id.admin_lot_photo), p);
+                        TextView expiryView = lotRow.findViewById(R.id.admin_lot_expiry);
+                        expiryView.setText(lot.expiresOn == null ? "Chưa có HSD" : "HSD " + lot.expiresOn.format(
+                            java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                        ((TextView) lotRow.findViewById(R.id.admin_lot_quantity)).setText(
+                            lot.quantity + " " + (p == null ? "đơn vị" : p.unit));
+                        boolean blocked = lot.quarantined || lot.expiresOn == null
+                            || !lot.expiresOn.isAfter(LocalDate.now());
+                        boolean expiring = !blocked && lot.quantity > 0
+                            && !lot.expiresOn.isAfter(LocalDate.now().plusDays(30));
+                        String status = lot.quarantined ? "Cách ly" : lot.expiresOn == null ? "Thiếu hạn dùng"
+                            : !lot.expiresOn.isAfter(LocalDate.now()) ? "Hết hạn"
+                            : lot.quantity < 1 ? "Hết số lượng" : expiring ? "Sắp hết hạn" : "Hạn hợp lệ";
+                        TextView statusChip = lotRow.findViewById(R.id.admin_lot_status);
+                        statusChip.setText(status);
+                        statusChip.setTextColor(a.getColor(blocked || expiring ? R.color.warning : R.color.forest));
+                        android.graphics.drawable.GradientDrawable chipBackground = new android.graphics.drawable.GradientDrawable();
+                        chipBackground.setColor(a.getColor(blocked || expiring ? R.color.warning_surface : R.color.mint));
+                        chipBackground.setCornerRadius(dp(a, 8));
+                        statusChip.setBackground(chipBackground);
+                        expiryView.setTextColor(a.getColor(blocked || expiring ? R.color.warning : R.color.forest));
+                        LinearLayout lotActions = lotRow.findViewById(R.id.admin_lot_actions);
                         if (!lot.quarantined && lot.quantity > 0) {
-                            button(lotItemsContainer, "Cách ly lô " + lot.code, false, () -> {
+                            lotAction(lotActions, "Cách ly lô", () -> {
                                 if (!s.canAdmin() || !s.quarantineLot(lot.code)) {
                                     host.message("Không đủ quyền hoặc lô không thể cách ly");
                                 } else {
                                     host.message("Đã cách ly lô hàng; hệ thống đã cập nhật tồn khả dụng");
                                     host.navigate("lots-v2");
                                 }
-                            });
+                            }).setContentDescription("Cách ly lô " + lot.code);
                         } else if (lot.quarantined && lot.quantity > 0) {
-                            button(lotItemsContainer, "Bỏ cách ly lô " + lot.code, false, () -> {
+                            lotAction(lotActions, "Bỏ cách ly", () -> {
                                 if (restoreDemoLot(s, lot)) {
                                     host.message("Đã mở lại lô hàng hợp lệ");
                                     host.navigate("lots-v2");
                                 } else host.message("Lô không đủ điều kiện mở lại: vui lòng kiểm tra quyền, hạn dùng hoặc số lượng tồn");
-                            });
+                            }).setContentDescription("Bỏ cách ly lô " + lot.code);
                         }
-                        divider(lotItemsContainer);
+                        lotItemsContainer.addView(lotRow);
                     }
                 }
 
@@ -154,7 +222,8 @@ public final class AdminLots {
                         lotPage[0] = newPage;
                         this.run();
                         if (screen.scroll != null) {
-                            screen.scroll.smoothScrollTo(0, existing.getTop());
+                            existing.requestRectangleOnScreen(new android.graphics.Rect(
+                                0, 0, existing.getWidth(), dp(a, 120)), false);
                         }
                     });
                 }
@@ -171,8 +240,58 @@ public final class AdminLots {
         });
 
         renderLotList.run();
-        warning(existing, "Quản lý tồn kho theo tiêu chuẩn Thực hành tốt phân phối thuốc (GDP) và ưu tiên xuất lô cận hạn trước.");
+        line(existing, "Lô cách ly hoặc hết hạn không dùng để bán.", 13, R.color.muted, false);
         return screen.root;
+    }
+
+    private static void bindThumbnail(Activity activity, UiHost host, DemoState state,
+                                      FrameLayout holder, DemoState.Product product) {
+        holder.removeAllViews();
+        if (product != null) {
+            View thumbnail = StaffMediaViews.createThumbnail(activity, host, product,
+                StaffMediaViews.demoPhoto(state, product.id),
+                () -> AdminMedia.showProductPhoto(activity, host, product, "lots-v2"));
+            holder.addView(thumbnail, new FrameLayout.LayoutParams(-1, -1));
+        } else {
+            ImageView unavailable = new ImageView(activity);
+            unavailable.setImageResource(R.drawable.admin_lot_box);
+            unavailable.setPadding(dp(activity, 20), dp(activity, 20), dp(activity, 20), dp(activity, 20));
+            unavailable.setBackgroundResource(R.drawable.admin_lot_panel);
+            unavailable.setContentDescription("Không có ảnh cho sản phẩm không còn trong danh mục");
+            holder.addView(unavailable, new FrameLayout.LayoutParams(-1, -1));
+        }
+    }
+
+    private static Button lotAction(LinearLayout parent, String label, Runnable action) {
+        Button control = button(parent, label, false, action);
+        control.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.TRANSPARENT));
+        if (control instanceof com.google.android.material.button.MaterialButton) {
+            ((com.google.android.material.button.MaterialButton) control).setStrokeWidth(0);
+            ((com.google.android.material.button.MaterialButton) control).setCornerRadius(dp(parent.getContext(), 8));
+        }
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-2, -2);
+        params.gravity = Gravity.END;
+        control.setLayoutParams(params);
+        return control;
+    }
+
+    private static void renderSelectedProduct(Activity activity, UiHost host, DemoState state,
+                                              LinearLayout preview, DemoState.Product product) {
+        preview.removeAllViews();
+        if (product == null) {
+            line(preview, "Chưa có sản phẩm phù hợp để nhập lô.", 14, R.color.muted, false);
+            return;
+        }
+        FrameLayout picture = new FrameLayout(activity);
+        LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(dp(activity, 72), dp(activity, 72));
+        imageParams.setMarginEnd(dp(activity, 12));
+        preview.addView(picture, imageParams);
+        bindThumbnail(activity, host, state, picture, product);
+        LinearLayout text = new LinearLayout(activity);
+        text.setOrientation(LinearLayout.VERTICAL);
+        preview.addView(text, new LinearLayout.LayoutParams(0, -2, 1));
+        line(text, product.name, 16, R.color.ink, true);
+        line(text, product.id + " · " + product.unit, 13, R.color.muted, false);
     }
 
     public static boolean duplicateLotCode(DemoState s, String code) {

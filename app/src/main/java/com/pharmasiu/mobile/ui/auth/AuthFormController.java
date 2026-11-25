@@ -21,6 +21,7 @@ import com.pharmasiu.mobile.R;
 import com.pharmasiu.mobile.core.DemoState;
 import com.pharmasiu.mobile.core.UiHost;
 import com.pharmasiu.mobile.ui.AuthScreen;
+import com.pharmasiu.mobile.ui.design.UiMotion;
 
 import static com.pharmasiu.mobile.ui.AuthScreen.validate;
 
@@ -28,43 +29,36 @@ import static com.pharmasiu.mobile.ui.AuthScreen.validate;
 public final class AuthFormController extends AuthUiState {
     public AuthFormController(Activity a,UiHost h,AuthMode mode){super(a,h,mode);}
     protected void attachListeners() {
+        for (Button action : new Button[]{togglePassword, register, forgot, back, submit,
+                demoToggle, demoCustomer, demoCashier, demoManager}) {
+            UiMotion.press(action);
+        }
         togglePassword.setOnClickListener(v -> setPasswordVisible(!showPassword));
         register.setOnClickListener(v -> setMode(AuthMode.REGISTER, true));
         forgot.setOnClickListener(v -> setMode(AuthMode.RESET, true));
         back.setOnClickListener(v -> setMode(AuthMode.LOGIN, true));
         submit.setOnClickListener(v -> submit());
+        demoToggle.setOnClickListener(v -> setDemoExpanded(!demoExpanded));
+
+        // Shortcuts only fill publicly documented demo accounts. DemoState.login
+        // still verifies credentials and resolves the role when Submit is pressed.
+        demoCustomer.setOnClickListener(v -> fillDemo("0900000000", "demo1234"));
+        demoCashier.setOnClickListener(v -> fillDemo("0901111111", "demo1234"));
+        demoManager.setOnClickListener(v -> fillDemo("0902222222", "demo1234"));
 
         View tabCustomer = root.findViewById(R.id.auth_role_tab_customer);
         View tabCashier = root.findViewById(R.id.auth_role_tab_cashier);
         View tabManager = root.findViewById(R.id.auth_role_tab_manager);
 
         if (tabCustomer != null) {
-            tabCustomer.setOnClickListener(v -> {
-                identifier.setText("0900000000");
-                password.setText("demo1234");
-                hideKeyboard();
-                host.message("Đã điền tài khoản Khách hàng (0900000000)");
-            });
+            tabCustomer.setOnClickListener(v -> fillDemo("0900000000", "demo1234"));
         }
         if (tabCashier != null) {
-            tabCashier.setOnClickListener(v -> {
-                identifier.setText("0901111111");
-                password.setText("demo1234");
-                hideKeyboard();
-                host.message("Đã điền tài khoản Thu ngân (0901111111)");
-            });
+            tabCashier.setOnClickListener(v -> fillDemo("0901111111", "demo1234"));
         }
         if (tabManager != null) {
-            tabManager.setOnClickListener(v -> {
-                identifier.setText("0902222222");
-                password.setText("demo1234");
-                hideKeyboard();
-                host.message("Đã điền tài khoản Quản lý (0902222222)");
-            });
+            tabManager.setOnClickListener(v -> fillDemo("0902222222", "demo1234"));
         }
-        // No hard-coded demo identities/passwords in the installed application.
-        demoPanel.setVisibility(View.GONE);
-        demoAccounts.setVisibility(View.GONE);
         forgot.setOnClickListener(v -> showError(
             "Chức năng khôi phục cần xác minh danh tính qua máy chủ; chưa được kích hoạt."));
 

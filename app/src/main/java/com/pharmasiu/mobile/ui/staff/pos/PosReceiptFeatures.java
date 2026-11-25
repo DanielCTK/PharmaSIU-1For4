@@ -103,6 +103,7 @@ abstract class PosReceiptFeatures extends PosCartFeatures {
                 renderReceipt();
                 scrollTo(receiptPanel);
             });
+            com.pharmasiu.mobile.ui.design.UiMotion.press(row);
             historyRows.addView(row);
         }
         historyMore.setVisibility(visibleHistoryCount < state.sales.size() ? View.VISIBLE : View.GONE);

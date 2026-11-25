@@ -39,8 +39,9 @@ public final class AdminAudit {
     public static View audit(Activity a, UiHost host) {
         DemoState s = host.state();
         Screen screen = new Screen(a, R.layout.staff_admin_audit, host);
+        screen.context(s.inventoryChecks.size() + " kiểm kê · " + s.shiftReconciliations.size() + " đối soát");
         LinearLayout inventory = card(screen);
-        title(inventory, "Kiểm kê lệch kho");
+        title(inventory, "Kiểm kê hàng hóa");
         Spinner goods = picker(inventory, productLabels(s), a);
         EditText counted = input(inventory, "Số lượng thực tế (0–999)", InputType.TYPE_CLASS_NUMBER, "");
         EditText reason = input(inventory, "Lý do lệch (>= 3 ký tự)", InputType.TYPE_CLASS_TEXT, "");
@@ -56,7 +57,7 @@ public final class AdminAudit {
                 host.navigate("audit-v2");
             }
         });
-        warning(inventory, "Biên bản kiểm kê ghi nhận số đếm thực tế để đối soát số lượng tồn kho định kỳ.");
+        warning(inventory, "Ghi nhận demo trên thiết bị. Chưa xác nhận tồn kho thực tế.");
 
         LinearLayout shifts = card(screen);
         title(shifts, "Đối soát ca bán hàng");
@@ -79,12 +80,12 @@ public final class AdminAudit {
                 host.navigate("audit-v2");
             }
         });
-        warning(shifts, "Đối soát đối chiếu doanh thu bán hàng tại quầy với số tiền mặt thực tế khi kết thúc ca làm việc.");
+        warning(shifts, "Chỉ đối soát sau khi đóng ca; mỗi ca ghi nhận một lần.");
 
         LinearLayout history = card(screen);
-        title(history, "Lịch sử kiểm kê và đối soát ca làm việc");
+        title(history, "Lịch sử ghi nhận");
         if (s.inventoryChecks.isEmpty() && s.shiftReconciliations.isEmpty()) {
-            line(history, "Chưa có biên bản đối soát nào được ghi nhận", 13, R.color.muted, false);
+            empty(history, R.drawable.nav_audit, "Chưa có biên bản", "Kiểm kê và đối soát đã lưu sẽ xuất hiện tại đây.");
         }
         for (String entry : s.inventoryChecks) { line(history, entry, 12, R.color.ink, false); divider(history); }
         for (String entry : s.shiftReconciliations) { line(history, entry, 12, R.color.ink, false); divider(history); }

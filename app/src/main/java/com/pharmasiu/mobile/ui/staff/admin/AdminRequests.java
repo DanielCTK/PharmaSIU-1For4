@@ -20,46 +20,44 @@ public final class AdminRequests {
     public static View requests(Activity a, UiHost host) {
         DemoState s = host.state();
         Screen screen = new Screen(a, R.layout.staff_admin_requests, host);
-        LinearLayout status = card(screen);
-        title(status, "Quản lý đơn đặt hàng");
-        line(status, "HỆ THỐNG DUYỆT ĐƠN PHARMASIU", 16, R.color.emerald, true);
-        warning(status, "Dược sĩ kiểm tra đơn thuốc, thẩm định và chuẩn bị đơn trước khi giao cho khách hàng.");
-
         List<DemoState.Order> orders = s.allOrdersForStaff();
+        screen.context(orders.size() + " yêu cầu đã lưu");
+        LinearLayout status = card(screen);
+        title(status, "Theo dõi yêu cầu");
+        int pendingCount = 0, readyCount = 0;
+        for (DemoState.Order order : orders) {
+            if (pending(order)) pendingCount++;
+            if ("Sẵn sàng nhận".equals(order.status)) readyCount++;
+        }
+        chip(status, pendingCount + " chờ xử lý · " + readyCount + " sẵn sàng", pendingCount > 0);
+        warning(status, "Chỉ mô phỏng trạng thái trên thiết bị. Chưa duyệt toa hoặc xác minh thanh toán thật.");
         if (orders.isEmpty()) {
-            LinearLayout empty = card(screen);
-            title(empty, "Danh sách đơn đặt hàng");
-            line(empty, "Hiện chưa có đơn đặt hàng nào từ khách hàng.", 13, R.color.muted, false);
+            LinearLayout emptyState = card(screen);
+            empty(emptyState, R.drawable.nav_orders, "Chưa có yêu cầu", "Yêu cầu đã lưu của khách sẽ xuất hiện tại đây.");
             return screen.root;
         }
 
-        LinearLayout countCard = card(screen);
-        title(countCard, "Tổng số đơn hàng: " + orders.size());
-        line(countCard, "Dược sĩ bấm Duyệt đơn để chuẩn bị thuốc cho khách nhận tại quầy.", 13, R.color.forest, false);
-
         for (DemoState.Order order : orders) {
             LinearLayout itemCard = card(screen);
-            line(itemCard, "ĐƠN HÀNG #" + order.reference, 12, R.color.emerald, true);
+            line(itemCard, "Mã " + order.reference, 16, R.color.emerald, true);
             
-            boolean isPending = "Đang xử lý".equals(order.status) || "Chờ xử lý".equals(order.status) 
-                             || "Chờ xác minh toa".equals(order.status) || "Chờ gửi và xác minh toa".equals(order.status);
+            boolean isPending = pending(order);
             boolean isReady = "Sẵn sàng nhận".equals(order.status);
             boolean isDone = "Hoàn tất".equals(order.status);
             boolean isCancelled = "Đã hủy".equals(order.status);
 
-            int statusColor = isReady ? R.color.emerald : isDone ? R.color.forest : isCancelled ? R.color.muted : R.color.ink;
-            line(itemCard, "Trạng thái: " + order.status, 15, statusColor, true);
+            chip(itemCard, order.status, isPending);
 
             line(itemCard, "Khách hàng: " + (order.customerName.isEmpty() ? "Khách hàng" : order.customerName) + 
                 (order.contactPhone.isEmpty() ? "" : " · " + order.contactPhone), 14, R.color.ink, false);
-            line(itemCard, "Địa chỉ nhận: " + order.pickup, 13, R.color.muted, false);
-            line(itemCard, "Thời gian đặt: " + order.displayTime, 12, R.color.muted, false);
+            line(itemCard, "Điểm nhận: " + order.pickup, 13, R.color.muted, false);
+            line(itemCard, order.displayTime, 12, R.color.muted, false);
             if (order.containsRx) {
-                line(itemCard, "⚠️ Thuốc kê đơn (Rx) · Cần Dược sĩ kiểm tra đơn thuốc trước khi giao", 12, R.color.forest, true);
+                warning(itemCard, "Rx · Chờ dược sĩ xác minh. Thao tác tại đây chỉ là mô phỏng.");
             }
             divider(itemCard);
 
-            line(itemCard, "Sản phẩm trong đơn:", 13, R.color.ink, true);
+            line(itemCard, "Sản phẩm", 14, R.color.ink, true);
             for (Map.Entry<String, Integer> line : order.lines.entrySet()) {
                 String pName = order.productNamesSnapshot != null && order.productNamesSnapshot.containsKey(line.getKey())
                         ? order.productNamesSnapshot.get(line.getKey())
@@ -73,15 +71,15 @@ public final class AdminRequests {
             line(itemCard, "Tổng tiền: " + vnd(order.pricedSubtotalVnd), 16, R.color.emerald, true);
 
             if (isPending) {
-                button(itemCard, "✓  Duyệt đơn & Chuẩn bị thuốc", true, () -> {
+                button(itemCard, "Chuẩn bị đơn (demo)", true, () -> {
                     if (s.approveOrder(order.reference)) {
-                        host.message("Đã duyệt đơn " + order.reference + " thành công!");
+                        host.message("Đã cập nhật trạng thái demo cho " + order.reference);
                         host.navigate("requests-admin-v2");
                     } else {
                         host.message("Không thể duyệt đơn này.");
                     }
                 });
-                button(itemCard, "✕  Từ chối / Hủy đơn", false, () -> {
+                button(itemCard, "Từ chối / hủy yêu cầu", false, () -> {
                     new AlertDialog.Builder(a)
                         .setTitle("Hủy đơn hàng")
                         .setMessage("Bạn có chắc chắn muốn từ chối/hủy đơn hàng " + order.reference + "?")
@@ -96,16 +94,16 @@ public final class AdminRequests {
                         }).show();
                 });
             } else if (isReady) {
-                line(itemCard, "● Thuốc đã soạn xong, đang chờ khách đến nhận.", 13, R.color.forest, true);
-                button(itemCard, "📦  Giao thuốc & Hoàn tất đơn hàng", true, () -> {
+                line(itemCard, "Đang chờ nhận (demo)", 13, R.color.forest, true);
+                button(itemCard, "Hoàn tất đơn (demo)", true, () -> {
                     if (s.completeOrder(order.reference)) {
-                        host.message("Đã hoàn tất đơn hàng " + order.reference + "!");
+                        host.message("Đã hoàn tất demo cho " + order.reference);
                         host.navigate("requests-admin-v2");
                     } else {
                         host.message("Không thể hoàn tất đơn.");
                     }
                 });
-                button(itemCard, "✕  Hủy đơn hàng này", false, () -> {
+                button(itemCard, "Hủy yêu cầu", false, () -> {
                     new AlertDialog.Builder(a)
                         .setTitle("Hủy đơn hàng")
                         .setMessage("Khách không đến nhận hoặc muốn hủy đơn " + order.reference + "?")
@@ -118,11 +116,16 @@ public final class AdminRequests {
                         }).show();
                 });
             } else if (isDone) {
-                line(itemCard, "✓  Đơn hàng đã hoàn tất giao dịch.", 13, R.color.emerald, true);
-            } else {
-                line(itemCard, "✕  Đơn hàng đã hủy" + (order.cancelReason != null ? ": " + order.cancelReason : "."), 13, R.color.muted, false);
+                line(itemCard, "Đã hoàn tất demo", 13, R.color.emerald, true);
+            } else if (isCancelled && order.cancelReason != null && !order.cancelReason.isEmpty()) {
+                line(itemCard, "Lý do hủy: " + order.cancelReason, 13, R.color.muted, false);
             }
         }
         return screen.root;
+    }
+
+    private static boolean pending(DemoState.Order order) {
+        return "Đang xử lý".equals(order.status) || "Chờ xử lý".equals(order.status)
+            || "Chờ xác minh toa".equals(order.status) || "Chờ gửi và xác minh toa".equals(order.status);
     }
 }

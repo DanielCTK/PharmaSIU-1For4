@@ -1,0 +1,16 @@
+<com.google.android.material.textfield.TextInputLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="8dp" android:hint="Tìm mã lô hoặc tên sản phẩm"
+    app:startIconDrawable="@drawable/ic_search" app:startIconTint="@color/emerald"
+    app:boxBackgroundColor="@color/paper" app:boxStrokeColor="@color/emerald"
+    app:boxCornerRadiusTopStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+    app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusBottomEnd="12dp">
+    <com.google.android.material.textfield.TextInputEditText android:id="@+id/admin_lot_search"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="56dp" android:paddingVertical="14dp"
+        android:inputType="text" android:imeOptions="actionSearch" android:singleLine="true"
+        android:textSize="16sp" android:textColor="@color/ink"
+        android:contentDescription="Tìm mã lô hoặc tên sản phẩm" />
+</com.google.android.material.textfield.TextInputLayout>

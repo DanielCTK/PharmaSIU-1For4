@@ -1,103 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:clipToPadding="false" xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/catalog_v2_catalog_scroll" xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/cream" android:fillViewport="true">
+    android:orientation="vertical" android:background="@drawable/catalog_surface_gradient">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:paddingBottom="100dp">
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:gravity="center_vertical" android:orientation="horizontal"
-            android:paddingHorizontal="16dp" android:paddingVertical="12dp">
-            <ImageView android:id="@+id/catalog_v2_catalog_back"
-                android:layout_width="40dp" android:layout_height="40dp"
-                android:background="@drawable/bg_favorite_circle"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="@color/forest"
-                android:scaleType="centerInside"
-                android:contentDescription="Về trang chủ"
-                android:padding="8dp"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:focusable="true"/>
-            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:text="Danh mục sản phẩm" android:gravity="center_vertical"
-                android:textColor="@color/forest" android:textSize="22sp" android:textStyle="bold"/>
-        </LinearLayout>
-        <FrameLayout android:layout_width="match_parent" android:layout_height="180dp"
-            android:background="@drawable/catalog_v2_hero">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
-                android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingVertical="20dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="TỦ ĐỒ CHĂM SÓC" android:letterSpacing="0.15"
-                    android:textColor="@color/lime" android:textSize="11sp" android:textStyle="bold"/>
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" android:text="Chọn đúng\nđiều bạn cần."
-                    android:textColor="@color/white" android:textSize="24sp" android:textStyle="bold"/>
-                <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="1"/>
-                <TextView android:id="@+id/catalog_v2_catalog_hero_count"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textColor="@color/mint" android:textSize="12sp"/>
-            </LinearLayout>
-        </FrameLayout>
-        <EditText android:id="@+id/catalog_v2_catalog_search" android:layout_width="match_parent"
-            android:layout_height="50dp" android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp" android:background="@drawable/bg_search_bar"
-            android:paddingHorizontal="16dp" android:hint="Tìm tên, danh mục hoặc nhu cầu..."
-            android:drawableStart="@drawable/ic_search"
-            android:drawableLeft="@drawable/ic_search"
-            android:drawablePadding="10dp"
-            android:singleLine="true" android:imeOptions="actionSearch" android:inputType="text"
-            android:textColor="@color/ink" android:textSize="14sp"/>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp" android:layout_marginTop="6dp"
-            android:text="Tra cứu thuốc, thực phẩm chức năng và vật tư y tế chính hãng." android:textColor="@color/muted"
-            android:textSize="11sp"/>
-        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:scrollbars="none" android:fillViewport="false">
-            <LinearLayout android:id="@+id/catalog_v2_catalog_filters"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:orientation="horizontal" android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp"/>
-        </HorizontalScrollView>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp" android:layout_marginBottom="14dp"
-            android:background="@drawable/catalog_v2_surface" android:gravity="center_vertical"
-            android:orientation="horizontal" android:paddingHorizontal="14dp"
-            android:paddingVertical="8dp">
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Sản phẩm" android:textColor="@color/emerald"
-                    android:textSize="16sp" android:textStyle="bold"/>
-                <TextView android:id="@+id/catalog_v2_catalog_results_count"
-                    android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textColor="@color/muted" android:textSize="11sp"/>
-            </LinearLayout>
-            <Spinner android:id="@+id/catalog_v2_catalog_sort"
-                android:layout_width="142dp" android:layout_height="48dp"
-                android:contentDescription="Sắp xếp sản phẩm"/>
-        </LinearLayout>
-        <LinearLayout android:id="@+id/catalog_v2_catalog_grid"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:paddingHorizontal="16dp"/>
-        <com.google.android.material.button.MaterialButton
-            app:cornerRadius="14dp"
-            android:id="@+id/catalog_v2_catalog_reset"
-            android:layout_width="match_parent" android:layout_height="50dp"
-            android:layout_marginHorizontal="16dp" android:layout_marginTop="10dp"
-            android:backgroundTint="@color/mint" android:text="Xóa bộ lọc"
-            android:textAllCaps="false" android:textColor="@color/emerald"
-            android:visibility="gone"/>
-            <com.google.android.material.button.MaterialButton
-            app:cornerRadius="14dp"
-            android:id="@+id/catalog_v2_scroll_top"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="16dp"
-            android:backgroundTint="@color/mint"
-            android:text="↑  Lên đầu trang"
-            android:textAllCaps="false"
-            android:textColor="@color/forest"
-            android:textStyle="bold"/>
+        android:orientation="vertical" android:background="@drawable/catalog_header_gradient" android:paddingBottom="14dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="64dp" android:paddingHorizontal="16dp" android:paddingVertical="8dp"
+        android:gravity="center_vertical" android:orientation="horizontal">
+        <ImageView android:id="@+id/catalog_v2_catalog_back" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="@drawable/catalog_redesign_header_button" android:src="@drawable/ic_arrow_back"
+            android:tint="@color/white" android:scaleType="centerInside" android:padding="12dp"
+            android:contentDescription="Quay lại trang chủ" android:clickable="true" android:focusable="true"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginHorizontal="12dp" android:text="Khám phá" android:textColor="@color/white"
+            android:textSize="23sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/catalog_v2_catalog_cart" android:layout_width="wrap_content" android:layout_height="48dp"
+            android:minWidth="48dp" android:gravity="center" android:paddingHorizontal="12dp"
+            android:background="@drawable/catalog_redesign_header_cart" android:drawablePadding="4dp"
+            android:textColor="@color/emerald" android:textSize="14sp" android:textStyle="bold"
+            android:contentDescription="Mở giỏ hàng" android:clickable="true" android:focusable="true"/>
     </LinearLayout>
-</ScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp" android:gravity="center_vertical" android:orientation="horizontal"
+        android:addStatesFromChildren="true" android:background="@drawable/catalog_market_search_surface">
+        <EditText android:id="@+id/catalog_v2_catalog_search" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:minHeight="52dp"
+            android:background="@android:color/transparent" android:paddingHorizontal="14dp" android:paddingVertical="12dp"
+            android:hint="Tìm sản phẩm…" android:drawableStart="@drawable/ic_search" android:drawablePadding="10dp"
+            android:singleLine="true" android:imeOptions="actionSearch" android:inputType="text"
+            android:textColor="@color/ink" android:textColorHint="@color/muted" android:textSize="16sp"
+            android:contentDescription="Tìm sản phẩm theo tên hoặc danh mục"/>
+        <ImageView android:id="@+id/catalog_v2_catalog_clear" android:layout_width="48dp" android:layout_height="48dp"
+            android:padding="13dp" android:src="@drawable/catalog_polish_close" android:visibility="gone"
+            android:contentDescription="Xóa từ khóa tìm kiếm" android:clickable="true" android:focusable="true"/>
+    </LinearLayout>
+    </LinearLayout>
+    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none">
+        <LinearLayout android:id="@+id/catalog_v2_catalog_filters" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:orientation="horizontal"
+            android:paddingHorizontal="12dp" android:paddingVertical="10dp"/>
+    </HorizontalScrollView>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="52dp" android:layout_marginHorizontal="12dp" android:layout_marginBottom="12dp"
+        android:gravity="center_vertical" android:orientation="horizontal">
+        <TextView android:id="@+id/catalog_v2_catalog_results_count" android:layout_width="0dp"
+            android:layout_height="wrap_content" android:layout_weight="1" android:paddingEnd="8dp"
+            android:textColor="@color/forest" android:textSize="16sp" android:textStyle="bold"
+            android:accessibilityLiveRegion="polite"/>
+        <Spinner android:id="@+id/catalog_v2_catalog_sort" android:layout_width="152dp" android:layout_height="wrap_content"
+            android:minHeight="48dp" android:paddingStart="12dp" android:paddingEnd="36dp"
+            android:background="@drawable/catalog_redesign_sort_background" android:contentDescription="Sắp xếp sản phẩm"/>
+    </LinearLayout>
+    <ScrollView android:id="@+id/catalog_v2_catalog_scroll" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:paddingBottom="24dp">
+            <LinearLayout android:id="@+id/catalog_v2_catalog_grid" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="12dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_catalog_reset"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp"
+                android:layout_marginHorizontal="12dp" android:layout_marginTop="10dp" android:paddingVertical="12dp"
+                android:text="Xóa bộ lọc" android:textSize="16sp" android:textAllCaps="false"
+                android:backgroundTint="@color/mint" android:textColor="@color/emerald" app:cornerRadius="16dp"
+                android:visibility="gone"/>
+            <TextView android:id="@+id/catalog_v2_catalog_hero_count" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginHorizontal="12dp" android:layout_marginTop="12dp"
+                android:textColor="@color/muted" android:textSize="13sp" android:gravity="center" android:visibility="gone"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/catalog_v2_scroll_top"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="52dp"
+                android:layout_marginTop="12dp" android:layout_marginHorizontal="12dp" android:paddingVertical="12dp"
+                android:backgroundTint="@color/mint" android:text="Đầu trang" android:textSize="16sp"
+                android:textAllCaps="false" android:textColor="@color/forest" app:cornerRadius="16dp"
+                app:icon="@drawable/ic_arrow_up" app:iconTint="@color/forest"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

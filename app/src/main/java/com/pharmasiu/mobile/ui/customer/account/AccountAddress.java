@@ -33,11 +33,11 @@ public abstract class AccountAddress extends AccountProfile {
         AccountOnboardingProgress progress,String route){super(a,h,p,progress,route);}
     protected void addresses() {
         hero("SỔ ĐỊA CHỈ", "Địa chỉ nhận hàng",
-            "Quản lý địa chỉ giao nhận thuốc và mua sắm của bạn tại PharmaSIU.", true);
+            state.myAddresses().size() + " địa chỉ đã lưu", true);
         if (state.myAddresses().isEmpty()) {
             LinearLayout empty = card();
             text(empty, "Chưa có địa chỉ", 19, R.color.forest, true, 0);
-            text(empty, "Bạn chưa lưu địa chỉ nhận hàng nào. Bấm nút bên dưới để thêm địa chỉ.",
+            text(empty, "Thêm địa chỉ để điền nhanh khi tạo yêu cầu.",
                 13, R.color.muted, false, 8);
         }
         for (DemoState.Address address : new ArrayList<>(state.myAddresses())) {
@@ -71,7 +71,7 @@ public abstract class AccountAddress extends AccountProfile {
     protected void addressForm(DemoState.Address edit) {
         header.removeAllViews(); body.removeAllViews(); scroll.scrollTo(0, 0);
         hero("SỔ ĐỊA CHỈ", edit == null ? "Thêm địa chỉ" : "Sửa địa chỉ",
-            "Thông tin địa chỉ nhận hàng.", false);
+            "", false);
         LinearLayout form = card();
         EditText label = field(form, "Nhãn (Nhà / Công ty)", edit == null ? "Nhà" : edit.label,
             InputType.TYPE_CLASS_TEXT, 24);
@@ -82,7 +82,7 @@ public abstract class AccountAddress extends AccountProfile {
         EditText detail = field(form, "Địa chỉ chi tiết (tối thiểu 8 ký tự)", edit == null ? "11 Tống Hữu Định, Phường An Khánh, TP.HCM" : edit.detail,
             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES, 190);
         detail.setSingleLine(false); detail.setMinLines(3);
-        detail.setLayoutParams(params(-1, dp(94), 7));
+        detail.setLayoutParams(params(-1, -2, 7));
         action(form, "Lưu địa chỉ", true, () -> {
             String l = value(label), r = value(receiver), p = value(number), d = value(detail);
             if (l.isEmpty() || r.length() < 2 || !phoneValid(p) || d.length() < 8) {
